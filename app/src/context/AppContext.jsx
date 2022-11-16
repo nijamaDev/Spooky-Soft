@@ -1,4 +1,4 @@
-import { LinearProgress } from '@mui/material';
+// import { LinearProgress } from '@mui/material';
 import React, { useState, createContext, useEffect } from 'react';
 // import GetCookie from '../hooks/getCookie'
 
@@ -11,13 +11,12 @@ export const AppProvider = ({ children }) => {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
 
   // const [processes, setProcesses] = useState(); //Array de Objetos
-  const [loading, setloading] = useState(true);
+  // const [loading, setloading] = useState(true);
 
   // Retorna el ultimo objeto insertado
   const [lastObject, setLastObject] = useState({});
 
-  useEffect(() => {
-    setloading(false);
+  useEffect(() => {    
     /* axios.get('get/processes').then((res) => {
       //console.log(res.data)
       //setName(res.data[0].name)
