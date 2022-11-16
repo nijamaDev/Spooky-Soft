@@ -4,11 +4,11 @@ import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
 import BlogPage from './pages/Blog';
-import UserPage from './pages/UserPage';
+import UserPage from './pages/Users';
 import LoginPage from './pages/Login';
 import Page404 from './pages/Page404';
-import ProductsPage from './pages/ProductsPage';
-import DashboardAppPage from './pages/DashboardAppPage';
+import ProductsPage from './pages/Products';
+import DashboardAppPage from './pages/Dashboard';
 
 // ----------------------------------------------------------------------
 
