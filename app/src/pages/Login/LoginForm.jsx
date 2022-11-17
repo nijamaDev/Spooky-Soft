@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+// hooks
+import SetCookie from '../../hooks/setCookie'
+import RemoveCookie from '../../hooks/removeCookie'
 // components
 import { AppContext } from '../../context/AppContext';
 import Iconify from '../../components/iconify';
@@ -16,25 +19,37 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(false);
 
   const handleInputChange = ({ target }) => {
     switch (target.id) {
       case 'email':
         setEmail(target.value);
-        console.log(email);
         break;
       case 'password':
         setPassword(target.value);
-        console.log(password);
         break;
       default:
-        console.log('Necesitas crear el respectivo handleInput');
+        console.log('Create the respective handleInput');
         break;
     }
   };
   const handleClick = () => {
-    // navigate('/dashboard', { replace: true });
-    setOpen(true);
+    console.log(remember)
+    if(email === 'admin@gmail.com' && password === 'admin'){      
+      if(remember){
+        SetCookie('usrin',JSON.stringify({
+          name:'admin',
+          email:'admin@gmail.com',
+          password:'admin',
+          role:'1'}))
+      }else{
+        RemoveCookie('usrin')
+      }      
+      navigate('/dashboard', { replace: true });
+    }else{
+      setOpen(true);
+    }   
   };
 
   const [open, setOpen] = useState(false);
@@ -71,7 +86,7 @@ export default function LoginForm() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <Checkbox name="remember" label="Remember me" />
+        <Checkbox name="remember" label="Remember me" checked={remember} onChange={()=>{setRemember(!remember)}}/>
         <Link variant="subtitle2" underline="hover">
           Forgot password? {login.name}
         </Link>
