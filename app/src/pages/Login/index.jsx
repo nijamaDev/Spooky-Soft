@@ -2,6 +2,8 @@ import { Helmet } from 'react-helmet-async';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Link, Container, Typography, Divider, Stack, Button } from '@mui/material';
+// Google Login
+import Google from '../../components/google-login';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 // components
@@ -80,7 +82,10 @@ export default function LoginPage() {
 
             <Stack direction="row" spacing={2}>
               <Button fullWidth size="large" color="inherit" variant="outlined">
-                <Iconify icon="eva:google-fill" color="#DF3E30" width={22} height={22} />
+                {/* <Iconify icon="eva:google-fill" color="#DF3E30" width={22} height={22}>
+                  <Google />
+                </Iconify> */}
+                <Google />
               </Button>
 
               <Button fullWidth size="large" color="inherit" variant="outlined">
