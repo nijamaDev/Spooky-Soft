@@ -8,7 +8,7 @@ import { fCurrency } from '../../utils/formatNumber';
 // components
 import Label from '../../components/label';
 import { ColorPreview } from '../../components/color-utils';
-import ProductDetail from './ProductDetail'
+import ProductDetail from './ProductDetail';
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ ShopProductCard.propTypes = {
   product: PropTypes.object,
 };
 
-export default function ShopProductCard({ product }) {  
+export default function ShopProductCard({ product }) {
   const [openDetail, setOpenDetail] = useState(false);
   const { name, cover, price, colors, status, priceSale } = product;
 
@@ -52,7 +52,7 @@ export default function ShopProductCard({ product }) {
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Link color="inherit" underline="hover" onClick={()=>setOpenDetail(true)}>
+        <Link color="inherit" underline="hover" onClick={() => setOpenDetail(true)}>
           <Typography variant="subtitle2" noWrap>
             {name}
           </Typography>
@@ -76,7 +76,7 @@ export default function ShopProductCard({ product }) {
           </Typography>
         </Stack>
       </Stack>
-      <ProductDetail open={openDetail} setOpen={setOpenDetail} product={product}/>
+      <ProductDetail open={openDetail} setOpen={setOpenDetail} product={product} />
     </Card>
   );
 }
