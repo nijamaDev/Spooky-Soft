@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 // ----------------------------------------------------------------------
 
 export default function Google() {
-  const clientId = '650635233178-6t6batpsm3ncmm2h31sfpu0es2m7q5uo.apps.googleusercontent.com';
+  const clientId = process.env.REACT_APP_CLIENT_ID;
 
   useEffect(() => {
     const initClient = () => {
