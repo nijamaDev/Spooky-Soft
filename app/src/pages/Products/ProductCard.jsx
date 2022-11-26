@@ -76,7 +76,7 @@ export default function ShopProductCard({ product }) {
           </Typography>
         </Stack>
       </Stack>
-      <ProductDetail open={openDetail} setOpen={setOpenDetail}/>
+      <ProductDetail open={openDetail} setOpen={setOpenDetail} product={product}/>
     </Card>
   );
 }

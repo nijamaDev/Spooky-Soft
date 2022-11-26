@@ -6,8 +6,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Button } from '@mui/material';
 /* eslint-disable react/prop-types */ // TODO: upgrade to latest eslint tooling
-export default function AlertDialog({open, setOpen}) {
-
+export default function AlertDialog({open, setOpen, product}) {
+  const { name, cover, description, price, colors, status, priceSale } = product;
   /*
   const handleClickOpen = () => {
     setOpen(true);
@@ -27,12 +27,12 @@ export default function AlertDialog({open, setOpen}) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Product Name"}
+          {name}
         </DialogTitle>
         <DialogContent>
-        <img style={{ width: "100%", height: "100%" }} src={'https://hashmeta.com/th/wp-content/uploads/2012/10/Hashmeta-Banner-Landing-Page-Design-.jpg'} alt="React Logo" />
+        <img style={{ width: "100%", height: "100%" }} src={cover} alt="React Logo" />
           <DialogContentText id="alert-dialog-description">
-            Descripcion del producto.
+            {description}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
