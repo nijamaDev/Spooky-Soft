@@ -36,6 +36,11 @@ const navConfig = [
     path: '/404',
     icon: icon('ic_disabled'),
   },
+  {
+    title: 'User Registration',
+    path: '/dashboard/register',
+    icon: icon('ic_lock'),
+  },
 ];
 
 export default navConfig;

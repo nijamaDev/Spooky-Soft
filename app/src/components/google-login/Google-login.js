@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 // ----------------------------------------------------------------------
 
 export default function Google() {
-  const clientId = '650635233178-jbpp6gmn7ug0hej6ov9qtfh46dlrmhk7.apps.googleusercontent.com';
+  const clientId = '650635233178-6t6batpsm3ncmm2h31sfpu0es2m7q5uo.apps.googleusercontent.com';
 
   useEffect(() => {
     const initClient = () => {
@@ -25,7 +25,7 @@ export default function Google() {
   return (
     <GoogleLogin
       clientId={clientId}
-      buttonText=""
+      buttonText="Sign In with Google"
       onSuccess={onSuccess}
       onFailure={onFailure}
       cookiePolicy={'single_host_origin'}
