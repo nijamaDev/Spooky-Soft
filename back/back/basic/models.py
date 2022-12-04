@@ -44,7 +44,9 @@ class Products(models.Model):
     url_picture = models.CharField(max_length=100)
     url_product = models.CharField(max_length=100)
     price = models.FloatField(max_length=100)
+    price_sale = models.FloatField(max_length=100)
     location = models.CharField(max_length=100)   
+    creation_date = models.DateField
     view_num = models.IntegerField
 
     def __str__(self):
