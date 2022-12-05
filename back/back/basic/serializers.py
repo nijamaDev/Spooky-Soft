@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Stores, People, Roles, Status, Users
+from .models import Stores, People, Roles, Status, Users, News
 
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,4 +24,9 @@ class StatusSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
+        fields = '__all__'
+
+class NewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = News
         fields = '__all__'
