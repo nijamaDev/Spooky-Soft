@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from rest_framework import routers
-from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet
+from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet, UsersViewSet
 from .myapi import logIn
 
 router = routers.DefaultRouter()
@@ -10,6 +10,7 @@ router.register('api/stores', StoreViweSet, 'stores')
 router.register('api/status', StatusViewSet, 'status')
 router.register('api/people', PeopleViewSet, 'people')
 router.register('api/roles', RolesViewSet, 'roles')
+router.register('api/users', UsersViewSet, 'users')
 
 # urlpatterns = [
 #     path('', views.index),
