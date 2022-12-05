@@ -23,11 +23,11 @@ def createPerson(req, name, lastname, identification):
     return JsonResponse({'insercion': cp})
 
 
-def logIn(req, email, password):
+def logIn(req):
     res = {'status': 0, 'user':{}, 'msg':""}
-    user =list(Users.objects.filter(mail=email).values())
+    user =list(Users.objects.filter(mail=req.data['mail']).values())
     if len(user) > 0:
-        if user[0]['password'] == password:
+        if user[0]['password'] == req.data['password']:
             res['status'] = 1
             res['user'] = user[0]
             res['msg'] = "Login Exitoso"
