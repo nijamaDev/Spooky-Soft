@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -21,6 +22,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
 
+
   const handleInputChange = ({ target }) => {
     switch (target.id) {
       case 'email':
@@ -35,6 +37,11 @@ export default function LoginForm() {
     }
   };
   const handleClick = () => {
+    console.log("ola")
+    axios.get("http://localhost:8000/basic/api/users/").then((res) => {
+      console.log(res.data);
+    })
+    /*
     console.log(remember)
     if(email === 'admin@gmail.com' && password === 'admin'){      
       if(remember){
@@ -49,7 +56,9 @@ export default function LoginForm() {
       navigate('/dashboard', { replace: true });
     }else{
       setOpen(true);
-    }   
+    }      
+    */
+     
   };
 
   const [open, setOpen] = useState(false);
