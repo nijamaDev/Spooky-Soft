@@ -64,10 +64,21 @@ BlogPostCard.propTypes = {
   index: PropTypes.number,
 };
 
+function isImage(url) {
+  return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+}
+
 export default function BlogPostCard({ post, index }) {
-  const { cover, title, description, redirect, view, comment, share, author, createdAt } = post;
+  const { title, description, redirect, createdAt } = post;
+  let { cover } = post;
+ 
+  if (!isImage(cover)){
+    cover = 'https://img.freepik.com/free-vector/hand-drawn-flat-design-mountain-landscape_52683-79195.jpg?w=2000'
+  }
+
   const latestPostLarge = index === 0;
   const latestPost = index === 1 || index === 2;
+
   /*
   const POST_INFO = [
     { number: comment, icon: 'eva:message-circle-fill' },

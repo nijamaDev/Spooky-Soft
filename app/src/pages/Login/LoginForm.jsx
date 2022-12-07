@@ -38,26 +38,31 @@ export default function LoginForm() {
   };
   const handleClick = () => {
     console.log("ola")
-    axios.get("http://localhost:8000/basic/api/users/").then((res) => {
-      console.log(res.data);
-    })
-    /*
-    console.log(remember)
-    if(email === 'admin@gmail.com' && password === 'admin'){      
-      if(remember){
-        SetCookie('usrin',JSON.stringify({
-          name:'admin',
-          email:'admin@gmail.com',
-          password:'admin',
-          role:'1'}))
+
+    const obj = {
+      mail: email,
+      password
+    }
+    axios.post("http://localhost:8000/basic/api/login/",obj).then((res) => {
+      console.log(res.data.status);
+      if(res.data.status === 1){      
+        if(remember){
+          SetCookie('usrin',JSON.stringify({
+            name:'test',
+            email,
+            password,
+            role:'1'}))
+        }else{
+          RemoveCookie('usrin')
+        }      
+        navigate('/dashboard', { replace: true });
       }else{
-        RemoveCookie('usrin')
-      }      
-      navigate('/dashboard', { replace: true });
-    }else{
-      setOpen(true);
-    }      
-    */
+        setOpen(true);
+      }  
+    })
+    
+    // console.log(remember)
+    
      
   };
 
