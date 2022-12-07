@@ -73,11 +73,9 @@ export default function UserPage() {
       </Helmet>
 
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom pb={3}>
           Create post
-          </Typography>
-        </Stack>
+        </Typography>
 
         <Card>
           <Box pt={3} pb={3} pr={3} onSubmit={handleSubmit} component="form">
