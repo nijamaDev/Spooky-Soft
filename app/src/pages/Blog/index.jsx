@@ -23,11 +23,11 @@ export default function BlogPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Blog | Minimal UI </title>
+        <title> Blog | One Market </title>
       </Helmet>
 
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5} mt={12}>
           <Typography variant="h4" gutterBottom>
             Blog
           </Typography>

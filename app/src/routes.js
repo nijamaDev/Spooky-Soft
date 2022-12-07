@@ -38,6 +38,7 @@ export default function Router() {
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
         { path: 'products', element: <ProductsPage /> },
+        { path: 'blog', element: <BlogPage /> },
       ],
     },
     {

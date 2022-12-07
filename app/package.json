@@ -43,6 +43,7 @@
     "@faker-js/faker": "^7.6.0",
     "@iconify/react": "^4.0.0",
     "@leecheuk/react-google-login": "^5.4.1",
+    "@mui/icons-material": "^5.10.16",
     "@mui/lab": "^5.0.0-alpha.103",
     "@mui/material": "^5.10.9",
     "apexcharts": "^3.36.0",
