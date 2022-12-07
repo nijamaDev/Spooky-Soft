@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import { Grid, Button, Container, Stack, Typography } from '@mui/material';
 // components
@@ -8,6 +9,7 @@ import BlogPostCard from './BlogPostCard'
 import BlogPostsSort from './BlogPostsSort'
 // mock
 import POSTS from '../../_mock/blog';
+
 
 // ----------------------------------------------------------------------
 
@@ -20,18 +22,19 @@ const SORT_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function BlogPage() {
+  const navigate = useNavigate();
   return (
     <>
       <Helmet>
-        <title> Dashboard: Blog | Minimal UI </title>
+        <title> Blog | One Market </title>
       </Helmet>
 
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5} mt={12}>
           <Typography variant="h4" gutterBottom>
             Blog
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={()=>navigate('/dashboard/create_post')}>
             New Post
           </Button>
         </Stack>

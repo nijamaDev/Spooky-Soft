@@ -22,27 +22,28 @@ class Status(models.Model):
         return self.name
 
 class Users(models.Model):
-    id_person = models.ForeignKey(People, on_delete=models.CASCADE)
-    id_role = models.ForeignKey(Roles, on_delete=models.CASCADE)
-    id_status = models.ForeignKey(Status, on_delete=models.CASCADE)
+    person = models.ForeignKey(People, on_delete=models.CASCADE)
+    role = models.ForeignKey(Roles, on_delete=models.CASCADE)
+    status = models.ForeignKey(Status, on_delete=models.CASCADE)
     mail = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.id_person.name  + " - " + self.id_role.name + " - " + self.id_status.name + " - " + self.mail        
+        return self.person.name  + " - " + self.role.name + " - " + self.status.name + " - " + self.mail        
 
 class Stores(models.Model):
     name = models.CharField(max_length=100)
-    url_store = models.CharField(max_length=100)
+    url_store = models.CharField(max_length=500)
 
     def __str__(self):
         return self.name
+        
 class Products(models.Model):
-    id_store = models.ForeignKey(Stores, on_delete=models.CASCADE)
+    store = models.ForeignKey(Stores, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
-    url_picture = models.CharField(max_length=100)
-    url_product = models.CharField(max_length=100)
+    url_picture = models.CharField(max_length=500)
+    url_product = models.CharField(max_length=500)
     price = models.FloatField(max_length=100)
     price_sale = models.FloatField(max_length=100)
     location = models.CharField(max_length=100)   

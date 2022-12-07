@@ -72,17 +72,12 @@ export default function UserPage() {
       </Helmet>
 
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Register a new user
-          </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
-          </Button>
-        </Stack>
+        <Typography variant="h4" gutterBottom pb={3}>
+          Register a new user
+        </Typography>
 
         <Card>
-          <Box pt={3} pb={3} onSubmit={handleSubmit} component="form">
+          <Box pt={3} pb={3} pr={3} onSubmit={handleSubmit} component="form">
             <FormContainer>
               <FormItem phone={phone} computer={computer}>
                 <TextField required fullWidth id="id" label="ID" value={id} onChange={handleInputChange} />
@@ -153,10 +148,17 @@ export default function UserPage() {
                   multiple
                 />
               </FormItem>
-              <FormItem phone={phone} computer={computer}>
-                <Button fullWidth variant="contained" color="secondary" type="submit">
-                  Crear Usuario
-                </Button>{' '}
+              <FormItem phone={phone} computer={12}>
+                <Box
+                  display="flex"
+                  justifyContent="flex-end"
+                  alignItems="flex-end"
+                  pt={3}
+                >
+                  <Button variant="contained" color="secondary" type="submit">
+                    Cretate user
+                  </Button>
+                </Box>
               </FormItem>
             </FormContainer>
           </Box>

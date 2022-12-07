@@ -10,6 +10,7 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/Products';
 import DashboardAppPage from './pages/Dashboard';
 import RegisterUser from './pages/RegisterUser';
+import RegisterNew from './pages/RegisterNew';
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +26,7 @@ export default function Router() {
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'register', element: <RegisterUser /> },
+        { path: 'create_post', element: <RegisterNew /> }
       ],
     },
     {
@@ -38,6 +40,7 @@ export default function Router() {
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
         { path: 'products', element: <ProductsPage /> },
+        { path: 'blog', element: <BlogPage /> },
       ],
     },
     {
