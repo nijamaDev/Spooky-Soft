@@ -41,7 +41,7 @@ class Stores(models.Model):
 class Products(models.Model):
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=500)
     url_picture = models.CharField(max_length=500)
     url_product = models.CharField(max_length=500)
     price = models.FloatField(max_length=100)
@@ -56,7 +56,7 @@ class Products(models.Model):
 class News(models.Model):
     title = models.CharField(max_length=100)
     createdAt = models.DateField(max_length=100)
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=500)
     cover = models.CharField(max_length=500)
     redirect = models.CharField(max_length=500)
 
