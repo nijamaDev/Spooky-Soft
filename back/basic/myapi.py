@@ -7,7 +7,7 @@ from .models import Users
 def logIn(req):
     res = {'status': 0, 'user':{}, 'msg':""}
     try:
-        user = list(Users.objects.filter(mail=req.data['mail']).values())
+        user = list(Users.objects.filter(email=req.data['email']).values())
     except Users.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if req.method == 'POST':

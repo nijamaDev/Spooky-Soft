@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
@@ -24,6 +25,8 @@ import {
   Box,
   Grid,
   TextField,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 // components
 import Iconify from '../../components/iconify';
@@ -42,13 +45,30 @@ export default function UserPage() {
   const computer = 6;
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(createdAt)
+    e.preventDefault();  
+    const obj = {
+      title,
+      createdAt,
+      description,
+      cover,
+      redirect
+    }
+    console.log(obj)
+    axios.post("http://localhost:8000/basic/api/news/",obj).then((res) => {
+      console.log(res.data);
+      if(res.data.status === 1){    
+        // navigate('/dashboard', { replace: true });
+      }else{
+        // setOpen(true);
+      }  
+    })
+
+
     // console.log(id, name, lastname, email, password, role, status);
   };
 
   const handleInputChange = ({ target }) => {
-    setCreatedAt(new Date())
+    setCreatedAt(new Date().toISOString().slice(0, 10))
     switch (target.id) {
       case 'title':
         setTitle(target.value);
@@ -66,6 +86,16 @@ export default function UserPage() {
         console.log('Missing: handle');
     }
   };
+
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
   return (
     <>
       <Helmet>
@@ -117,6 +147,11 @@ export default function UserPage() {
           </Box>
         </Card>
       </Container>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          Datos inválidos. Por favor, intente nuevamente.
+        </Alert>
+      </Snackbar>
     </>
   );
 }
