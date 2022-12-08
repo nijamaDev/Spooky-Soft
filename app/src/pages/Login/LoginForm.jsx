@@ -37,25 +37,21 @@ export default function LoginForm() {
     }
   };
   const handleClick = () => {
-    console.log("ola")
-
     const obj = {
-      mail: email,
+      email,
       password
     }
+    console.log(obj)
     axios.post("http://localhost:8000/basic/api/login/",obj).then((res) => {
-      console.log(res.data.status);
+      console.log(res.data.user);
+      const resUser = res.data.user;
       if(res.data.status === 1){      
         if(remember){
-          SetCookie('usrin',JSON.stringify({
-            name:'test',
-            email,
-            password,
-            role:'1'}))
+          SetCookie('usrin',JSON.stringify({resUser}))
         }else{
           RemoveCookie('usrin')
         }      
-        navigate('/dashboard', { replace: true });
+        // navigate('/dashboard', { replace: true });
       }else{
         setOpen(true);
       }  
