@@ -25,11 +25,11 @@ class Users(models.Model):
     person = models.ForeignKey(People, on_delete=models.CASCADE)
     role = models.ForeignKey(Roles, on_delete=models.CASCADE)
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
-    mail = models.CharField(max_length=100)
+    email = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.person.name  + " - " + self.role.name + " - " + self.status.name + " - " + self.mail        
+        return self.person.name  + " - " + self.role.name + " - " + self.status.name + " - " + self.email        
 
 class Stores(models.Model):
     name = models.CharField(max_length=100)
@@ -54,11 +54,11 @@ class Products(models.Model):
         return self.name + ' ' + self.description
 
 class News(models.Model):
-    name = models.CharField(max_length=100)
-    creation_date = models.DateField(max_length=100)
+    title = models.CharField(max_length=100)
+    createdAt = models.DateField(max_length=100)
     description = models.CharField(max_length=100)
-    url_image = models.CharField(max_length=100)
-    url_destiny = models.CharField(max_length=100)
+    cover = models.CharField(max_length=500)
+    redirect = models.CharField(max_length=500)
 
     def __str__(self):
-        return self.name + ' ' + self.description
+        return self.title + ' ' + self.description
