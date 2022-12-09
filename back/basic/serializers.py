@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Stores, People, Roles, Status, Users, News
+from .models import Stores, People, Roles, Status, Users, News, GoogleUsers
 
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,4 +29,9 @@ class UserSerializer(serializers.ModelSerializer):
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
+        fields = '__all__'
+
+class GoogleUsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GoogleUsers
         fields = '__all__'
