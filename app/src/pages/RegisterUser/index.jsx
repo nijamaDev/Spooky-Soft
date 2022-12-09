@@ -156,7 +156,7 @@ export default function UserPage() {
                   pt={3}
                 >
                   <Button variant="contained" color="secondary" type="submit">
-                    Cretate user
+                    Create user
                   </Button>
                 </Box>
               </FormItem>

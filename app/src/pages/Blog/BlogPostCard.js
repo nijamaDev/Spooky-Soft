@@ -77,7 +77,7 @@ function isImage(url) {
 
 export default function BlogPostCard({ post, index, showButtons}) {
   const navigate = useNavigate();
-  const { update, setUpdate } = useContext(AppContext);
+  const { login, update, setUpdate } = useContext(AppContext);
   const [show, setShow] = useState(<Box />)
 
   const { id, title, description, redirect, createdAt } = post;
@@ -91,7 +91,7 @@ export default function BlogPostCard({ post, index, showButtons}) {
   }
 
   useEffect(()=>{   
-    if(showButtons){
+    if(showButtons && login.role_id !== undefined){
       setShow(
       <Box m={1} display="flex" justifyContent="flex-end" alignItems="flex-end">
         <Card>

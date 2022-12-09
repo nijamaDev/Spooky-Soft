@@ -89,7 +89,7 @@ export default function EditNew() {
 
       <Container>
         <Typography variant="h4" gutterBottom pb={3}>
-          Create post
+          Edit post
         </Typography>
 
         <Card>
