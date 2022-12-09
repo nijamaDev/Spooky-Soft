@@ -1,6 +1,6 @@
-from .models import Stores, People, Status, Roles, Users, News
+from .models import Stores, People, Status, Roles, Users, News, GoogleUsers
 from rest_framework import viewsets, permissions
-from .serializers import StoreSerializer, PoepleSerializer, RolesSerializer, StatusSerializer, UserSerializer, NewsSerializer
+from .serializers import StoreSerializer, PoepleSerializer, RolesSerializer, StatusSerializer, UserSerializer, NewsSerializer, GoogleUsersSerializer 
 
 class StoreViweSet(viewsets.ModelViewSet):
     queryset = Stores.objects.all()
@@ -31,3 +31,8 @@ class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = NewsSerializer
+
+class GoogleUsersViewSet(viewsets.ModelViewSet):
+    queryset = GoogleUsers.objects.all()
+    permission_classes = [permissions.AllowAny]
+    serializer_class = GoogleUsersSerializer

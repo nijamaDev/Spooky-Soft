@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Users
+from .models import Users, People
 
 @api_view(['POST'])
 def logIn(req):
@@ -23,3 +23,18 @@ def logIn(req):
         else:
             res['msg'] = "Usuario no Registrado"
             return Response(res)
+
+@api_view(['POST'])
+def getPerson(req):
+    res = { 'name': "", 'lastname': "", 'identification': "" }
+    try:
+        person = People.objects.get(id=req.data['id'])
+    except People.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if req.method == 'POST':
+        res['name'] = person.name
+        res['lastname'] = person.lastname
+        res['identification'] = person.identification
+        return Response(res)
+    else:
+        return Response(res)
