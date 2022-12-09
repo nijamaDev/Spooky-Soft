@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert } from '@mui/material';
+import { Box, Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
 import SetCookie from '../../hooks/setCookie'
@@ -16,7 +16,7 @@ import Iconify from '../../components/iconify';
 export default function LoginForm() {
   const navigate = useNavigate();
 
-  const { setLogin } = useContext(AppContext);
+  const { login, setLogin } = useContext(AppContext);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,22 +41,24 @@ export default function LoginForm() {
       email,
       password
     }
-    
-    console.log(obj)
     axios.post("http://localhost:8000/basic/api/login/",obj).then((res) => {
       const resUser = res.data.user;
       if(res.data.status === 1){
-        setLogin(resUser);
+        axios.post("http://localhost:8000/basic/api/get_person/",{id:resUser.person_id}).then((response) => {
+          const person = response.data
+          setLogin({...resUser,name:person.name, lastname:person.lastname, identification:person.identification})
+          RemoveCookie('usrin')   
+          if(remember){            
+              SetCookie('usrin',JSON.stringify({...resUser,name:person.name, lastname:person.lastname, identification:person.identification}))
+              console.log({...resUser,name:person.name, lastname:person.lastname, identification:person.identification})
+            }          
+          })
         navigate('/dashboard', { replace: true });
-        RemoveCookie('usrin')   
-        if(remember){
-          // AXIOS HERE
-          SetCookie('usrin',JSON.stringify(resUser))
-        }
       }else{
         setOpen(true);
       }  
     })
+    
     
     // console.log(remember)
     
@@ -97,7 +99,11 @@ export default function LoginForm() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <Checkbox name="remember" label="Remember me" checked={remember} onChange={()=>{setRemember(!remember)}}/>
+        <Box>
+          <Checkbox name="remember" label="Remember me" checked={remember} onChange={()=>{setRemember(!remember)}}/>
+          Remember me.
+        </Box>
+        
         <Link variant="subtitle2" underline="hover">
           Forgot password?
         </Link>

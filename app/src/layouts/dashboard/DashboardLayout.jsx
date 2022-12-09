@@ -41,22 +41,26 @@ export default function DashboardLayout() {
   const navigate = useNavigate();   
 
   useEffect(()=>{
-    if(login.found === false){
+    if(login.name !== undefined){
+      // Still looking
+      if(login.found === false){
+        console.log('login',login)
         navigate('/login')        
-    }else{
-      setDashLay(
-        <StyledRoot>
-              <Header onOpenNav={() => setOpen(true)} />
-
-              <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-
-              <Main>
-                <Outlet />
-              </Main>
-            </StyledRoot>
-      )
+      }else{
+        setDashLay(
+          <StyledRoot>
+                <Header onOpenNav={() => setOpen(true)} />
+  
+                <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+  
+                <Main>
+                  <Outlet />
+                </Main>
+              </StyledRoot>
+        )
+      }
     }
-        
+    
   },[login])
 
 

@@ -65,11 +65,7 @@ export default function ProductsPage() {
               <Button variant="contained" sx={{backgroundColor: "#FF0000",}}>
                 <YouTubeIcon />
               </Button>
-            </Stack>
-            <Button variant="contained" sx={{backgroundColor: "#FF0000",}} onClick={()=>navigate('/login')}>
-              <YouTubeIcon />aa
-            </Button>
-            
+            </Stack>            
           </Grid>
         </Grid>
         <Typography variant="h3" align="center" sx={{ mb: 2 }}>
