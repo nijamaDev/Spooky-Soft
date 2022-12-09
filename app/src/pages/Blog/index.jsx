@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useEffect, useState} from 'react';
+import { useContext, useEffect, useState} from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
@@ -10,6 +10,7 @@ import BlogPostsSearch from './BlogPostsSearch'
 import BlogPostCard from './BlogPostCard'
 import BlogPostsSort from './BlogPostsSort'
 // mock
+import { AppContext } from '../../context/AppContext'
 
 
 // ----------------------------------------------------------------------
@@ -23,14 +24,15 @@ const SORT_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function BlogPage() {
+  const { update } = useContext(AppContext);
   const navigate = useNavigate();
   const [posts , setPosts] = useState([])
+
   useEffect(()=>{
     axios.get("http://localhost:8000/basic/api/news/").then((res) => {
-      console.log(res.data)
       setPosts(res.data)
     })  
-  },[])
+  },[update])
 
   return (
     <>
@@ -55,7 +57,7 @@ export default function BlogPage() {
 
         <Grid container spacing={3}>
           {posts.map((post, index) => (
-            <BlogPostCard key={post.id} post={post} index={index} />
+            <BlogPostCard key={post.id} post={post} index={index} showButtons/>
           ))}
         </Grid>
       </Container>

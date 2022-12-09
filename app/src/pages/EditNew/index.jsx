@@ -1,28 +1,13 @@
 import axios from 'axios'
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // @mui
 import {
   Card,
-  Table,
-  Stack,
-  Paper,
-  Avatar,
   Button,
-  Popover,
-  Checkbox,
-  TableRow,
-  MenuItem,
-  TableBody,
-  TableCell,
   Container,
   Typography,
-  IconButton,
-  TableContainer,
-  TablePagination,
   Box,
   Grid,
   TextField,
@@ -30,20 +15,20 @@ import {
   Alert,
 } from '@mui/material';
 // components
-import Iconify from '../../components/iconify';
 import { FormContainer, FormItem, Selector } from '../../components/Forms';
 import BlogPostCard from '../Blog/BlogPostCard';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function EditNew() {
   const navigate = useNavigate();
+  const { state } = useLocation();
 
-  const [title, setTitle] = useState('');
-  const [createdAt, setCreatedAt] = useState('');
-  const [description, setDescription] = useState('');
-  const [cover, setCover] = useState('');
-  const [redirect, setRedirect] = useState('');
+  const [title, setTitle] = useState(state.title);
+  const [createdAt, setCreatedAt] = useState(state.createAt);
+  const [description, setDescription] = useState(state.description);
+  const [cover, setCover] = useState(state.cover);
+  const [redirect, setRedirect] = useState(state.redirect);
   const phone = 12;
   const computer = 6;
 
@@ -57,7 +42,7 @@ export default function UserPage() {
       redirect
     }
     console.log(obj)
-    axios.post("http://localhost:8000/basic/api/news/",obj).then((res) => {
+    axios.patch(`http://localhost:8000/basic/api/news/${state.id}/`,obj).then((res) => {
       console.log(res.data);
       if(res.data.id !== undefined){    
         navigate('/dashboard/blog');
@@ -99,7 +84,7 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> Create post | One Market </title>
+        <title> Edit post | One Market </title>
       </Helmet>
 
       <Container>
@@ -138,7 +123,7 @@ export default function UserPage() {
                   pt={3}
                 >
                   <Button variant="contained" color="secondary" type="submit">
-                    Cretate post
+                    Edit post
                   </Button>
                 </Box>
               </FormItem>

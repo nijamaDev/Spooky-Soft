@@ -11,6 +11,7 @@ import ProductsPage from './pages/Products';
 import DashboardAppPage from './pages/Dashboard';
 import RegisterUser from './pages/RegisterUser';
 import RegisterNew from './pages/RegisterNew';
+import EditNew from './pages/EditNew'
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +27,8 @@ export default function Router() {
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'register', element: <RegisterUser /> },
-        { path: 'create_post', element: <RegisterNew /> }
+        { path: 'create_post', element: <RegisterNew /> },
+        { path: 'edit_post', element: <EditNew /> }
       ],
     },
     {

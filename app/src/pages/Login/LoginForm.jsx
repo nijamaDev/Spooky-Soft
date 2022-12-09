@@ -16,7 +16,7 @@ import Iconify from '../../components/iconify';
 export default function LoginForm() {
   const navigate = useNavigate();
 
-  const { login } = useContext(AppContext);
+  const { setLogin } = useContext(AppContext);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,17 +41,18 @@ export default function LoginForm() {
       email,
       password
     }
+    
     console.log(obj)
     axios.post("http://localhost:8000/basic/api/login/",obj).then((res) => {
-      console.log(res.data.user);
       const resUser = res.data.user;
-      if(res.data.status === 1){      
+      if(res.data.status === 1){
+        setLogin(resUser);
+        navigate('/dashboard', { replace: true });
+        RemoveCookie('usrin')   
         if(remember){
-          SetCookie('usrin',JSON.stringify({resUser}))
-        }else{
-          RemoveCookie('usrin')
-        }      
-        // navigate('/dashboard', { replace: true });
+          // AXIOS HERE
+          SetCookie('usrin',JSON.stringify(resUser))
+        }
       }else{
         setOpen(true);
       }  
@@ -98,7 +99,7 @@ export default function LoginForm() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
         <Checkbox name="remember" label="Remember me" checked={remember} onChange={()=>{setRemember(!remember)}}/>
         <Link variant="subtitle2" underline="hover">
-          Forgot password? {login.name}
+          Forgot password?
         </Link>
       </Stack>
 

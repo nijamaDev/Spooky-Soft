@@ -1,32 +1,27 @@
 // import { LinearProgress } from '@mui/material';
+import { update } from 'lodash';
 import React, { useState, createContext, useEffect } from 'react';
-// import GetCookie from '../hooks/getCookie'
+import GetCookie from '../hooks/getCookie'
 
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [login, setLogin] = useState({
-    name: 'nico',
-  });
+  const [update, setUpdate] = useState(true);
+  const [login, setLogin] = useState({});
   const [isDarkTheme, setIsDarkTheme] = useState(true);
 
   // const [processes, setProcesses] = useState(); //Array de Objetos
   // const [loading, setloading] = useState(true);
 
   // Retorna el ultimo objeto insertado
-  const [lastObject, setLastObject] = useState({});
+  const [lastObject, setLastObject] = useState({}); 
 
-  useEffect(() => {    
-    /* axios.get('get/processes').then((res) => {
-      //console.log(res.data)
-      //setName(res.data[0].name)
-      //setDescription(res.data[0].description)
-      try {
-        setLogin(JSON.parse(GetCookie('usrin')));
-      } catch (error) {}
-      setloading(false);
-      setProcesses(res.data);
-    }); */
+  useEffect(() => {
+    try {
+      setLogin({...JSON.parse(GetCookie('usrin')),found:true});
+    } catch (error) {
+      setLogin({found:false});
+    }
   }, []);
 
   //
@@ -45,6 +40,8 @@ export const AppProvider = ({ children }) => {
         setIsDarkTheme,
         lastObject,
         setLastObject,
+        update,
+        setUpdate
       }}
     >
       {children}

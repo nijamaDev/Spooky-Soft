@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useState, useContext, useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 //
+import { AppContext } from '../../context/AppContext';
 import Header from './header';
 import Nav from './nav';
 
@@ -33,17 +34,36 @@ const Main = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function DashboardLayout() {
+  const { login } = useContext(AppContext)
+
   const [open, setOpen] = useState(false);
+  const [dashLay, setDashLay] = useState(<></>)
+  const navigate = useNavigate();   
+
+  useEffect(()=>{
+    if(login.found === false){
+        navigate('/login')        
+    }else{
+      setDashLay(
+        <StyledRoot>
+              <Header onOpenNav={() => setOpen(true)} />
+
+              <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+
+              <Main>
+                <Outlet />
+              </Main>
+            </StyledRoot>
+      )
+    }
+        
+  },[login])
+
 
   return (
-    <StyledRoot>
-      <Header onOpenNav={() => setOpen(true)} />
-
-      <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-
-      <Main>
-        <Outlet />
-      </Main>
-    </StyledRoot>
+    <>
+    {dashLay}
+    </>
+     
   );
 }
