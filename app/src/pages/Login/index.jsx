@@ -12,6 +12,8 @@ import Logo from '../../components/logo';
 import Iconify from '../../components/iconify';
 // sections
 import LoginForm from './LoginForm';
+import SignUpForm from './SignUpForm';
+
 
 // ----------------------------------------------------------------------
 
@@ -93,7 +95,7 @@ export default function LoginPage() {
           </StyledSection>
         )}
 
-        <Stack sx={{paddingTop:{xs: 8, sm: 5} }} fullWidth
+        <Stack sx={{paddingTop:{xs: 8, sm: 5} }}
         style={{ display: 'flex' }}>        
           <Tabs 
             value={value} onChange={handleChange} sx={{paddingRight:{xs: 0, sm: 80} }}>
@@ -134,7 +136,7 @@ export default function LoginPage() {
                   </Typography>
                 </Divider>
 
-                <LoginForm />
+                <SignUpForm />
               </StyledContent>
             </Container>
           </TabPanel>
