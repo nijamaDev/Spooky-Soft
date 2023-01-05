@@ -1,9 +1,6 @@
 from rest_framework import serializers
-<<<<<<< Updated upstream
 from .models import Stores, People, Roles, Status, Users, News, GoogleUsers
-=======
 from .models import Stores, People, Roles, Status, Users, News, ProductRegisters
->>>>>>> Stashed changes
 
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,13 +32,12 @@ class NewsSerializer(serializers.ModelSerializer):
         model = News
         fields = '__all__'
 
-<<<<<<< Updated upstream
 class GoogleUsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoogleUsers
-=======
+
+8
 class ProductRegistersSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductRegisters
->>>>>>> Stashed changes
         fields = '__all__'
