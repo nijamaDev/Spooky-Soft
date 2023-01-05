@@ -72,3 +72,13 @@ class GoogleUsers(models.Model):
 
     def __str__(self):
         return self.title + ' ' + self.description
+
+class ProductRegisters(models.Model):
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    date = models.DateField
+    visits = models.FloatField(max_length=100)
+    redirect = models.FloatField(max_length=100)
+
+    def __str__(self):
+        return self.product + ' ' + self.redirect
+
