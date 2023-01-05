@@ -75,7 +75,7 @@ class GoogleUsers(models.Model):
 
 class ProductRegisters(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
-    date = models.DateField
+    date = models.DateField(max_length=100, null=False)
     visits = models.FloatField(max_length=100)
     redirect = models.FloatField(max_length=100)
 

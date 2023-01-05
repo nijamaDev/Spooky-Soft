@@ -37,6 +37,7 @@ class GoogleUsersViewSet(viewsets.ModelViewSet):
     queryset = GoogleUsers.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = GoogleUsersSerializer
+    
 class ProductRegistersViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
     permission_classes = [permissions.AllowAny]
