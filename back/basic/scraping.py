@@ -3,6 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
+from selenium.webdriver.chrome.service import Service
+from chromedriver_py import binary_path # this will get you the path variable
 
 def scrapElement():
     # Establecer parametros
@@ -11,7 +13,9 @@ def scrapElement():
     options.add_argument('--incognito')
     options.add_argument('--headless')
     # Crear una instancia del navegador
-    browser = webdriver.Chrome(chrome_options=options)
+    service_object = Service(binary_path)
+    browser = webdriver.Chrome(service=service_object,chrome_options=options)
+    #browser = webdriver.Chrome(chrome_options=options)
 
     # Usar el método get para abrir una página web
     browser.get('https://www.falabella.com.co/')
