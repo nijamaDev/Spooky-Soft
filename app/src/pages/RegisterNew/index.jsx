@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
@@ -48,27 +48,27 @@ export default function UserPage() {
   const computer = 6;
 
   const handleSubmit = async (e) => {
-    e.preventDefault();  
+    e.preventDefault();
     const obj = {
       title,
       createdAt,
       description,
       cover,
-      redirect
-    }
-    console.log(obj)
-    axios.post("http://localhost:8000/basic/api/news/",obj).then((res) => {
+      redirect,
+    };
+    console.log(obj);
+    axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/news/`, obj).then((res) => {
       console.log(res.data);
-      if(res.data.id !== undefined){    
+      if (res.data.id !== undefined) {
         navigate('/dashboard/blog');
-      }else{
+      } else {
         setOpen(true);
-      }  
-    })
+      }
+    });
   };
 
   const handleInputChange = ({ target }) => {
-    setCreatedAt(new Date().toISOString().slice(0, 10))
+    setCreatedAt(new Date().toISOString().slice(0, 10));
     switch (target.id) {
       case 'title':
         setTitle(target.value);
@@ -114,35 +114,50 @@ export default function UserPage() {
                 <TextField required fullWidth id="title" label="Title" value={title} onChange={handleInputChange} />
               </FormItem>
               <FormItem phone={phone} computer={computer}>
-                <TextField required fullWidth id="cover" label="Link to image" value={cover} onChange={handleInputChange} />
+                <TextField
+                  required
+                  fullWidth
+                  id="cover"
+                  label="Link to image"
+                  value={cover}
+                  onChange={handleInputChange}
+                />
               </FormItem>
               <FormItem phone={phone} computer={computer}>
-                <TextField required fullWidth id="description" label="Short Description" value={description} onChange={handleInputChange} />
+                <TextField
+                  required
+                  fullWidth
+                  id="description"
+                  label="Short Description"
+                  value={description}
+                  onChange={handleInputChange}
+                />
               </FormItem>
               <FormItem phone={phone} computer={computer}>
-                <TextField required fullWidth id="redirect" label="Link to redirect" value={redirect} onChange={handleInputChange} />
-              </FormItem> 
+                <TextField
+                  required
+                  fullWidth
+                  id="redirect"
+                  label="Link to redirect"
+                  value={redirect}
+                  onChange={handleInputChange}
+                />
+              </FormItem>
               <Grid item xs={phone} sm={12}>
-                <Typography variant='h5' gutterBottom>
-                Preview
-                </Typography>  
-              </Grid>            
-              <BlogPostCard post={{cover, title, description, redirect, createdAt}} index={0}/>
-              <BlogPostCard post={{cover, title, description, redirect, createdAt}} index={1}/>
-              <BlogPostCard post={{cover, title, description, redirect, createdAt}} index={3}/>
+                <Typography variant="h5" gutterBottom>
+                  Preview
+                </Typography>
+              </Grid>
+              <BlogPostCard post={{ cover, title, description, redirect, createdAt }} index={0} />
+              <BlogPostCard post={{ cover, title, description, redirect, createdAt }} index={1} />
+              <BlogPostCard post={{ cover, title, description, redirect, createdAt }} index={3} />
               <FormItem phone={phone} computer={12}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-end"
-                  alignItems="flex-end"
-                  pt={3}
-                >
+                <Box display="flex" justifyContent="flex-end" alignItems="flex-end" pt={3}>
                   <Button variant="contained" color="secondary" type="submit">
                     Create post
                   </Button>
                 </Box>
               </FormItem>
-              
             </FormContainer>
           </Box>
         </Card>

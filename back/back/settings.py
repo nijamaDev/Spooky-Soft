@@ -60,11 +60,10 @@ ROOT_URLCONF = 'back.urls'
 
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-  'http://localhost:3000',
-  'http://127.0.0.1:8000',
-)
-
+CORS_ALLOWED_ORIGIN_REGEXES = (
+  r'^(https?://(?:.+\.)?onemarket\.pages\.dev)$',
+  r'^(http://localhost:3000)$'
+  )
 
 TEMPLATES = [
     {
