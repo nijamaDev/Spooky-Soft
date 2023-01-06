@@ -18,7 +18,7 @@ def scrapElement():
     #options.add_argument('--headless')
     options = webdriver.FirefoxOptions()
     options.add_argument('-headless')
-    browser = webdriver.Firefox(executable_path='/geckodriver', options=options, log_path='/dev/null', service_log_path='/dev/null')
+    browser = webdriver.Firefox(executable_path='/vercel/path1/geckodriver', options=options, log_path='/dev/null', service_log_path='/dev/null')
     # Crear una instancia del navegador
     #service_object = Service(binary_path)
     #browser = webdriver.Chrome(service=service_object,chrome_options=options)
