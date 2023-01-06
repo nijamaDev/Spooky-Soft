@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from rest_framework import routers
 from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet, UsersViewSet, NewsViewSet, GoogleUsersViewSet
-from .myapi import logIn, getPerson
+from .myapi import logIn, getPerson, scarpInit
 
 router = routers.DefaultRouter()
 
@@ -27,3 +27,4 @@ router.register('api/googleusers', GoogleUsersViewSet, 'news')
 urlpatterns = router.urls
 urlpatterns.append(path('api/login/', logIn, name='login'))
 urlpatterns.append(path('api/get_person/', getPerson, name='get_person'))
+urlpatterns.append(path('api/scrap/', scarpInit, name='scrap'))
