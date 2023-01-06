@@ -73,14 +73,22 @@ export default function UserPage() {
 
       <Container>
         <Typography variant="h4" gutterBottom pb={3}>
-          Register a new user
+          Editing User
         </Typography>
 
         <Card>
           <Box pt={3} pb={3} pr={3} onSubmit={handleSubmit} component="form">
             <FormContainer>
               <FormItem phone={phone} computer={computer}>
-                <TextField required fullWidth id="id" label="ID" value={id} onChange={handleInputChange} />
+                <TextField
+                  required
+                  fullWidth
+                  id="id"
+                  label="ID"
+                  value={id}
+                  onChange={handleInputChange}
+                  disabled={false}
+                />
               </FormItem>
               <FormItem phone={phone} computer={computer}>
                 <TextField required fullWidth id="name" label="Name" value={name} onChange={handleInputChange} />
@@ -151,7 +159,7 @@ export default function UserPage() {
               <FormItem phone={phone} computer={12}>
                 <Box display="flex" justifyContent="flex-end" alignItems="flex-end" pt={3}>
                   <Button variant="contained" color="secondary" type="submit">
-                    Create user
+                    Save Changes
                   </Button>
                 </Box>
               </FormItem>

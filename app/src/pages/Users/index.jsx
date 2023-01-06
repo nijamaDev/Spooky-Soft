@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 // @mui
 import {
   Card,
@@ -27,8 +28,8 @@ import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
-import UserListHead from './UserListHead'
-import UserListToolbar from './UserListToolbar'
+import UserListHead from './UserListHead';
+import UserListToolbar from './UserListToolbar';
 // mock
 import USERLIST from '../../_mock/user';
 
@@ -75,6 +76,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -141,6 +143,14 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const handleNewUser = () => {
+    navigate('/dashboard/register');
+  };
+
+  const handleEditUser = () => {
+    navigate('/dashboard/edit_user');
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -150,15 +160,15 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Users | One Market </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Users
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleNewUser}>
             New User
           </Button>
         </Stack>
@@ -280,7 +290,7 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
+        <MenuItem onClick={handleNewUser}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
         </MenuItem>

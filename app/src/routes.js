@@ -10,8 +10,9 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/Products';
 import DashboardAppPage from './pages/Dashboard';
 import RegisterUser from './pages/RegisterUser';
+import EditUser from './pages/EditUser';
 import RegisterNew from './pages/RegisterNew';
-import EditNew from './pages/EditNew'
+import EditNew from './pages/EditNew';
 
 // ----------------------------------------------------------------------
 
@@ -27,8 +28,9 @@ export default function Router() {
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'register', element: <RegisterUser /> },
+        { path: 'edit_user', element: <EditUser /> },
         { path: 'create_post', element: <RegisterNew /> },
-        { path: 'edit_post', element: <EditNew /> }
+        { path: 'edit_post', element: <EditNew /> },
       ],
     },
     {
