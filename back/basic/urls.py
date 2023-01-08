@@ -1,8 +1,9 @@
 from django.urls import path
 from . import views
 from rest_framework import routers
-from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet, UsersViewSet, NewsViewSet, GoogleUsersViewSet
+from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet, UsersViewSet, NewsViewSet, GoogleUsersViewSet, ProductRegistersViewSet, ProductsViewSet
 from .myapi import logIn, getPerson
+
 
 router = routers.DefaultRouter()
 
@@ -13,6 +14,8 @@ router.register('api/roles', RolesViewSet, 'roles')
 router.register('api/users', UsersViewSet, 'users')
 router.register('api/news', NewsViewSet, 'news')
 router.register('api/googleusers', GoogleUsersViewSet, 'google')
+router.register('api/products', ProductsViewSet, 'products')
+router.register('api/productRegisters', ProductRegistersViewSet, 'registers')
 
 # urlpatterns = [
 #     path('', views.index),
