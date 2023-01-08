@@ -1,8 +1,10 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { gapi } from 'gapi-script';
+import { GoogleLogin } from '@leecheuk/react-google-login';
 // @mui
-import { Box, Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert } from '@mui/material';
+import { Box, Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert, Divider, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
 import SetCookie from '../../hooks/setCookie';
@@ -15,12 +17,27 @@ import Iconify from '../../components/iconify';
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const clientId = process.env.REACT_APP_CLIENT_ID;
 
   const { login, setLogin } = useContext(AppContext);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
+
+  useEffect(() => {
+    const initClient = () => {
+      gapi.client.init({
+        clientId,
+        scope: '',
+      });
+    };
+    gapi.load('client:auth2', initClient);
+  });
+
+  const onSuccess = (res) => {
+    console.log('success:', res);
+  };
 
   const handleInputChange = ({ target }) => {
     switch (target.id) {
@@ -92,6 +109,19 @@ export default function LoginForm() {
 
   return (
     <>
+      <GoogleLogin
+        clientId={clientId}
+        buttonText="Log In with Google"
+        onSuccess={onSuccess}
+        onFailure={()=>setOpen(true)}
+        cookiePolicy={'single_host_origin'}
+        isSignedIn
+      />
+      <Divider sx={{ my: 3 }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          OR
+        </Typography>
+      </Divider>
       <Stack spacing={3}>
         <TextField id="email" label="Email address" name="email" value={email} onChange={handleInputChange} />
 
