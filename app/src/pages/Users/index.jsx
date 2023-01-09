@@ -74,6 +74,8 @@ function applySortFilter(array, comparator, query) {
       (_user) =>
         _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
         _user.email.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      // || _user.role.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      // || _user.status.toLowerCase().indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
