@@ -47,8 +47,7 @@ class Products(models.Model):
     price = models.FloatField(max_length=100, null=False)
     price_sale = models.FloatField(max_length=100, blank=True)
     location = models.CharField(max_length=100, null=False)   
-    creation_date = models.DateField(null=False)
-    view_num = models.IntegerField(null=False)
+    creation_date = models.DateField(auto_now_add=True, null=False)
 
     def __str__(self):
         return self.name + ' ' + self.description
@@ -74,7 +73,7 @@ class GoogleUsers(models.Model):
         return self.email + ' ' + self.rol
 
 class ProductRegisters(models.Model):
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, null=False)
     date = models.DateField(max_length=100, null=False)
     visits = models.FloatField(max_length=100)
     redirect = models.FloatField(max_length=100)
