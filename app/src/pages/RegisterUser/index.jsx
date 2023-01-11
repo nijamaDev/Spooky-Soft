@@ -68,7 +68,7 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> User Register </title>
+        <title> User Register | One Market </title>
       </Helmet>
 
       <Container>
@@ -149,12 +149,7 @@ export default function UserPage() {
                 />
               </FormItem>
               <FormItem phone={phone} computer={12}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-end"
-                  alignItems="flex-end"
-                  pt={3}
-                >
+                <Box display="flex" justifyContent="flex-end" alignItems="flex-end" pt={3}>
                   <Button variant="contained" color="secondary" type="submit">
                     Create user
                   </Button>

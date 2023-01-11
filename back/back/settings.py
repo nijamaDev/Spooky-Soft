@@ -30,8 +30,6 @@ SECRET_KEY = 'django-insecure-w&()e1o&%d6+e6c(#7wqrx=5f6td2ryu^klx+t_o54)!ukc5i*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '.vercel.app', '.now.sh']
-
 
 # Application definition
 
@@ -62,11 +60,10 @@ ROOT_URLCONF = 'back.urls'
 
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-  'http://localhost:3000',
-  'https://onemarket.pages.dev'
-)
-
+CORS_ALLOWED_ORIGIN_REGEXES = (
+  r'^(https?://(?:.+\.)?onemarket\.pages\.dev)$',
+  r'^(http://localhost:3000)$'
+  )
 
 TEMPLATES = [
     {
@@ -141,7 +138,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = os.path.join(BASE_DIR, 'static'),
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
-ALLOWED_HOSTS = ['localhost', '.vercel.app', '.now.sh']
+ALLOWED_HOSTS = ['localhost', '.vercel.app', '.now.sh','127.0.0.1']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
