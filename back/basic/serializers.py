@@ -35,7 +35,7 @@ class NewsSerializer(serializers.ModelSerializer):
 class GoogleUsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoogleUsers
-
+        fields = '__all__'
 
 class ProductRegistersSerializer(serializers.ModelSerializer):
     class Meta:

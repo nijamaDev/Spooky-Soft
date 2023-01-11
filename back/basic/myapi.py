@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Users, People
+from .scraping import scrapElement
 
 @api_view(['POST'])
 def logIn(req):
@@ -38,3 +39,12 @@ def getPerson(req):
         return Response(res)
     else:
         return Response(res)
+
+@api_view(['GET'])
+def scarpInit(req):
+    res = { 'status':0, 'element': "" }
+    element = scrapElement()
+    print(element)
+    res['element'] = element
+    res['status'] = 1
+    return Response(res)
