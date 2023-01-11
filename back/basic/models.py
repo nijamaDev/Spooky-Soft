@@ -22,7 +22,7 @@ class Status(models.Model):
         return self.name
 
 class Users(models.Model):
-    person = models.ForeignKey(People, on_delete=models.CASCADE, null=False, unique=True)
+    person = models.OneToOneField(People, on_delete=models.CASCADE, null=False,)
     role = models.ForeignKey(Roles, on_delete=models.CASCADE, null=False)
     status = models.ForeignKey(Status, on_delete=models.CASCADE, null=False)
     email = models.CharField(max_length=100, null=False, unique=True)
@@ -67,8 +67,8 @@ class GoogleUsers(models.Model):
     email: models.CharField(max_length=100, null=False, unique=True)
     googleId: models.CharField(max_length=100, null=False, unique=True)
     imageUrl: models.CharField(max_length=100, null=False)
-    name: models.CharField(max_length=100, null=False)
+    name: models.CharField(max_length=100,null=False)
     rol: models.ForeignKey(Roles, on_delete=models.CASCADE, null=False)
 
-    def __str__(self):
-        return self.title + ' ' + self.description
+    def _str_(self):
+        return self.email + ' ' + self.rol

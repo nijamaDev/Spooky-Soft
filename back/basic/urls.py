@@ -12,7 +12,7 @@ router.register('api/people', PeopleViewSet, 'people')
 router.register('api/roles', RolesViewSet, 'roles')
 router.register('api/users', UsersViewSet, 'users')
 router.register('api/news', NewsViewSet, 'news')
-router.register('api/googleusers', GoogleUsersViewSet, 'news')
+router.register('api/googleusers', GoogleUsersViewSet, 'google')
 
 # urlpatterns = [
 #     path('', views.index),
