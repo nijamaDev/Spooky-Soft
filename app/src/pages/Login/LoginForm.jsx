@@ -35,6 +35,41 @@ export default function LoginForm() {
     gapi.load('client:auth2', initClient);
   });
 
+  const onLogin = (obj) => {
+    const resUser = 0;
+    axios
+      .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: resUser.person_id })
+      .then((response) => {
+        const person = response.data;
+        setLogin({
+          ...resUser,
+          name: person.name,
+          lastname: person.lastname,
+          identification: person.identification,
+        });
+        RemoveCookie('usrin');
+        if (remember) {
+          SetCookie(
+            'usrin',
+            JSON.stringify({
+              ...resUser,
+              name: person.name,
+              lastname: person.lastname,
+              identification: person.identification,
+            })
+          );
+          console.log({
+            ...resUser,
+            name: person.name,
+            lastname: person.lastname,
+            identification: person.identification,
+          });
+        }
+      });
+    navigate('/dashboard', { replace: true });
+    // console.log(remember)
+  }
+
   const onSuccess = (res) => {
     console.log('success:', res);
   };
@@ -52,6 +87,7 @@ export default function LoginForm() {
         break;
     }
   };
+  
   const handleClick = () => {
     const obj = {
       email,
@@ -59,43 +95,13 @@ export default function LoginForm() {
     };
     axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/login/`, obj).then((res) => {
       const resUser = res.data.user;
+      console.log(resUser)
       if (res.data.status === 1) {
-        axios
-          .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: resUser.person_id })
-          .then((response) => {
-            const person = response.data;
-            setLogin({
-              ...resUser,
-              name: person.name,
-              lastname: person.lastname,
-              identification: person.identification,
-            });
-            RemoveCookie('usrin');
-            if (remember) {
-              SetCookie(
-                'usrin',
-                JSON.stringify({
-                  ...resUser,
-                  name: person.name,
-                  lastname: person.lastname,
-                  identification: person.identification,
-                })
-              );
-              console.log({
-                ...resUser,
-                name: person.name,
-                lastname: person.lastname,
-                identification: person.identification,
-              });
-            }
-          });
-        navigate('/dashboard', { replace: true });
+        onLogin(obj)
       } else {
         setOpen(true);
       }
     });
-
-    // console.log(remember)
   };
 
   const [open, setOpen] = useState(false);
