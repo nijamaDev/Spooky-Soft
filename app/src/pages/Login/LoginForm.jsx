@@ -35,43 +35,14 @@ export default function LoginForm() {
     gapi.load('client:auth2', initClient);
   });
 
-  const onLogin = (obj) => {
-    const resUser = 0;
-    axios
-      .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: resUser.person_id })
-      .then((response) => {
-        const person = response.data;
-        setLogin({
-          ...resUser,
-          name: person.name,
-          lastname: person.lastname,
-          identification: person.identification,
-        });
-        RemoveCookie('usrin');
-        if (remember) {
-          SetCookie(
-            'usrin',
-            JSON.stringify({
-              ...resUser,
-              name: person.name,
-              lastname: person.lastname,
-              identification: person.identification,
-            })
-          );
-          console.log({
-            ...resUser,
-            name: person.name,
-            lastname: person.lastname,
-            identification: person.identification,
-          });
-        }
-      });
-    navigate('/dashboard', { replace: true });
-    // console.log(remember)
-  }
-
   const onSuccess = (res) => {
-    console.log('success:', res);
+    console.log('success:');
+    setRemember(true)
+    const obj = {
+      email : res.profileObj.email,
+      password : res.profileObj.googleId,
+    };
+    onLogin(obj)
   };
 
   const handleInputChange = ({ target }) => {
@@ -88,16 +59,45 @@ export default function LoginForm() {
     }
   };
   
-  const handleClick = () => {
+  const loginButton = () => {
     const obj = {
       email,
       password,
     };
+    onLogin(obj)
+  }
+
+  const onLogin = (obj) => {
+    
     axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/login/`, obj).then((res) => {
       const resUser = res.data.user;
-      console.log(resUser)
-      if (res.data.status === 1) {
-        onLogin(obj)
+      // console.log(resUser)
+      if (res.data.status === 1) {        
+      axios
+        .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: resUser.person_id })
+        .then((response) => {
+          const person = response.data;
+          setLogin({
+            ...resUser,
+            name: person.name,
+            lastname: person.lastname,
+            identification: person.identification,
+          });
+          RemoveCookie('usrin');
+          if (remember) {
+            SetCookie(
+              'usrin',
+              JSON.stringify({
+                ...resUser,
+                name: person.name,
+                lastname: person.lastname,
+                identification: person.identification,
+              })
+            );
+          }
+        });
+      navigate('/dashboard', { replace: true });
+      // console.log(remember)
       } else {
         setOpen(true);
       }
@@ -121,7 +121,6 @@ export default function LoginForm() {
         onSuccess={onSuccess}
         onFailure={()=>setOpen(true)}
         cookiePolicy={'single_host_origin'}
-        isSignedIn
       />
       <Divider sx={{ my: 3 }}>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -168,7 +167,7 @@ export default function LoginForm() {
         </Link>
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
+      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={loginButton}>
         Login
       </LoadingButton>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
