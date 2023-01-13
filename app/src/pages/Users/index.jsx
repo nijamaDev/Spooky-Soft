@@ -74,7 +74,7 @@ function applySortFilter(array, comparator, query) {
     return filter(
       array,
       (_user) =>
-        _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+        _user.email.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
         _user.email.toLowerCase().indexOf(query.toLowerCase()) !== -1
       // || _user.role.toLowerCase().indexOf(query.toLowerCase()) !== -1
       // || _user.status.toLowerCase().indexOf(query.toLowerCase()) !== -1
@@ -94,7 +94,7 @@ export default function UserPage() {
 
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('email');
 
   const [filterName, setFilterName] = useState('');
 
@@ -126,18 +126,18 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = userlist.map((n) => n.name);
+      const newSelecteds = userlist.map((n) => n.email);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, email) => {
+    const selectedIndex = selected.indexOf(email);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, email);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -209,20 +209,19 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, email, avatarUrl } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                    const { id, role, status, email } = row;
+                    const selectedUser = selected.indexOf(email) !== -1;
 
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, email)} />
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
                             <Typography variant="subtitle2" noWrap>
-                              {name}
+                              {email}
                             </Typography>
                           </Stack>
                         </TableCell>
