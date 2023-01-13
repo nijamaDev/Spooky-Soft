@@ -70,7 +70,7 @@ export default function SignUpForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(id, name, lastname, email, password, role, status);
-    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/users/s`).then((res) => {
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/users/`).then((res) => {
       console.log(res.data);
     });
     console.log('?');
