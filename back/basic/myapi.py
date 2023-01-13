@@ -52,9 +52,14 @@ def scarpInit(req):
 @api_view(['POST']) 
 def createUser(req): 
     data = req.data 
-    people = People.objects.create(name=data['people']['name'], lastname=data['people']['lastname'], identification=data['people']['identification']) 
-    role = Roles.objects.get(name=data['role'])
-    status = Status.objects.get(name=data['status'])
-    user = Users.objects.create(person=people, role=role, status=status, email=data["email"], password=data["password"]) 
-    user.save()
-    return Response(status=201)
+    if req.method == 'POST':
+        try:
+            Users.objects.get(email=req.data['email'])
+            return Response('Email already in use')
+        except Users.DoesNotExist:
+            people = People.objects.create(name=data['people']['name'], lastname=data['people']['lastname'], identification=data['people']['identification']) 
+            role = Roles.objects.get(name=data['role'])
+            status = Status.objects.get(name=data['status'])
+            user = Users.objects.create(person=people, role=role, status=status, email=data["email"], password=data["password"]) 
+            user.save()
+    return Response('User created succesfully')
