@@ -43,6 +43,23 @@ export default function UserPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(id, name, lastname, email, password, role, status);
+    /* const data = {
+      id: this.state.id,
+      name: this.state.name,
+      lastname: this.state.lastname,
+      email: this.state.email,
+      password: this.state.password,
+      role: this.state.role,
+      status: this.state.status,
+    }; */
+    /* fetch(`http://localhost:8000/api/users/`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      }); */
   };
   const handleInputChange = ({ target }) => {
     switch (target.id) {
