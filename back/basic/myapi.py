@@ -60,6 +60,6 @@ def createUser(req):
             people = People.objects.create(name=data['people']['name'], lastname=data['people']['lastname'], identification=data['people']['identification']) 
             role = Roles.objects.get(name=data['role'])
             status = Status.objects.get(name=data['status'])
-            user = Users.objects.create(person=people, role=role, status=status, email=data["email"], password=data["password"]) 
+            user = Users.objects.create(person=people, role=role, status=status, email=data["email"], password=data["password"], imageUrl=data["imageUrl"]) 
             user.save()
     return Response('User created succesfully')
