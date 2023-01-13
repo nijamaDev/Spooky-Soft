@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Users, People
+from .models import Users, People, Roles, Status
 from .scraping import scrapElement
 
 @api_view(['POST'])
@@ -48,3 +48,13 @@ def scarpInit(req):
     res['element'] = element
     res['status'] = 1
     return Response(res)
+
+@api_view(['POST']) 
+def createUser(req): 
+    data = req.data 
+    people = People.objects.create(name=data['people']['name'], lastname=data['people']['lastname'], identification=data['people']['identification']) 
+    role = Roles.objects.get(name=data['role'])
+    status = Status.objects.get(name=data['status'])
+    user = Users.objects.create(person=people, role=role, status=status, email=data["email"], password=data["password"]) 
+    user.save()
+    return Response(status=201)

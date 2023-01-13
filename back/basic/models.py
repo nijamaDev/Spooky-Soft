@@ -27,6 +27,7 @@ class Users(models.Model):
     status = models.ForeignKey(Status, on_delete=models.CASCADE, null=False)
     email = models.CharField(max_length=100, null=False, unique=True)
     password = models.CharField(max_length=100, null=False)
+    imageUrl = models.CharField(max_length=100, null=False)
 
     def __str__(self):
         return self.person.name  + " - " + self.role.name + " - " + self.status.name + " - " + self.email        
