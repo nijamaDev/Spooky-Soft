@@ -67,8 +67,7 @@ export default function LoginForm() {
     onLogin(obj)
   }
 
-  const onLogin = (obj) => {
-    
+  const onLogin = (obj) => {    
     axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/login/`, obj).then((res) => {
       const resUser = res.data.user;
       // console.log(resUser)
@@ -167,7 +166,7 @@ export default function LoginForm() {
         </Link>
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={loginButton}>
+      <LoadingButton fullWidth size="large" variant="contained" onClick={loginButton}>
         Login
       </LoadingButton>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>

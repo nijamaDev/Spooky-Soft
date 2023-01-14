@@ -1,49 +1,66 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { gapi } from 'gapi-script';
+import { GoogleLogin } from '@leecheuk/react-google-login';
 // @mui
 import {
-  Card,
-  Table,
   Stack,
-  Paper,
-  Avatar,
-  Button,
-  Popover,
-  Checkbox,
-  TableRow,
-  MenuItem,
-  TableBody,
-  TableCell,
-  Container,
-  Typography,
   IconButton,
-  TableContainer,
-  TablePagination,
   Box,
   TextField,
   InputAdornment,
   Snackbar,
   Alert,
+  Divider,
+  Typography,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+// hooks
+import SetCookie from '../../hooks/setCookie';
+import RemoveCookie from '../../hooks/removeCookie';
 // components
 import Iconify from '../../components/iconify';
 import { FormContainer, FormItem, Selector } from '../../components/Forms';
+import { AppContext } from '../../context/AppContext';
 
 // ----------------------------------------------------------------------
 
 export default function SignUpForm() {
-    const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const clientId = process.env.REACT_APP_CLIENT_ID;
+
+  const { login, setLogin } = useContext(AppContext);
+  const [showPassword, setShowPassword] = useState(false);
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState(1);
-  const [status, setStatus] = useState(1);
   
+  useEffect(() => {
+    const initClient = () => {
+      gapi.client.init({
+        clientId,
+        scope: '',
+      });
+    };
+    gapi.load('client:auth2', initClient);
+  });
+
+  const onSuccess = (res) => {
+    console.log('success:');
+    // setRemember(true)
+    const obj = {
+      email : res.profileObj.email,
+      password : res.profileObj.googleId,
+    };
+    // onSignUp(obj)
+  };
+
   const handleInputChange = ({ target }) => {
     switch (target.id) {
       case 'id':
@@ -66,13 +83,61 @@ export default function SignUpForm() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(id, name, lastname, email, password, role, status);
+  const signButton = () => {
+    const obj = {
+      role : "Visitante",
+      status : "Activo",
+      email,
+      password,
+      people : {
+        identification : id,
+        name,
+        lastname,
+      }    
+    };
+    console.log(obj)
+    onSignUp(obj)
+  }
+
+  const onSignUp = (obj) => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if( !re.test(email) || name === "" || lastname === ""){
+      setOpen(true);
+    } else {
+      axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/create_user/`, obj).then((res) => {
+        const resUser = res.data
+        console.log(resUser)
+      })
+    }
+    /*
+    
+    axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/login/`, obj).then((res) => {
+      const resUser = res.data.user;
+      // console.log(resUser)
+      if (res.data.status === 1) {        
+      axios
+        .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: resUser.person_id })
+        .then((response) => {
+          const person = response.data;
+          setLogin({
+            ...resUser,
+            name: person.name,
+            lastname: person.lastname,
+            identification: person.identification,
+          });
+        });
+      navigate('/dashboard', { replace: true });
+      // console.log(remember)
+      } else {
+        setOpen(true);
+      }
+    });
+
+    */
+    
   };
 
   const [open, setOpen] = useState(false);
-
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -81,49 +146,63 @@ export default function SignUpForm() {
   };
 
   return (
-    <Box onSubmit={handleSubmit} component="form">
+    <>
+    <GoogleLogin
+        clientId={clientId}
+        buttonText="Sign In with Google"
+        onSuccess={onSuccess}
+        onFailure={()=>setOpen(true)}
+        cookiePolicy={'single_host_origin'}
+      />
+      <Divider sx={{ my: 3 }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          OR
+        </Typography>
+      </Divider>
     <Stack spacing={3} >
-        <TextField id="email_s" required label="Email address" name="email" value={email} onChange={handleInputChange} />
+      <TextField id="email_s" required label="Email address" name="email" value={email} onChange={handleInputChange} />
 
-        <TextField id="id" required label="ID" name="ID" value={id} onChange={handleInputChange} />     
+      <TextField required id="name" label="Name" value={name} onChange={handleInputChange} />
 
-        <TextField required id="name" label="Name" value={name} onChange={handleInputChange} />
+      <TextField
+          required
+          id="lastname"
+          label="Lastname"
+          value={lastname}
+          onChange={handleInputChange}
+      />
 
-        <TextField
-            required
-            id="lastname"
-            label="Lastname"
-            value={lastname}
-            onChange={handleInputChange}
-        />
-
-        <TextField
-            id="password_s"
-            label="Password"
-            name="password"
-            required
-            value={password}
-            onChange={handleInputChange}
-            type={showPassword ? 'text' : 'password'}
-            InputProps={{
-                endAdornment: (
-                <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                </InputAdornment>
-                ),
-            }}
-            />
-      </Stack>
-      <LoadingButton size="large" type="submit" variant="contained">
+      <TextField id="id" label="Identification" name="Identification" value={id} onChange={handleInputChange} />  
+      
+      <TextField
+          id="password_s"
+          label="Password"
+          name="password"
+          required
+          value={password}
+          onChange={handleInputChange}
+          type={showPassword ? 'text' : 'password'}
+          InputProps={{
+              endAdornment: (
+              <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                  </IconButton>
+              </InputAdornment>
+              ),
+          }}
+          />
+      <LoadingButton size="large" variant="contained" onClick={signButton}>
         Login
       </LoadingButton>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          Datos inválidos. Por favor, intente nuevamente.
-        </Alert>
-      </Snackbar>
-    </Box>
+    </Stack>
+      
+    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Alert variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+        Datos inválidos. Por favor, intente nuevamente.
+      </Alert>
+    </Snackbar>
+    </>
+    
   );
 }
