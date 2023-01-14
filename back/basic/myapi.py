@@ -3,6 +3,16 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Users, People, Roles, Status, Stores, Products
 from .scraping import scrapElement
+from .serializers import UserSerializer
+
+@api_view(['GET'])
+def scarpInit(req):
+    res = { 'status':0, 'element': "" }
+    element = scrapElement()
+    print(element)
+    res['element'] = element
+    res['status'] = 1
+    return Response(res)
 
 @api_view(['POST'])
 def logIn(req):
@@ -40,30 +50,6 @@ def getPerson(req):
     else:
         return Response(res)
 
-@api_view(['POST'])
-def getUser(req):
-    res = { 'name': "", 'lastname': "", 'identification': "" }
-    try:
-        person = People.objects.get(id=req.data['id'])
-    except People.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    if req.method == 'POST':
-        res['name'] = person.name
-        res['lastname'] = person.lastname
-        res['identification'] = person.identification
-        return Response(res)
-    else:
-        return Response(res)
-
-@api_view(['GET'])
-def scarpInit(req):
-    res = { 'status':0, 'element': "" }
-    element = scrapElement()
-    print(element)
-    res['element'] = element
-    res['status'] = 1
-    return Response(res)
-
 @api_view(['POST']) 
 def createUser(req): 
     res = {'status': 0, 'user':{}, 'msg':""}
@@ -92,6 +78,13 @@ def createUser(req):
             user.save()
     return Response(res)
 
+@api_view(['GET'])
+def getAllUsers(req):
+    if req.method == 'GET':
+        users = Users.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
 @api_view(['POST'])
 def createProduct(req):
     res = {'status': 0, 'product':{}, 'msg':""}    
@@ -104,3 +97,29 @@ def createProduct(req):
         res['msg'] = "Producto creado exitosamente"
         product.save()
     return Response(res)
+
+@api_view(['POST'])
+def getRole(req):
+    res = { 'name': "" }
+    try:
+        role = Roles.objects.get(id=req.data['id'])
+    except Roles.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if req.method == 'POST':
+        res['name'] = role.name
+        return Response(res)
+    else:
+        return Response(res)
+
+@api_view(['POST'])
+def getStatus(req):
+    res = { 'name': "" }
+    try:
+        statusObj = Status.objects.get(id=req.data['id'])
+    except Status.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if req.method == 'POST':
+        res['name'] = statusObj.name
+        return Response(res)
+    else:
+        return Response(res)
