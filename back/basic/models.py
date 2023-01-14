@@ -46,7 +46,7 @@ class Products(models.Model):
     url_picture = models.CharField(max_length=500, null=False)
     url_product = models.CharField(max_length=500, null=False)
     price = models.FloatField(max_length=100, null=False)
-    price_sale = models.FloatField(max_length=100, blank=True)
+    price_sale = models.FloatField(max_length=100, null=True)
     location = models.CharField(max_length=100, null=False)   
     creation_date = models.DateField(auto_now_add=True, null=False)
 

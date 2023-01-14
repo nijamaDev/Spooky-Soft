@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from rest_framework import routers
 from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet, UsersViewSet, NewsViewSet, GoogleUsersViewSet, ProductRegistersViewSet, ProductsViewSet
-from .myapi import logIn, getPerson, scarpInit, createUser
+from .myapi import logIn, getPerson, scarpInit, createUser, createProduct
 
 router = routers.DefaultRouter()
 
@@ -31,3 +31,4 @@ urlpatterns.append(path('api/login/', logIn, name='login'))
 urlpatterns.append(path('api/get_person/', getPerson, name='get_person'))
 urlpatterns.append(path('api/scrap/', scarpInit, name='scrap'))
 urlpatterns.append(path('api/create_user/', createUser, name='create_user'))
+urlpatterns.append(path('api/create_product/', createProduct, name='create_product'))

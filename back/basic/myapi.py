@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Users, People, Roles, Status
+from .models import Users, People, Roles, Status, Stores, Products
 from .scraping import scrapElement
 
 @api_view(['POST'])
@@ -63,3 +63,12 @@ def createUser(req):
             user = Users.objects.create(person=people, role=role, status=status, email=data["email"], password=data["password"], imageUrl=data["imageUrl"]) 
             user.save()
     return Response('User created succesfully')
+
+@api_view(['POST'])
+def createProduct(request):
+    if request.method == 'POST':
+        data = request.data
+        store = Stores.objects.get(id=data['store_id'])
+        product = Products.objects.create(store=store, name=data['name'], description=data['description'], url_picture=data['url_picture'], url_product=data['url_product'], price=data['price'],price_sale=data['price_sale'], location=data['location'])
+        product.save()
+    return Response('Product created succesfully')
