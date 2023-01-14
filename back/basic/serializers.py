@@ -23,9 +23,22 @@ class StatusSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+
     class Meta:
         model = Users
-        fields = '__all__'
+        fields = ('email', 'id', 'name', 'role', 'status')
+
+    def get_name(self, obj):
+        return obj.person.name
+
+    def get_role(self, obj):
+        return obj.role.name
+
+    def get_status(self, obj):
+        return obj.status.name
 
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
