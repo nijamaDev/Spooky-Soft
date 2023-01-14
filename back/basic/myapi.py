@@ -40,6 +40,21 @@ def getPerson(req):
     else:
         return Response(res)
 
+@api_view(['POST'])
+def getUser(req):
+    res = { 'name': "", 'lastname': "", 'identification': "" }
+    try:
+        person = People.objects.get(id=req.data['id'])
+    except People.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if req.method == 'POST':
+        res['name'] = person.name
+        res['lastname'] = person.lastname
+        res['identification'] = person.identification
+        return Response(res)
+    else:
+        return Response(res)
+
 @api_view(['GET'])
 def scarpInit(req):
     res = { 'status':0, 'element': "" }
@@ -58,12 +73,20 @@ def createUser(req):
             Users.objects.get(email=req.data['email'])
             return Response('Email already in use')
         except Users.DoesNotExist:
-            people = People.objects.create(name=data['people']['name'], lastname=data['people']['lastname'], identification=data['people']['identification']) 
+            person = People.objects.create(name=data['people']['name'], lastname=data['people']['lastname'], identification=data['people']['identification']) 
             role = Roles.objects.get(name=data['role'])
             status = Status.objects.get(name=data['status'])
-            user = Users.objects.create(person=people, role=role, status=status, email=data["email"], password=data["password"], imageUrl=data["imageUrl"]) 
+            user = Users.objects.create(person=person, role=role, status=status, email=data["email"], password=data["password"], imageUrl=data["imageUrl"]) 
+            expectedUser =  {
+                                "person_id": user.person.id,
+                                "role_id": user.role.id,
+                                "status_id": user.status.id, 
+                                "email": user.email, 
+                                "password": user.password, 
+                                "imageUrl": user.imageUrl 
+                            }
             res['status'] = 1
-            res['user'] = req.data
+            res['user'] = expectedUser
             res['msg'] = "Usuario creado exitosamente"
             user.save()
     return Response(res)
