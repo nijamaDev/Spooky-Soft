@@ -51,6 +51,7 @@ def scarpInit(req):
 
 @api_view(['POST']) 
 def createUser(req): 
+    res = {'status': 0, 'user':{}, 'msg':""}
     data = req.data 
     if req.method == 'POST':
         try:
@@ -61,14 +62,21 @@ def createUser(req):
             role = Roles.objects.get(name=data['role'])
             status = Status.objects.get(name=data['status'])
             user = Users.objects.create(person=people, role=role, status=status, email=data["email"], password=data["password"], imageUrl=data["imageUrl"]) 
+            res['status'] = 1
+            res['user'] = req.data
+            res['msg'] = "Usuario creado exitosamente"
             user.save()
-    return Response('User created succesfully')
+    return Response(res)
 
 @api_view(['POST'])
-def createProduct(request):
-    if request.method == 'POST':
-        data = request.data
+def createProduct(req):
+    res = {'status': 0, 'product':{}, 'msg':""}    
+    data = req.data
+    if req.method == 'POST':
         store = Stores.objects.get(id=data['store_id'])
         product = Products.objects.create(store=store, name=data['name'], description=data['description'], url_picture=data['url_picture'], url_product=data['url_product'], price=data['price'],price_sale=data['price_sale'], location=data['location'])
+        res['status'] = 1
+        res['product'] = req.data
+        res['msg'] = "Producto creado exitosamente"
         product.save()
-    return Response('Product created succesfully')
+    return Response(res)
