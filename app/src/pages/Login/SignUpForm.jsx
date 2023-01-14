@@ -52,13 +52,22 @@ export default function SignUpForm() {
   });
 
   const onSuccess = (res) => {
-    console.log('success:');
+    // console.log('success:',res);
     // setRemember(true)
     const obj = {
+      role : "Visitante",
+      status : "Activo",
+      imageUrl : res.profileObj.imageUrl,
       email : res.profileObj.email,
       password : res.profileObj.googleId,
-    };
-    // onSignUp(obj)
+      people : {
+        identification : "",
+        name : res.profileObj.givenName,
+        lastname : res.profileObj.familyName,
+      }    
+    }
+    // console.log(obj)
+    onSignUp(obj)
   };
 
   const handleInputChange = ({ target }) => {
@@ -87,6 +96,7 @@ export default function SignUpForm() {
     const obj = {
       role : "Visitante",
       status : "Activo",
+      imageUrl : "",
       email,
       password,
       people : {
@@ -107,6 +117,7 @@ export default function SignUpForm() {
       axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/create_user/`, obj).then((res) => {
         const resUser = res.data
         console.log(resUser)
+        
       })
     }
     /*

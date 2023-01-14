@@ -70,7 +70,7 @@ export default function LoginForm() {
   const onLogin = (obj) => {    
     axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/login/`, obj).then((res) => {
       const resUser = res.data.user;
-      // console.log(resUser)
+      console.log(res.data)
       if (res.data.status === 1) {        
       axios
         .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: resUser.person_id })
