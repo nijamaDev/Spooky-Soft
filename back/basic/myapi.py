@@ -78,6 +78,7 @@ def createUser(req):
             status = Status.objects.get(name=data['status'])
             user = Users.objects.create(person=person, role=role, status=status, email=data["email"], password=data["password"], imageUrl=data["imageUrl"]) 
             expectedUser =  {
+                                "id": user.id,
                                 "person_id": user.person.id,
                                 "role_id": user.role.id,
                                 "status_id": user.status.id, 
