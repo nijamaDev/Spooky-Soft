@@ -106,46 +106,48 @@ export default function SignUpForm() {
       }    
     };
     console.log(obj)
-    onSignUp(obj)
-  }
-
-  const onSignUp = (obj) => {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if( !re.test(email) || name === "" || lastname === ""){
       setOpen(true);
     } else {
-      axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/create_user/`, obj).then((res) => {
-        const resUser = res.data
-        console.log(resUser)
-        
-      })
+      onSignUp(obj)
     }
-    /*
-    
-    axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/login/`, obj).then((res) => {
-      const resUser = res.data.user;
-      // console.log(resUser)
-      if (res.data.status === 1) {        
-      axios
-        .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: resUser.person_id })
-        .then((response) => {
-          const person = response.data;
-          setLogin({
-            ...resUser,
-            name: person.name,
-            lastname: person.lastname,
-            identification: person.identification,
-          });
-        });
-      navigate('/dashboard', { replace: true });
-      // console.log(remember)
-      } else {
-        setOpen(true);
-      }
-    });
+  }
 
-    */
-    
+  const onSignUp = (obj) => {
+    axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/create_user/`, obj).then((res) => {
+      const resUser = res.data
+      console.log(resUser)      
+      
+      if (res.data.status === 1) {        
+        axios
+          .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: resUser.person_id })
+          .then((response) => {
+            const person = response.data;
+            setLogin({
+              ...resUser,
+              name: person.name,
+              lastname: person.lastname,
+              identification: person.identification,
+            });
+            RemoveCookie('usrin');
+            SetCookie(
+              'usrin',
+              JSON.stringify({
+                ...resUser,
+                name: person.name,
+                lastname: person.lastname,
+                identification: person.identification,
+              })
+            );
+          });
+        navigate('/dashboard', { replace: true });
+        // console.log(remember)
+        } else {
+          setOpen(true);
+        }
+    })
+        
   };
 
   const [open, setOpen] = useState(false);
