@@ -62,7 +62,7 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none">
           <StyledAccount>
-            <Avatar src={login.photo} alt="photoURL" sx={{backgroundColor: '#ff0000',}}>{login.name[0]}{login.lastname[0]}</Avatar>
+            <Avatar src={login.person.imageUrl} alt="photoURL" sx={{backgroundColor: '#ff0000',}}>{login.person.name[0]}{login.person.lastname[0]}</Avatar>
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
