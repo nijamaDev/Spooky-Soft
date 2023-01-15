@@ -2,6 +2,10 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import axios from 'axios';
 // @mui
 import {
@@ -29,9 +33,7 @@ import {
 import Iconify from '../../components/iconify';
 import { FormContainer, FormItem, Selector } from '../../components/Forms';
 
-// ----------------------------------------------------------------------
-
-export default function UserPage() {
+export default function AlertDialog({ open, setOpen /* , userId */ }) {
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
@@ -52,8 +54,8 @@ export default function UserPage() {
       role,
       status,
     });
-    try {
-      const response = await axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_user/${id}/`, {
+    /* try {
+      const response = await axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_user/${id}/`, {
         name,
         lastname,
         email,
@@ -63,7 +65,7 @@ export default function UserPage() {
       console.log(response);
     } catch (error) {
       console.error(error);
-    }
+    } */
   };
   const handleInputChange = ({ target }) => {
     switch (target.id) {
@@ -86,18 +88,22 @@ export default function UserPage() {
         console.log('Missing: handle');
     }
   };
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <>
-      <Helmet>
-        <title> User Register | One Market </title>
-      </Helmet>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <Typography variant="h4" gutterBottom pb={3}>
+            Register a new user
+          </Typography>
 
-      <Container>
-        <Typography variant="h4" gutterBottom pb={3}>
-          Editing User
-        </Typography>
-
-        <Card>
           <Box pt={3} pb={3} pr={3} onSubmit={handleSubmit} component="form">
             <FormContainer>
               <FormItem phone={phone} computer={computer}>
@@ -186,16 +192,24 @@ export default function UserPage() {
                 />
               </FormItem>
               <FormItem phone={phone} computer={12}>
-                <Box display="flex" justifyContent="flex-end" alignItems="flex-end" pt={3}>
-                  <Button variant="contained" color="secondary" type="submit">
-                    Save Changes
+                <Stack justifyContent="flex-end" direction="row" spacing={2}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleClose}
+                    style={{ backgroundColor: 'red' }}
+                  >
+                    Cancel
                   </Button>
-                </Box>
+                  <Button variant="contained" color="secondary" type="submit">
+                    Create user
+                  </Button>
+                </Stack>
               </FormItem>
             </FormContainer>
           </Box>
-        </Card>
-      </Container>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

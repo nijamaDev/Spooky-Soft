@@ -2,7 +2,6 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useContext, useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 // @mui
 import {
@@ -31,9 +30,10 @@ import Scrollbar from '../../components/scrollbar';
 // sections
 import UserListHead from './UserListHead';
 import UserListToolbar from './UserListToolbar';
-// mock
-import USERLIST from '../../_mock/user';
+// Context
 import { AppContext } from '../../context/AppContext';
+import NewUser from './NewUser';
+import EditUser from './EditUser';
 
 // ----------------------------------------------------------------------
 // name role status email pass
@@ -86,7 +86,6 @@ function applySortFilter(array, comparator, query) {
 
 export default function UserPage() {
   const { update } = useContext(AppContext);
-  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -102,6 +101,10 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [userlist, setUserlist] = useState([]);
+
+  const [openNew, setOpenNew] = useState(false);
+
+  const [openEdit, setOpenEdit] = useState(false);
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/users/`).then((res) => {
@@ -163,14 +166,6 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const handleNewUser = () => {
-    navigate('/dashboard/register');
-  };
-
-  const handleEditUser = () => {
-    navigate('/dashboard/edit_user');
-  };
-
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userlist.length) : 0;
 
   const filteredUsers = applySortFilter(userlist, getComparator(order, orderBy), filterName);
@@ -188,7 +183,7 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Users
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleNewUser}>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpenNew(true)}>
             New User
           </Button>
         </Stack>
@@ -308,7 +303,7 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem onClick={handleEditUser}>
+        <MenuItem onClick={() => setOpenEdit(true)}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
         </MenuItem>
@@ -318,6 +313,8 @@ export default function UserPage() {
           Delete
         </MenuItem>
       </Popover>
+      <NewUser open={openNew} setOpen={setOpenNew} />
+      <EditUser open={openEdit} setOpen={setOpenEdit} /* user={userId} */ />
     </>
   );
 }
