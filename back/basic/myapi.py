@@ -69,7 +69,7 @@ def createProduct(req):
     res = {'status': 0, 'product':{}, 'msg':""}    
     data = req.data
     if req.method == 'POST':
-        store = Stores.objects.get(id=data['store_id'])
+        store = Stores.objects.get(name=data['store'])
         product = Products.objects.create(store=store, name=data['name'], description=data['description'], url_picture=data['url_picture'], url_product=data['url_product'], price=data['price'],price_sale=data['price_sale'], location=data['location'])
         res['status'] = 1
         res['product'] = req.data
