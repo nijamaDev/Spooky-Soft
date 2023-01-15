@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -33,11 +33,11 @@ import {
 import Iconify from '../../components/iconify';
 import { FormContainer, FormItem, Selector } from '../../components/Forms';
 
-export default function AlertDialog({ open, setOpen /* , userId */ }) {
-  const [id, setId] = useState('');
-  const [name, setName] = useState('');
-  const [lastname, setLastname] = useState('');
-  const [email, setEmail] = useState('');
+export default function AlertDialog({ open, setOpen, user }) {
+  const [id, setId] = useState(user.id);
+  const [name, setName] = useState(user.name);
+  const [lastname, setLastname] = useState(user.lastname);
+  const [email, setEmail] = useState(user.email);
   const [password, setPassword] = useState('');
   const [role, setRole] = useState(3);
   const [status, setStatus] = useState(3);
@@ -91,6 +91,15 @@ export default function AlertDialog({ open, setOpen /* , userId */ }) {
   const handleClose = () => {
     setOpen(false);
   };
+  useEffect(() => {
+    if (open) {
+      setId(user.id);
+      setName(user.name);
+      setLastname(user.lastname);
+      setEmail(user.email);
+      console.log('USE EFFECT ', user);
+    }
+  }, [open]);
   return (
     <>
       <Dialog

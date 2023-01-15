@@ -106,7 +106,7 @@ export default function AlertDialog({ open, setOpen /* , userId */ }) {
 
           <Box pt={3} pb={3} pr={3} onSubmit={handleSubmit} component="form">
             <FormContainer>
-              <FormItem phone={phone} computer={computer}>
+              {/* <FormItem phone={phone} computer={computer}>
                 <TextField
                   required
                   fullWidth
@@ -116,7 +116,7 @@ export default function AlertDialog({ open, setOpen /* , userId */ }) {
                   onChange={handleInputChange}
                   disabled={false}
                 />
-              </FormItem>
+              </FormItem> */}
               <FormItem phone={phone} computer={computer}>
                 <TextField required fullWidth id="name" label="Name" value={name} onChange={handleInputChange} />
               </FormItem>

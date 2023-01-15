@@ -74,8 +74,7 @@ function applySortFilter(array, comparator, query) {
     return filter(
       array,
       (_user) =>
-        _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-        _user.lastname.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+        [_user.name, _user.lastname].join(' ').toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
         _user.email.toLowerCase().indexOf(query.toLowerCase()) !== -1
       // || _user.role.toLowerCase().indexOf(query.toLowerCase()) !== -1
       // || _user.status.toLowerCase().indexOf(query.toLowerCase()) !== -1
@@ -102,6 +101,8 @@ export default function UserPage() {
 
   const [userlist, setUserlist] = useState([]);
 
+  const [userID, setUserID] = useState({});
+
   const [openNew, setOpenNew] = useState(false);
 
   const [openEdit, setOpenEdit] = useState(false);
@@ -111,11 +112,11 @@ export default function UserPage() {
       setUserlist(res.data);
     });
   }, [update]);
-  console.log('?1');
-  console.log(userlist);
-  console.log('?2');
-  const handleOpenMenu = (event) => {
+
+  const handleOpenMenu = (event, row) => {
     setOpen(event.currentTarget);
+    console.log(row);
+    setUserID(row);
   };
 
   const handleCloseMenu = () => {
@@ -232,7 +233,7 @@ export default function UserPage() {
                         </TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -314,7 +315,7 @@ export default function UserPage() {
         </MenuItem>
       </Popover>
       <NewUser open={openNew} setOpen={setOpenNew} />
-      <EditUser open={openEdit} setOpen={setOpenEdit} /* user={userId} */ />
+      <EditUser open={openEdit} setOpen={setOpenEdit} user={userID} />
     </>
   );
 }
