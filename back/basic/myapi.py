@@ -148,10 +148,10 @@ def updateUserNoPassword(req, user_id):
         People.objects.filter(id=user.person.id).update(name=data.get('name'), lastname=data.get('lastname')) 
         person = People.objects.get(id=user.person.id)
         role = Roles.objects.get(name=data['role'])
-        status = Status.objects.get(name=data['status'])
+        statusObj = Status.objects.get(name=data['status'])
         user.email = data.get('email')
         user.role.name = role.name
-        user.status.name = status.name
+        user.status.name = statusObj.name
         user.person.name = person.name
         user.person.lastname = person.lastname
         user.save()
