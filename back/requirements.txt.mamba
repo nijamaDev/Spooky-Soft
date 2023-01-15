@@ -3,3 +3,9 @@ django-cors-headers
 django-environ
 djangorestframework
 psycopg2-binary
+bs4
+beautifulsoup4
+selenium
+django-extensions
+Werkzeug
+pyOpenSSL
