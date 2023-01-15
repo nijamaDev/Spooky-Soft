@@ -1,7 +1,8 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Users, People, Roles, Status, Stores, Products
+from datetime import datetime
+from .models import Users, People, Roles, Status, Stores, Products, ProductRegisters
 from .scraping import scrapElement
 from .serializers import UserSerializer
 
@@ -74,6 +75,20 @@ def createProduct(req):
         res['product'] = req.data
         res['msg'] = "Producto creado exitosamente"
         product.save()
+    return Response(res)
+
+@api_view(['POST'])
+def createProductRegister(req):
+    res = {'product': "", 'date':"", 'visits':"", 'redirect':""}    
+    data = req.data
+    if req.method == 'POST':
+        product = Products.objects.get(id=data['product'])
+        productRegister = ProductRegisters.objects.create(product=product, date=datetime.now().date(), visits=0, redirect=0)
+        res['product'] = product.name
+        res['date'] = productRegister.date
+        res['visits'] = productRegister.visits
+        res['redirect'] = productRegister.redirect
+        productRegister.save()
     return Response(res)
 
 @api_view(['GET'])
@@ -150,7 +165,7 @@ def updateUserNoPassword(req, user_id):
         res['role'] = user.role.name
         res['status'] = user.status.name
         return Response(status=status.HTTP_200_OK)
-        
+
 @api_view(['PUT'])
 def updateUserPassword(req, user_id):
     user = Users.objects.get(id=user_id)

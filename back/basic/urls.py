@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from rest_framework import routers
 from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet, UsersViewSet, NewsViewSet, GoogleUsersViewSet, ProductRegistersViewSet, ProductsViewSet
-from .myapi import scarpInit, logIn, createUser, createProduct, getPerson, getRole, getStatus, updateUserNoPassword, updateUserPassword
+from .myapi import scarpInit, logIn, createUser, createProduct, createProductRegister, getPerson, getRole, getStatus, updateUserNoPassword, updateUserPassword
 
 router = routers.DefaultRouter()
 
@@ -31,6 +31,7 @@ urlpatterns.append(path('api/scrap/', scarpInit, name='scrap'))
 urlpatterns.append(path('api/login/', logIn, name='login'))
 urlpatterns.append(path('api/create_user/', createUser, name='create_user'))
 urlpatterns.append(path('api/create_product/', createProduct, name='create_product'))
+urlpatterns.append(path('api/create_product_register/', createProductRegister, name='create_product_register'))
 urlpatterns.append(path('api/get_person/', getPerson, name='get_person'))
 urlpatterns.append(path('api/get_role/', getRole, name='get_role'))
 urlpatterns.append(path('api/get_status/', getStatus, name='get_status'))
