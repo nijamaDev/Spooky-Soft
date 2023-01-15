@@ -37,8 +37,8 @@ export default function UserPage() {
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('Visitante');
-  const [status, setStatus] = useState('Activo');
+  const [role, setRole] = useState(3);
+  const [status, setStatus] = useState(3);
   const phone = 12;
   const computer = 6;
   const handleSubmit = async (e) => {
@@ -146,15 +146,15 @@ export default function UserPage() {
                   setHook={setRole}
                   arrayElements={[
                     {
-                      id: 'Visitante',
+                      id: 3,
                       name: 'Visitante',
                     },
                     {
-                      id: 'Operario',
+                      id: 2,
                       name: 'Operario',
                     },
                     {
-                      id: 'Administrador',
+                      id: 1,
                       name: 'Administrador',
                     },
                   ]}
@@ -170,15 +170,15 @@ export default function UserPage() {
                   setHook={setStatus}
                   arrayElements={[
                     {
-                      id: 'Activo',
+                      id: 3,
                       name: 'Activo',
                     },
                     {
-                      id: 'Inactivo',
+                      id: 4,
                       name: 'Inactivo',
                     },
                     {
-                      id: 'Suspendido',
+                      id: 5,
                       name: 'Suspendido',
                     },
                   ]}
