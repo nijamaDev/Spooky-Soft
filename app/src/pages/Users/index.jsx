@@ -308,7 +308,7 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem onClick={handleNewUser}>
+        <MenuItem onClick={handleEditUser}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
         </MenuItem>

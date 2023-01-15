@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+import axios from 'axios';
 // @mui
 import {
   Card,
@@ -36,13 +37,33 @@ export default function UserPage() {
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState(1);
-  const [status, setStatus] = useState(1);
+  const [role, setRole] = useState('Visitante');
+  const [status, setStatus] = useState('Activo');
   const phone = 12;
   const computer = 6;
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(id, name, lastname, email, password, role, status);
+    console.log({
+      id,
+      name,
+      lastname,
+      email,
+      password,
+      role,
+      status,
+    });
+    try {
+      const response = await axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_user/${id}/`, {
+        name,
+        lastname,
+        email,
+        role,
+        status,
+      });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
   };
   const handleInputChange = ({ target }) => {
     switch (target.id) {
@@ -125,12 +146,16 @@ export default function UserPage() {
                   setHook={setRole}
                   arrayElements={[
                     {
-                      id: 1,
-                      name: 'Operator',
+                      id: 'Visitante',
+                      name: 'Visitante',
                     },
                     {
-                      id: 2,
-                      name: 'Manager',
+                      id: 'Operario',
+                      name: 'Operario',
+                    },
+                    {
+                      id: 'Administrador',
+                      name: 'Administrador',
                     },
                   ]}
                   multiple
@@ -145,12 +170,12 @@ export default function UserPage() {
                   setHook={setStatus}
                   arrayElements={[
                     {
-                      id: 1,
-                      name: 'active',
+                      id: 'Activo',
+                      name: 'Activo',
                     },
                     {
-                      id: 2,
-                      name: 'inactive',
+                      id: 'Inactivo',
+                      name: 'Inactivo',
                     },
                   ]}
                   multiple
