@@ -66,11 +66,12 @@ def createUser(req):
 
 @api_view(['POST'])
 def createProduct(req):
-    res = {'status': 0, 'product':{}, 'msg':""}    
+    res = { 'id':"", 'status': 0, 'product':{}, 'msg':""}    
     data = req.data
     if req.method == 'POST':
         store = Stores.objects.get(name=data['store'])
-        product = Products.objects.create(store=store, name=data['name'], description=data['description'], url_picture=data['url_picture'], url_product=data['url_product'], price=data['price'],price_sale=data['price_sale'], location=data['location'])
+        product = Products.objects.create(store=store, name=data['name'], description=data['description'], cover=data['cover'], redirect=data['redirect'], price=data['price'], priceSale=data['priceSale'], location=data['location'], colors=data['colors'])
+        res['id'] = product.id
         res['status'] = 1
         res['product'] = req.data
         res['msg'] = "Producto creado exitosamente"
