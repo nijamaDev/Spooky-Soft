@@ -110,12 +110,12 @@ export default function UserPage() {
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/users/`).then((res) => {
       setUserlist(res.data);
+      console.log('UPDATE');
     });
   }, [update]);
 
   const handleOpenMenu = (event, row) => {
     setOpen(event.currentTarget);
-    console.log(row);
     setUserID(row);
   };
 
@@ -173,6 +173,18 @@ export default function UserPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+  const roleMap = {
+    3: 'Visitante',
+    2: 'Operario',
+    1: 'Administrador',
+  };
+
+  const statusMap = {
+    3: 'Activo',
+    4: 'Inactivo',
+    5: 'Suspendido',
+  };
+
   return (
     <>
       <Helmet>
@@ -226,10 +238,12 @@ export default function UserPage() {
 
                         <TableCell align="left">{email}</TableCell>
 
-                        <TableCell align="left">{role}</TableCell>
+                        <TableCell align="left">{roleMap[role] || role}</TableCell>
 
                         <TableCell align="left">
-                          <Label color={(status === 'disabled' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                          <Label color={(status === 'disabled' && 'error') || 'success'}>
+                            {sentenceCase(statusMap[status] || status)}
+                          </Label>
                         </TableCell>
 
                         <TableCell align="right">

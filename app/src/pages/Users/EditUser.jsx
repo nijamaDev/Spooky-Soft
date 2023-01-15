@@ -34,10 +34,10 @@ import Iconify from '../../components/iconify';
 import { FormContainer, FormItem, Selector } from '../../components/Forms';
 
 export default function AlertDialog({ open, setOpen, user }) {
-  const [id, setId] = useState(user.id);
-  const [name, setName] = useState(user.name);
-  const [lastname, setLastname] = useState(user.lastname);
-  const [email, setEmail] = useState(user.email);
+  const [id, setId] = useState('');
+  const [name, setName] = useState('');
+  const [lastname, setLastname] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState(3);
   const [status, setStatus] = useState(3);
@@ -63,6 +63,7 @@ export default function AlertDialog({ open, setOpen, user }) {
         status,
       });
       console.log(response);
+      setOpen(false);
     } catch (error) {
       console.error(error);
     }
@@ -144,8 +145,8 @@ export default function AlertDialog({ open, setOpen, user }) {
               </FormItem>
               <FormItem phone={phone} computer={computer}>
                 <TextField
-                  required
                   fullWidth
+                  type="password"
                   id="password"
                   label="Password"
                   value={password}
