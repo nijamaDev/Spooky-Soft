@@ -1,6 +1,3 @@
-import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -17,6 +14,7 @@ import {
   Alert,
   Divider,
   Typography,
+  LinearProgress,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
@@ -116,32 +114,43 @@ export default function SignUpForm() {
 
   const onSignUp = (obj) => {
     axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/create_user/`, obj).then((res) => {
-      const resUser = res.data
-      console.log(resUser)      
-      
-      if (res.data.status === 1) {        
+      const user = res.data.user      
+      if (res.data.status === 1) {     
+        setDisplay(false)   
         axios
-          .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: resUser.person_id })
+          .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: user.person_id })
           .then((response) => {
-            const person = response.data;
-            setLogin({
-              ...resUser,
-              name: person.name,
-              lastname: person.lastname,
-              identification: person.identification,
-            });
-            RemoveCookie('usrin');
-            SetCookie(
-              'usrin',
-              JSON.stringify({
-                ...resUser,
-                name: person.name,
-                lastname: person.lastname,
-                identification: person.identification,
+          const person = response.data;
+          axios
+            .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_role/`, { id: user.role_id })
+            .then((response) => {
+              const role = response.data
+              axios
+              .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_status/`, { id: user.status_id })
+              .then((response) => {
+                const status = response.data
+                setLogin({
+                  ...user,
+                  person,
+                  role,
+                  status,
+                  found:true
+                });
+                RemoveCookie('usrin');
+                SetCookie(
+                  'usrin',
+                  JSON.stringify({
+                    ...user,
+                    person,
+                    role,
+                    status,
+                  })
+                );
+                navigate('/dashboard', { replace: true });
               })
-            );
+            })
+        
           });
-        navigate('/dashboard', { replace: true });
         // console.log(remember)
         } else {
           setOpen(true);
@@ -151,6 +160,7 @@ export default function SignUpForm() {
   };
 
   const [open, setOpen] = useState(false);
+  const [display, setDisplay] = useState(true);
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -160,56 +170,60 @@ export default function SignUpForm() {
 
   return (
     <>
-    <GoogleLogin
-        clientId={clientId}
-        buttonText="Sign In with Google"
-        onSuccess={onSuccess}
-        onFailure={()=>setOpen(true)}
-        cookiePolicy={'single_host_origin'}
-      />
-      <Divider sx={{ my: 3 }}>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          OR
-        </Typography>
-      </Divider>
-    <Stack spacing={3} >
-      <TextField id="email_s" required label="Email address" name="email" value={email} onChange={handleInputChange} />
+    <Box sx={{display:display ? 'block' : 'none'}}>
+      <GoogleLogin
+          clientId={clientId}
+          buttonText="Sign In with Google"
+          onSuccess={onSuccess}
+          onFailure={()=>setOpen(true)}
+          cookiePolicy={'single_host_origin'}
+        />
+        <Divider sx={{ my: 3 }}>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            OR
+          </Typography>
+        </Divider>
+      <Stack spacing={3} >
+        <TextField id="email_s" required label="Email address" name="email" value={email} onChange={handleInputChange} />
 
-      <TextField required id="name" label="Name" value={name} onChange={handleInputChange} />
+        <TextField required id="name" label="Name" value={name} onChange={handleInputChange} />
 
-      <TextField
-          required
-          id="lastname"
-          label="Lastname"
-          value={lastname}
-          onChange={handleInputChange}
-      />
+        <TextField
+            required
+            id="lastname"
+            label="Lastname"
+            value={lastname}
+            onChange={handleInputChange}
+        />
 
-      <TextField id="id" label="Identification" name="Identification" value={id} onChange={handleInputChange} />  
-      
-      <TextField
-          id="password_s"
-          label="Password"
-          name="password"
-          required
-          value={password}
-          onChange={handleInputChange}
-          type={showPassword ? 'text' : 'password'}
-          InputProps={{
-              endAdornment: (
-              <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                  </IconButton>
-              </InputAdornment>
-              ),
-          }}
-          />
-      <LoadingButton size="large" variant="contained" onClick={signButton}>
-        Login
-      </LoadingButton>
-    </Stack>
-      
+        <TextField id="id" label="Identification" name="Identification" value={id} onChange={handleInputChange} />  
+        
+        <TextField
+            id="password_s"
+            label="Password"
+            name="password"
+            required
+            value={password}
+            onChange={handleInputChange}
+            type={showPassword ? 'text' : 'password'}
+            InputProps={{
+                endAdornment: (
+                <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    </IconButton>
+                </InputAdornment>
+                ),
+            }}
+            />
+        <LoadingButton size="large" variant="contained" onClick={signButton}>
+          Sign Up
+        </LoadingButton>
+      </Stack>
+    </Box>
+
+    <LinearProgress sx={{display:display ? 'none' : 'block'}}/>
+
     <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
       <Alert variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
         Datos inválidos. Por favor, intente nuevamente.

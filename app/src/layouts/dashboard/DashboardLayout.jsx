@@ -41,7 +41,28 @@ export default function DashboardLayout() {
   const navigate = useNavigate();   
 
   useEffect(()=>{
-    if(login.name !== undefined){
+    console.log(login)
+    if(login.found !== "waiting"){
+      if(!login.found){
+        console.log('login',login)
+        navigate('/login')  
+      } else {
+        setDashLay(
+          <StyledRoot>
+            <Header onOpenNav={() => setOpen(true)} />
+  
+            <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+  
+            <Main>
+              <Outlet />
+            </Main>
+          </StyledRoot>
+        )
+      }
+    }
+    
+    /*    
+    if(login.id !== undefined){
       // Still looking
       if(login.found === false){
         console.log('login',login)
@@ -59,7 +80,8 @@ export default function DashboardLayout() {
               </StyledRoot>
         )
       }
-    }
+    }    
+    */    
     
   },[login])
 

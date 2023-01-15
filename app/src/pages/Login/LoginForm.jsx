@@ -4,7 +4,7 @@ import axios from 'axios';
 import { gapi } from 'gapi-script';
 import { GoogleLogin } from '@leecheuk/react-google-login';
 // @mui
-import { Box, Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert, Divider, Typography } from '@mui/material';
+import { Box, Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert, Divider, Typography, LinearProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
 import SetCookie from '../../hooks/setCookie';
@@ -19,7 +19,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const clientId = process.env.REACT_APP_CLIENT_ID;
 
-  const { login, setLogin } = useContext(AppContext);
+  const { setLogin } = useContext(AppContext);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -69,34 +69,47 @@ export default function LoginForm() {
 
   const onLogin = (obj) => {    
     axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/login/`, obj).then((res) => {
-      const resUser = res.data.user;
+      const user = res.data.user;
       console.log(res.data)
-      if (res.data.status === 1) {        
+      if (res.data.status === 1) {   
+      setDisplay(false)     
       axios
-        .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: resUser.person_id })
+        .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: user.person_id })
         .then((response) => {
           const person = response.data;
-          setLogin({
-            ...resUser,
-            name: person.name,
-            lastname: person.lastname,
-            identification: person.identification,
-          });
-          RemoveCookie('usrin');
-          if (remember) {
-            SetCookie(
-              'usrin',
-              JSON.stringify({
-                ...resUser,
-                name: person.name,
-                lastname: person.lastname,
-                identification: person.identification,
+          axios
+            .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_role/`, { id: user.role_id })
+            .then((response) => {
+              const role = response.data
+              axios
+              .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_status/`, { id: user.status_id })
+              .then((response) => {
+                const status = response.data                
+                setLogin({
+                  ...user,
+                  person,
+                  role,
+                  status,
+                  found:true
+                });
+                RemoveCookie('usrin');
+                if (remember) {
+                  console.log("set cookie")
+                  SetCookie(
+                    'usrin',
+                    JSON.stringify({
+                      ...user,
+                      person,
+                      role,
+                      status,
+                    })
+                  );
+                }
+                navigate('/dashboard', { replace: true });
               })
-            );
-          }
+            })
         });
-      navigate('/dashboard', { replace: true });
-      // console.log(remember)
+      
       } else {
         setOpen(true);
       }
@@ -104,6 +117,7 @@ export default function LoginForm() {
   };
 
   const [open, setOpen] = useState(false);
+  const [display, setDisplay] = useState(true);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -114,28 +128,22 @@ export default function LoginForm() {
 
   return (
     <>
+    <Box sx={{display:display ? 'block' : 'none'}}>
       <GoogleLogin
-        clientId={clientId}
-        buttonText="Log In with Google"
-        onSuccess={onSuccess}
-        onFailure={()=>setOpen(true)}
+        clientId={clientId} buttonText="Log In with Google"
+        onSuccess={onSuccess} onFailure={()=>setOpen(true)}
         cookiePolicy={'single_host_origin'}
       />
       <Divider sx={{ my: 3 }}>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          OR
-        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>OR</Typography>
       </Divider>
       <Stack spacing={3}>
         <TextField id="email" label="Email address" name="email" value={email} onChange={handleInputChange} />
 
         <TextField
-          id="password"
-          label="Password"
-          name="password"
-          value={password}
-          onChange={handleInputChange}
-          type={showPassword ? 'text' : 'password'}
+          id="password" label="Password"
+          name="password" value={password}
+          onChange={handleInputChange} type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -147,33 +155,30 @@ export default function LoginForm() {
           }}
         />
       </Stack>
-
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
         <Box>
           <Checkbox
-            name="remember"
-            label="Remember me"
-            checked={remember}
-            onChange={() => {
-              setRemember(!remember);
-            }}
+            name="remember" label="Remember me"
+            checked={remember} onChange={() => { setRemember(!remember) }}
           />
           Remember me.
         </Box>
 
-        <Link variant="subtitle2" underline="hover">
-          Forgot password?
-        </Link>
+        <Link variant="subtitle2" underline="hover">Forgot password?</Link>
       </Stack>
 
       <LoadingButton fullWidth size="large" variant="contained" onClick={loginButton}>
         Login
       </LoadingButton>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          Datos inválidos. Por favor, intente nuevamente.
-        </Alert>
-      </Snackbar>
-    </>
+    </Box>
+    
+    <LinearProgress sx={{display:display ? 'none' : 'block'}}/>
+
+    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Alert variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+        Datos inválidos. Por favor, intente nuevamente.
+      </Alert>
+    </Snackbar>
+  </>
   );
 }
