@@ -146,16 +146,8 @@ def updateUserNoPassword(req, user_id):
     user = Users.objects.get(id=user_id)
     if req.method == 'PUT':
         People.objects.filter(id=user.person.id).update(name=data.get('name'), lastname=data.get('lastname')) 
-        person = People.objects.get(id=user.person.id)
-        role = Roles.objects.get(name=data['role'])
-        statusObj = Status.objects.get(name=data['status'])
-        user.email = data.get('email')
-        user.role.name = role.name
-        user.status.name = statusObj.name
-        user.person.name = person.name
-        user.person.lastname = person.lastname
-        user.save()
-        return Response(status=status.HTTP_200_OK)
+        Users.objects.filter(id=user_id).update(email=data['email'],role=data['role'],status=data['status'])
+        return Response(status=status.HTTP_200_OK) 
 
 @api_view(['PUT'])
 def updateUserPassword(req, user_id):
