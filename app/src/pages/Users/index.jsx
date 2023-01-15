@@ -209,7 +209,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, email, avatarUrl } = row;
+                    const { id, name, role, status, email, imageUrl } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -220,7 +220,7 @@ export default function UserPage() {
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
+                            <Avatar alt={name} src={imageUrl} />
                             <Typography variant="subtitle2" noWrap>
                               {name}
                             </Typography>
