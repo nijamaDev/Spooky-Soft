@@ -75,6 +75,7 @@ function applySortFilter(array, comparator, query) {
       array,
       (_user) =>
         _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+        _user.lastname.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
         _user.email.toLowerCase().indexOf(query.toLowerCase()) !== -1
       // || _user.role.toLowerCase().indexOf(query.toLowerCase()) !== -1
       // || _user.status.toLowerCase().indexOf(query.toLowerCase()) !== -1
@@ -209,7 +210,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, email, imageUrl } = row;
+                    const { id, name, lastname, role, status, email, imageUrl } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -222,7 +223,7 @@ export default function UserPage() {
                           <Stack direction="row" alignItems="center" spacing={2}>
                             <Avatar alt={name} src={imageUrl} />
                             <Typography variant="subtitle2" noWrap>
-                              {name}
+                              {`${name} ${lastname}`}
                             </Typography>
                           </Stack>
                         </TableCell>
