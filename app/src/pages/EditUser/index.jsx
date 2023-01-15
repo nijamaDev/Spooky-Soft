@@ -177,6 +177,10 @@ export default function UserPage() {
                       id: 'Inactivo',
                       name: 'Inactivo',
                     },
+                    {
+                      id: 'Suspendido',
+                      name: 'Suspendido',
+                    },
                   ]}
                   multiple
                 />
