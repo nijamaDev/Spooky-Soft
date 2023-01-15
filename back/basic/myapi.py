@@ -1,7 +1,8 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Users, People, Roles, Status, Stores, Products
+from datetime import datetime
+from .models import Users, People, Roles, Status, Stores, Products, ProductRegisters
 from .scraping import scrapElement
 from .serializers import UserSerializer
 
@@ -35,21 +36,6 @@ def logIn(req):
             res['msg'] = "Usuario no Registrado"
             return Response(res)
 
-@api_view(['POST'])
-def getPerson(req):
-    res = { 'name': "", 'lastname': "", 'identification': "" }
-    try:
-        person = People.objects.get(id=req.data['id'])
-    except People.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    if req.method == 'POST':
-        res['name'] = person.name
-        res['lastname'] = person.lastname
-        res['identification'] = person.identification
-        return Response(res)
-    else:
-        return Response(res)
-
 @api_view(['POST']) 
 def createUser(req): 
     res = {'status': 0, 'user':{}, 'msg':""}
@@ -78,6 +64,33 @@ def createUser(req):
             user.save()
     return Response(res)
 
+@api_view(['POST'])
+def createProduct(req):
+    res = {'status': 0, 'product':{}, 'msg':""}    
+    data = req.data
+    if req.method == 'POST':
+        store = Stores.objects.get(name=data['store'])
+        product = Products.objects.create(store=store, name=data['name'], description=data['description'], url_picture=data['url_picture'], url_product=data['url_product'], price=data['price'],price_sale=data['price_sale'], location=data['location'])
+        res['status'] = 1
+        res['product'] = req.data
+        res['msg'] = "Producto creado exitosamente"
+        product.save()
+    return Response(res)
+
+@api_view(['POST'])
+def createProductRegister(req):
+    res = {'product': "", 'date':"", 'visits':"", 'redirect':""}    
+    data = req.data
+    if req.method == 'POST':
+        product = Products.objects.get(id=data['product'])
+        productRegister = ProductRegisters.objects.create(product=product, date=datetime.now().date(), visits=0, redirect=0)
+        res['product'] = product.name
+        res['date'] = productRegister.date
+        res['visits'] = productRegister.visits
+        res['redirect'] = productRegister.redirect
+        productRegister.save()
+    return Response(res)
+
 @api_view(['GET'])
 def getAllUsers(req):
     if req.method == 'GET':
@@ -86,17 +99,19 @@ def getAllUsers(req):
         return Response(serializer.data)
 
 @api_view(['POST'])
-def createProduct(req):
-    res = {'status': 0, 'product':{}, 'msg':""}    
-    data = req.data
+def getPerson(req):
+    res = { 'name': "", 'lastname': "", 'identification': "" }
+    try:
+        person = People.objects.get(id=req.data['id'])
+    except People.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
     if req.method == 'POST':
-        store = Stores.objects.get(id=data['store_id'])
-        product = Products.objects.create(store=store, name=data['name'], description=data['description'], url_picture=data['url_picture'], url_product=data['url_product'], price=data['price'],price_sale=data['price_sale'], location=data['location'])
-        res['status'] = 1
-        res['product'] = req.data
-        res['msg'] = "Producto creado exitosamente"
-        product.save()
-    return Response(res)
+        res['name'] = person.name
+        res['lastname'] = person.lastname
+        res['identification'] = person.identification
+        return Response(res)
+    else:
+        return Response(res)
 
 @api_view(['POST'])
 def getRole(req):
@@ -123,3 +138,28 @@ def getStatus(req):
         return Response(res)
     else:
         return Response(res)
+
+@api_view(['PUT'])
+def updateUserNoPassword(req, user_id):
+    data = req.data
+    user = Users.objects.get(id=user_id)
+    if req.method == 'PUT':
+        People.objects.filter(id=user.person.id).update(name=data.get('name'), lastname=data.get('lastname')) 
+        person = People.objects.get(id=user.person.id)
+        role = Roles.objects.get(name=data['role'])
+        status = Status.objects.get(name=data['status'])
+        user.email = data.get('email')
+        user.role.name = role.name
+        user.status.name = status.name
+        user.person.name = person.name
+        user.person.lastname = person.lastname
+        user.save()
+        return Response(status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+def updateUserPassword(req, user_id):
+    user = Users.objects.get(id=user_id)
+    if req.method == 'PUT':
+        user.password = req.data.get('password')
+        user.save()
+        return Response(status=status.HTTP_200_OK)
