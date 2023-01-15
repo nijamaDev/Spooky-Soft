@@ -7,7 +7,7 @@ export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [update, setUpdate] = useState(true);
-  const [login, setLogin] = useState({});
+  const [login, setLogin] = useState({ found : "waiting"});
   const [isDarkTheme, setIsDarkTheme] = useState(true);
 
   // const [processes, setProcesses] = useState(); //Array de Objetos

@@ -1,8 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 // @mui
 import {
   Card,
@@ -32,6 +33,7 @@ import UserListHead from './UserListHead';
 import UserListToolbar from './UserListToolbar';
 // mock
 import USERLIST from '../../_mock/user';
+import { AppContext } from '../../context/AppContext';
 
 // ----------------------------------------------------------------------
 // name role status email pass
@@ -82,6 +84,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
+  const { update } = useContext(AppContext);
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
@@ -95,8 +98,18 @@ export default function UserPage() {
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const [userlist, setUserlist] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/users/`).then((res) => {
+      setUserlist(res.data);
+    });
+  }, [update]);
+  console.log('?1');
+  console.log(userlist);
+  console.log('?2');
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
@@ -113,7 +126,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = userlist.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -157,9 +170,9 @@ export default function UserPage() {
     navigate('/dashboard/edit_user');
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userlist.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(userlist, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -189,7 +202,7 @@ export default function UserPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={userlist.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -267,7 +280,7 @@ export default function UserPage() {
           <TablePagination
             rowsPerPageOptions={[10, 20, 50]}
             component="div"
-            count={USERLIST.length}
+            count={userlist.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
