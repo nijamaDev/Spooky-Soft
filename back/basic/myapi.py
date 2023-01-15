@@ -141,29 +141,19 @@ def getStatus(req):
 
 @api_view(['PUT'])
 def updateUserNoPassword(req, user_id):
-    res = { 'id':"",'name': "",'lastname': "",'role': "",'status': "",'email': "", }
     data = req.data
     user = Users.objects.get(id=user_id)
     if req.method == 'PUT':
-
         People.objects.filter(id=user.person.id).update(name=data.get('name'), lastname=data.get('lastname')) 
         person = People.objects.get(id=user.person.id)
         role = Roles.objects.get(name=data['role'])
         status = Status.objects.get(name=data['status'])
-        
         user.email = data.get('email')
         user.role.name = role.name
         user.status.name = status.name
         user.person.name = person.name
         user.person.lastname = person.lastname
         user.save()
-
-        res['id'] = user_id
-        res['name'] = user.person.name
-        res['lastname'] = user.person.lastname
-        res['email'] = user.email
-        res['role'] = user.role.name
-        res['status'] = user.status.name
         return Response(status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
