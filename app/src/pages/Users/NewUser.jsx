@@ -2,6 +2,11 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import axios from 'axios';
 // @mui
 import {
   Card,
@@ -28,21 +33,39 @@ import {
 import Iconify from '../../components/iconify';
 import { FormContainer, FormItem, Selector } from '../../components/Forms';
 
-// ----------------------------------------------------------------------
-
-export default function UserPage() {
+export default function AlertDialog({ open, setOpen /* , userId */ }) {
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState(1);
-  const [status, setStatus] = useState(1);
+  const [role, setRole] = useState(3);
+  const [status, setStatus] = useState(3);
   const phone = 12;
   const computer = 6;
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(id, name, lastname, email, password, role, status);
+    console.log({
+      id,
+      name,
+      lastname,
+      email,
+      password,
+      role,
+      status,
+    });
+    /* try {
+      const response = await axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_user/${id}/`, {
+        name,
+        lastname,
+        email,
+        role,
+        status,
+      });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    } */
   };
   const handleInputChange = ({ target }) => {
     switch (target.id) {
@@ -65,21 +88,25 @@ export default function UserPage() {
         console.log('Missing: handle');
     }
   };
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <>
-      <Helmet>
-        <title> User Register | One Market </title>
-      </Helmet>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <Typography variant="h4" gutterBottom pb={3}>
+            Register a new user
+          </Typography>
 
-      <Container>
-        <Typography variant="h4" gutterBottom pb={3}>
-          Editing User
-        </Typography>
-
-        <Card>
           <Box pt={3} pb={3} pr={3} onSubmit={handleSubmit} component="form">
             <FormContainer>
-              <FormItem phone={phone} computer={computer}>
+              {/* <FormItem phone={phone} computer={computer}>
                 <TextField
                   required
                   fullWidth
@@ -89,7 +116,7 @@ export default function UserPage() {
                   onChange={handleInputChange}
                   disabled={false}
                 />
-              </FormItem>
+              </FormItem> */}
               <FormItem phone={phone} computer={computer}>
                 <TextField required fullWidth id="name" label="Name" value={name} onChange={handleInputChange} />
               </FormItem>
@@ -125,12 +152,16 @@ export default function UserPage() {
                   setHook={setRole}
                   arrayElements={[
                     {
-                      id: 1,
-                      name: 'Operator',
+                      id: 3,
+                      name: 'Visitante',
                     },
                     {
                       id: 2,
-                      name: 'Manager',
+                      name: 'Operario',
+                    },
+                    {
+                      id: 1,
+                      name: 'Administrador',
                     },
                   ]}
                   multiple
@@ -145,28 +176,40 @@ export default function UserPage() {
                   setHook={setStatus}
                   arrayElements={[
                     {
-                      id: 1,
-                      name: 'active',
+                      id: 3,
+                      name: 'Activo',
                     },
                     {
-                      id: 2,
-                      name: 'inactive',
+                      id: 4,
+                      name: 'Inactivo',
+                    },
+                    {
+                      id: 5,
+                      name: 'Suspendido',
                     },
                   ]}
                   multiple
                 />
               </FormItem>
               <FormItem phone={phone} computer={12}>
-                <Box display="flex" justifyContent="flex-end" alignItems="flex-end" pt={3}>
-                  <Button variant="contained" color="secondary" type="submit">
-                    Save Changes
+                <Stack justifyContent="flex-end" direction="row" spacing={2}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleClose}
+                    style={{ backgroundColor: 'red' }}
+                  >
+                    Cancel
                   </Button>
-                </Box>
+                  <Button variant="contained" color="secondary" type="submit">
+                    Create user
+                  </Button>
+                </Stack>
               </FormItem>
             </FormContainer>
           </Box>
-        </Card>
-      </Container>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
