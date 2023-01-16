@@ -32,10 +32,10 @@ ShopProductCard.propTypes = {
   product: PropTypes.object,
 };
 
-export default function ShopProductCard({ product, checkbox }) {
+export default function ShopProductCard({ register, checkbox }) {
   const navigate = useNavigate();
   const { login } = useContext(AppContext);
-  const { name, cover, price, colors, status, priceSale } = product;
+  const { name, cover, price, colors, status, priceSale } = register.product;
 
   const [openDetail, setOpenDetail] = useState(false);
   const [openEdit, setOpenEdit] = useState(false); 
@@ -124,7 +124,10 @@ export default function ShopProductCard({ product, checkbox }) {
           </Link>
 
           <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <ColorPreview colors={colors} />
+            <ColorPreview colors={
+              typeof colors === 'string' ? colors.split(",") : []
+              // colors.split(",")
+            } />
             <Typography variant="subtitle1">
               <Typography
                 component="span"
@@ -141,8 +144,8 @@ export default function ShopProductCard({ product, checkbox }) {
             </Typography>
           </Stack>
         </Stack>
-        <ProductEdit open={openEdit} setOpen={setOpenEdit} product={product} />
-        <ProductDetail open={openDetail} setOpen={setOpenDetail} product={product} />
+        <ProductEdit open={openEdit} setOpen={setOpenEdit} product={register.product} />
+        <ProductDetail open={openDetail} setOpen={setOpenDetail} product={register.product} />
       </Card>
       {show}
 
