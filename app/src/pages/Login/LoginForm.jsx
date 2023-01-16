@@ -4,7 +4,20 @@ import axios from 'axios';
 import { gapi } from 'gapi-script';
 import { GoogleLogin } from '@leecheuk/react-google-login';
 // @mui
-import { Box, Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert, Divider, Typography, LinearProgress } from '@mui/material';
+import {
+  Box,
+  Link,
+  Stack,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Checkbox,
+  Snackbar,
+  Alert,
+  Divider,
+  Typography,
+  LinearProgress,
+} from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
 import SetCookie from '../../hooks/setCookie';
@@ -29,7 +42,7 @@ export default function LoginForm() {
     const initClient = () => {
       gapi.client.init({
         clientId,
-        scope: '',
+        scope: 'https://www.googleapis.com/auth/userinfo.profile',
       });
     };
     gapi.load('client:auth2', initClient);
@@ -37,12 +50,12 @@ export default function LoginForm() {
 
   const onSuccess = (res) => {
     console.log('success:');
-    setRemember(true)
+    setRemember(true);
     const obj = {
-      email : res.profileObj.email,
-      password : res.profileObj.googleId,
+      email: res.profileObj.email,
+      password: res.profileObj.googleId,
     };
-    onLogin(obj)
+    onLogin(obj);
   };
 
   const handleInputChange = ({ target }) => {
@@ -58,57 +71,56 @@ export default function LoginForm() {
         break;
     }
   };
-  
+
   const loginButton = () => {
     const obj = {
       email,
       password,
     };
-    onLogin(obj)
-  }
+    onLogin(obj);
+  };
 
-  const onLogin = (obj) => {    
+  const onLogin = (obj) => {
     axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/login/`, obj).then((res) => {
       const user = res.data.user;
-      console.log(res.data)
-      if (res.data.status === 1) {   
-      setDisplay(false)     
-      axios
-        .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: user.person_id })
-        .then((response) => {
-          const person = response.data;
-          axios
-            .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_role/`, { id: user.role_id })
-            .then((response) => {
-              const role = response.data
-              axios
-              .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_status/`, { id: user.status_id })
+      console.log(res.data);
+      if (res.data.status === 1) {
+        setDisplay(false);
+        axios
+          .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: user.person_id })
+          .then((response) => {
+            const person = response.data;
+            axios
+              .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_role/`, { id: user.role_id })
               .then((response) => {
-                const status = response.data                
-                setLogin({
-                  ...user,
-                  person,
-                  role,
-                  status,
-                  found:true
-                });
-                RemoveCookie('usrin');
-                if (remember) {
-                  SetCookie(
-                    'usrin',
-                    JSON.stringify({
+                const role = response.data;
+                axios
+                  .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_status/`, { id: user.status_id })
+                  .then((response) => {
+                    const status = response.data;
+                    setLogin({
                       ...user,
                       person,
                       role,
                       status,
-                    })
-                  );
-                }
-                navigate('/dashboard', { replace: true });
-              })
-            })
-        });
-      
+                      found: true,
+                    });
+                    RemoveCookie('usrin');
+                    if (remember) {
+                      SetCookie(
+                        'usrin',
+                        JSON.stringify({
+                          ...user,
+                          person,
+                          role,
+                          status,
+                        })
+                      );
+                    }
+                    navigate('/dashboard', { replace: true });
+                  });
+              });
+          });
       } else {
         setOpen(true);
       }
@@ -127,57 +139,70 @@ export default function LoginForm() {
 
   return (
     <>
-    <Box sx={{display:display ? 'block' : 'none'}}>
-      <GoogleLogin
-        clientId={clientId} buttonText="Log In with Google"
-        onSuccess={onSuccess} onFailure={()=>setOpen(true)}
-        cookiePolicy={'single_host_origin'}
-      />
-      <Divider sx={{ my: 3 }}>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>OR</Typography>
-      </Divider>
-      <Stack spacing={3}>
-        <TextField id="email" label="Email address" name="email" value={email} onChange={handleInputChange} />
-
-        <TextField
-          id="password" label="Password"
-          name="password" value={password}
-          onChange={handleInputChange} type={showPassword ? 'text' : 'password'}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
+      <Box sx={{ display: display ? 'block' : 'none' }}>
+        <GoogleLogin
+          clientId={clientId}
+          buttonText="Log In with Google"
+          onSuccess={onSuccess}
+          onFailure={() => setOpen(true)}
+          cookiePolicy={'single_host_origin'}
         />
-      </Stack>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <Box>
-          <Checkbox
-            name="remember" label="Remember me"
-            checked={remember} onChange={() => { setRemember(!remember) }}
+        <Divider sx={{ my: 3 }}>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            OR
+          </Typography>
+        </Divider>
+        <Stack spacing={3}>
+          <TextField id="email" label="Email address" name="email" value={email} onChange={handleInputChange} />
+
+          <TextField
+            id="password"
+            label="Password"
+            name="password"
+            value={password}
+            onChange={handleInputChange}
+            type={showPassword ? 'text' : 'password'}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          Remember me.
-        </Box>
+        </Stack>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
+          <Box>
+            <Checkbox
+              name="remember"
+              label="Remember me"
+              checked={remember}
+              onChange={() => {
+                setRemember(!remember);
+              }}
+            />
+            Remember me.
+          </Box>
 
-        <Link variant="subtitle2" underline="hover">Forgot password?</Link>
-      </Stack>
+          <Link variant="subtitle2" underline="hover">
+            Forgot password?
+          </Link>
+        </Stack>
 
-      <LoadingButton fullWidth size="large" variant="contained" onClick={loginButton}>
-        Login
-      </LoadingButton>
-    </Box>
-    
-    <LinearProgress sx={{display:display ? 'none' : 'block'}}/>
+        <LoadingButton fullWidth size="large" variant="contained" onClick={loginButton}>
+          Login
+        </LoadingButton>
+      </Box>
 
-    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-      <Alert variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-        Datos inválidos. Por favor, intente nuevamente.
-      </Alert>
-    </Snackbar>
-  </>
+      <LinearProgress sx={{ display: display ? 'none' : 'block' }} />
+
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          Datos inválidos. Por favor, intente nuevamente.
+        </Alert>
+      </Snackbar>
+    </>
   );
 }
