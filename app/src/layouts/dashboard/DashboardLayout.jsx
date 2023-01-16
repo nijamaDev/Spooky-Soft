@@ -44,21 +44,24 @@ export default function DashboardLayout() {
     console.log(login)
     if(login.found !== "waiting"){
       if(!login.found){
-        console.log('login',login)
-        navigate('/login')  
-      } else {
-        setDashLay(
-          <StyledRoot>
-            <Header onOpenNav={() => setOpen(true)} />
-  
-            <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-  
-            <Main>
-              <Outlet />
-            </Main>
-          </StyledRoot>
-        )
-      }
+        // console.log('login',login)
+        navigate('/login')
+      } else if(login.role.name === "Visitante"){
+          navigate('/products')
+        } else {
+          setDashLay(
+            <StyledRoot>
+              <Header onOpenNav={() => setOpen(true)} />
+    
+              <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+    
+              <Main>
+                <Outlet />
+              </Main>
+            </StyledRoot>
+          )
+        }        
+      
     }
     
     /*    

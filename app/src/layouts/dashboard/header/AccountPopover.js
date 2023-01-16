@@ -63,7 +63,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={login.person.imageUrl} alt="photoURL" sx={{backgroundColor: '#ff0000',}}>{login.person.name[0]}{login.person.lastname[0]}</Avatar>
+        <Avatar src={login.imageUrl} alt="photoURL" sx={{backgroundColor: '#ff0000',}}>{login.person.name[0]}{login.person.lastname[0]}</Avatar>
       </IconButton>
 
       <Popover
