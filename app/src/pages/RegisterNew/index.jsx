@@ -7,22 +7,9 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import {
   Card,
-  Table,
-  Stack,
-  Paper,
-  Avatar,
   Button,
-  Popover,
-  Checkbox,
-  TableRow,
-  MenuItem,
-  TableBody,
-  TableCell,
   Container,
   Typography,
-  IconButton,
-  TableContainer,
-  TablePagination,
   Box,
   Grid,
   TextField,
@@ -30,7 +17,6 @@ import {
   Alert,
 } from '@mui/material';
 // components
-import Iconify from '../../components/iconify';
 import { FormContainer, FormItem, Selector } from '../../components/Forms';
 import BlogPostCard from '../Blog/BlogPostCard';
 

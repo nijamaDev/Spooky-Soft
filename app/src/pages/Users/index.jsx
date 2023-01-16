@@ -1,8 +1,8 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
 // @mui
 import {
   Card,
@@ -13,6 +13,7 @@ import {
   Button,
   Popover,
   Checkbox,
+  CircularProgress,
   TableRow,
   MenuItem,
   TableBody,
@@ -30,8 +31,10 @@ import Scrollbar from '../../components/scrollbar';
 // sections
 import UserListHead from './UserListHead';
 import UserListToolbar from './UserListToolbar';
-// mock
-import USERLIST from '../../_mock/user';
+// Context
+import { AppContext } from '../../context/AppContext';
+import NewUser from './NewUser';
+import EditUser from './EditUser';
 
 // ----------------------------------------------------------------------
 // name role status email pass
@@ -72,7 +75,7 @@ function applySortFilter(array, comparator, query) {
     return filter(
       array,
       (_user) =>
-        _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+        [_user.name, _user.lastname].join(' ').toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
         _user.email.toLowerCase().indexOf(query.toLowerCase()) !== -1
       // || _user.role.toLowerCase().indexOf(query.toLowerCase()) !== -1
       // || _user.status.toLowerCase().indexOf(query.toLowerCase()) !== -1
@@ -82,7 +85,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
-  const navigate = useNavigate();
+  const { update } = useContext(AppContext);
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -95,10 +98,33 @@ export default function UserPage() {
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const handleOpenMenu = (event) => {
+  const [userlist, setUserlist] = useState([]);
+
+  const [userID, setUserID] = useState({});
+
+  const [openNew, setOpenNew] = useState(false);
+
+  const [openEdit, setOpenEdit] = useState(false);
+
+  const [updateList, setUpdateList] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setOpen(null);
+    setIsLoading(true);
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/users/`).then((res) => {
+      setUserlist(res.data);
+      console.log('UPDATE');
+      setIsLoading(false);
+    });
+  }, [updateList]);
+
+  const handleOpenMenu = (event, row) => {
     setOpen(event.currentTarget);
+    setUserID(row);
   };
 
   const handleCloseMenu = () => {
@@ -113,7 +139,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = userlist.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -149,19 +175,29 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const handleNewUser = () => {
-    navigate('/dashboard/register');
-  };
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userlist.length) : 0;
 
-  const handleEditUser = () => {
-    navigate('/dashboard/edit_user');
-  };
-
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(userlist, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
+
+  const roleMap = {
+    3: 'Visitante',
+    2: 'Operario',
+    1: 'Administrador',
+  };
+
+  const statusMap = {
+    3: 'Activo',
+    4: 'Inactivo',
+    5: 'Suspendido',
+  };
+
+  const statusColorMap = {
+    Activo: 'success',
+    Inactivo: 'warning',
+    Suspendido: 'error',
+  };
 
   return (
     <>
@@ -174,9 +210,10 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Users
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleNewUser}>
+
+          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpenNew(true)}>
             New User
-          </Button>
+          </Button> */}
         </Stack>
 
         <Card>
@@ -189,14 +226,14 @@ export default function UserPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={userlist.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, email, avatarUrl } = row;
+                    const { id, name, lastname, role, status, email, imageUrl } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -207,25 +244,47 @@ export default function UserPage() {
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
+                            <Avatar alt={name} src={imageUrl} />
                             <Typography variant="subtitle2" noWrap>
-                              {name}
+                              {`${name} ${lastname}`}
                             </Typography>
                           </Stack>
                         </TableCell>
 
                         <TableCell align="left">{email}</TableCell>
 
-                        <TableCell align="left">{role}</TableCell>
+                        <TableCell align="left">{roleMap[role] || role}</TableCell>
 
                         <TableCell align="left">
-                          <Label color={(status === 'disabled' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell>
-
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            mb={5}
+                            display="flex"
+                            margin="auto"
+                          >
+                            <Label color={statusColorMap[status] || 'default'}>
+                              {sentenceCase(statusMap[status] || status)}
+                            </Label>
+                            {
+                              (isLoading && <CircularProgress size={36} />) || (
+                                <Button
+                                  onClick={() => {
+                                    setOpenEdit(true);
+                                    setUserID(row);
+                                  }}
+                                >
+                                  <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+                                  Edit
+                                </Button>
+                              ) /* || (
+                                <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row)}>
+                                  <Iconify icon={'eva:more-vertical-fill'} />
+                                </IconButton>
+                              ) */
+                            }
+                          </Stack>
                         </TableCell>
                       </TableRow>
                     );
@@ -267,7 +326,7 @@ export default function UserPage() {
           <TablePagination
             rowsPerPageOptions={[10, 20, 50]}
             component="div"
-            count={USERLIST.length}
+            count={userlist.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -294,7 +353,7 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem onClick={handleNewUser}>
+        <MenuItem onClick={() => setOpenEdit(true)}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
         </MenuItem>
@@ -304,6 +363,14 @@ export default function UserPage() {
           Delete
         </MenuItem>
       </Popover>
+      <NewUser open={openNew} setOpen={setOpenNew} />
+      <EditUser
+        open={openEdit}
+        setOpen={setOpenEdit}
+        user={userID}
+        updateList={updateList}
+        setUpdateList={setUpdateList}
+      />
     </>
   );
 }

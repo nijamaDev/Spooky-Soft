@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { styled, alpha } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
 // mock
-import account from '../../../_mock/account';
+
 // hooks
 import useResponsive from '../../../hooks/useResponsive';
 // components
@@ -62,7 +62,7 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none">
           <StyledAccount>
-            <Avatar src={login.photo} alt="photoURL" sx={{backgroundColor: '#ff0000',}}>{login.name[0]}{login.lastname[0]}</Avatar>
+            <Avatar src={login.imageUrl} alt="photoURL" sx={{backgroundColor: '#ff0000',}}>{login.person.name[0]}{login.person.lastname[0]}</Avatar>
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
@@ -70,7 +70,7 @@ export default function Nav({ openNav, onCloseNav }) {
               </Typography>
 
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}Operator
+                {login.role.name}
               </Typography>
             </Box>
           </StyledAccount>
