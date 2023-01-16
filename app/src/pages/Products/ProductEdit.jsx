@@ -1,5 +1,6 @@
 // import * as React from 'react';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -18,21 +19,24 @@ function isImage(url) {
 
 export default function AlertDialog({ open, setOpen, product }) {
   console.log("product",product)
-  const { name, cover, description, price, colors, status, priceSale } = product;
+  const { id, name, cover, description, price, colors, redirect, priceSale } = product;
   // console.log(typeof colors === 'string' ? colors.split(",").length <= 2 ? colors.split(",")[0] : colors.split(",")[1] : [])
   const [ nameF, setNameF] = useState(name);
   const [ descriptionF, setDescriptionF ] = useState(description)
   const [ coverF, setCoverF] = useState(cover)
   const [ priceF, setPriceF] = useState(price)
   const [ priceSaleF, setPriceSaleF] = useState(priceSale)
-  const [color1, setColor1] = useState(typeof colors === 'string' ? colors.split(",").length <= 2 ? colors.split(",")[0] : "Not Found" : []);
-  const [ color2, setColor2] = useState(typeof colors === 'string' ? colors.split(",").length <= 2 ? colors.split(",")[1] : "Not Found" : []);
+  const [color1, setColor1] = useState(typeof colors === 'string' ? colors.split(",").length === 1 ? colors.split(",")[0] : "Not Found" : "Not Found");
+  const [ color2, setColor2] = useState(typeof colors === 'string' ? colors.split(",").length === 2 ? colors.split(",")[1] : "Not Found" : "Not Found");
   const [ colorsF, setColorsF] = useState("");
   const colorsOptions = ["#ffffff", "#f44336", "#9c27b0", "#3f51b5", "#2196f3", "#4caf50", "#8bc34a", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#000001"];
   const [ displayEdit, setDisplayEdit] = useState(false);
 
+  // console.log("color2",color2)
   useEffect(()=>{
     let colorAux = ""
+    // console.log("color1",color1)
+    // console.log("color2",color2)
     if(color1 !== 'Not Found'){
       colorAux += color1
       if(color2 !== 'Not Found'){colorAux += ","}
@@ -64,6 +68,26 @@ export default function AlertDialog({ open, setOpen, product }) {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const obj = {
+      name:nameF,
+      description:descriptionF,
+      cover:coverF,
+      redirect,
+      price:priceF,
+      priceSale:priceSaleF,
+      location:"",
+
+      colors:colorsF
+
+    };
+    console.log(obj);
+    axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_product/${id}/`, obj).then((res) => {
+      console.log(res.data);
+    })
+  }
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -79,9 +103,8 @@ export default function AlertDialog({ open, setOpen, product }) {
       >
         <DialogContent >
           <Typography variant="h4" gutterBottom pb={3}>Editing: {nameF}</Typography>
-          <Button variant="contained" color="secondary" onClick={()=>{setDisplayEdit(!displayEdit)}}>Toggle Edit</Button>
-          <Box mt={3} pt={3} pr={3} pb={3} sx={{display:displayEdit ? "block" : "none", border: '1px solid #D3D3D3',
-    borderRadius: '10px'}}>
+          <Box mb={3} display="flex" justifyContent="center"><Button variant="contained" color="secondary" onClick={()=>{setDisplayEdit(!displayEdit)}}>Toggle Edit</Button></Box>
+          <Box onSubmit={handleSubmit} component="form" pt={3} pr={3} pb={3} sx={{display:displayEdit ? "block" : "none", border: '1px solid #D3D3D3', borderRadius: '10px'}}>
             <FormContainer>
               <FormItem phone={12} computer={12}>
                 <TextField required fullWidth id="nameF" label="Product Name" value={nameF} onChange={handleInputChange} />
@@ -120,15 +143,6 @@ export default function AlertDialog({ open, setOpen, product }) {
                   <Button variant="outlined" onClick={() => {setColor2("Not Found")}} startIcon={<DeleteIcon />}>Clear</Button>
                 </Box>        
               </FormItem>
-              
-              <Grid item xs={12} sm={12}>
-                <Typography variant="h5" gutterBottom>
-                  Preview
-                </Typography>
-              </Grid>
-              {
-                // <BlogPostCard post={{ cover, title, description, redirect, createdAt }} index={3} />
-              }
               <FormItem phone={12} computer={12}>
                 <Box display="flex" justifyContent="flex-end" alignItems="flex-end" pt={3}>
                   <Button variant="contained" color="secondary" type="submit">
