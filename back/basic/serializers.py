@@ -58,7 +58,7 @@ class ProductsSerializer(serializers.ModelSerializer):
     store = StoreSerializer(read_only=True)
     class Meta:
         model = Products
-        fields = ('store', 'storename','name','description','cover','redirect','price','priceSale','location','creation_date','colors')
+        fields = ('store','name','description','cover','redirect','price','priceSale','location','creation_date','colors')
 
     def get_store(self, obj):
         return obj.store.name

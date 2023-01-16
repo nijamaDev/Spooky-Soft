@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from rest_framework import routers
 from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet, UsersViewSet, NewsViewSet, GoogleUsersViewSet, ProductRegistersViewSet, ProductsViewSet
-from .myapi import scarpInit, logIn, createUser, createProduct, createProducts, createProductRegister, createProductRegisterGivenDate, createProductRegisterAllProducts, getPerson, getRole, getStatus, getTodayProductRegisters, updateUserNoPassword, updateUserPassword, updateProduct, addVisit, addRedirect, deleteProduct
+from .myapi import scarpInit, logIn, createUser, createProduct, createProducts, updateProducts, createProductRegister, createProductRegisterGivenDate, createProductRegisterAllProducts, getPerson, getRole, getStatus, getTodayProductRegisters, updateUserNoPassword, updateUserPassword, updateProduct, addVisit, addRedirect, deleteProduct
 
 router = routers.DefaultRouter()
 
@@ -42,6 +42,7 @@ urlpatterns.append(path('api/update_user_password/<str:id>/', updateUserPassword
 #---------[ PRODUCTS ]---------------------------------------------------------------------------------------------------
 urlpatterns.append(path('api/create_product/', createProduct, name='create_product'))
 urlpatterns.append(path('api/create_products/', createProducts, name='create_products'))
+urlpatterns.append(path('api/update_products/', updateProducts, name='update_products'))
 urlpatterns.append(path('api/update_product/<str:id>/', updateProduct, name='update_product'))
 urlpatterns.append(path('api/delete_product/<str:id>/', deleteProduct, name='delete_product'))
 #---------[ PRODUCT REGISTERS ]---------------------------------------------------------------------------------------------------
