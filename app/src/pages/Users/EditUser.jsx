@@ -57,14 +57,20 @@ export default function AlertDialog({ open, setOpen, user, updateList, setUpdate
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_user/${id}/`, {
+      const res1 = await axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_user/${id}/`, {
         name,
         lastname,
         email,
         role,
         status,
       });
-      console.log(response);
+      console.log(res1);
+      if (password !== '') {
+        const res2 = await axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_user_password/${id}/`, {
+          password,
+        });
+        console.log(res2);
+      }
       setOpen(false);
       setUpdateList(!updateList);
     } catch (error) {
@@ -101,6 +107,7 @@ export default function AlertDialog({ open, setOpen, user, updateList, setUpdate
       setName(user.name);
       setLastname(user.lastname);
       setEmail(user.email);
+      setPassword('');
       setRole(roleMap[user.role] || user.role);
       setStatus(statusMap[user.status] || user.status);
     }
@@ -121,15 +128,7 @@ export default function AlertDialog({ open, setOpen, user, updateList, setUpdate
           <Box pt={3} pb={3} pr={3} onSubmit={handleSubmit} component="form">
             <FormContainer>
               <FormItem phone={phone} computer={computer}>
-                <TextField
-                  required
-                  fullWidth
-                  id="id"
-                  label="ID"
-                  value={id}
-                  onChange={handleInputChange}
-                  disabled={false}
-                />
+                <TextField required fullWidth id="id" label="ID" value={id} onChange={handleInputChange} disabled />
               </FormItem>
               <FormItem phone={phone} computer={computer}>
                 <TextField required fullWidth id="name" label="Name" value={name} onChange={handleInputChange} />

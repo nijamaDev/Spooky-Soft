@@ -269,7 +269,12 @@ export default function UserPage() {
                             </Label>
                             {
                               (isLoading && <CircularProgress />) || (
-                                <MenuItem onClick={() => setOpenEdit(true)}>
+                                <MenuItem
+                                  onClick={() => {
+                                    setOpenEdit(true);
+                                    setUserID(row);
+                                  }}
+                                >
                                   <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
                                   Edit
                                 </MenuItem>
