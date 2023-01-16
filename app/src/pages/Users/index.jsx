@@ -268,8 +268,8 @@ export default function UserPage() {
                               {sentenceCase(statusMap[status] || status)}
                             </Label>
                             {
-                              (isLoading && <CircularProgress />) || (
-                                <MenuItem
+                              (isLoading && <CircularProgress size={36} />) || (
+                                <Button
                                   onClick={() => {
                                     setOpenEdit(true);
                                     setUserID(row);
@@ -277,7 +277,7 @@ export default function UserPage() {
                                 >
                                   <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
                                   Edit
-                                </MenuItem>
+                                </Button>
                               ) /* || (
                                 <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row)}>
                                   <Iconify icon={'eva:more-vertical-fill'} />
