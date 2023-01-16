@@ -81,4 +81,4 @@ class ProductRegisters(models.Model):
     redirect = models.IntegerField()
 
     def __str__(self):
-        return self.product + ' ' + self.redirect
+        return self.product.name + ' ' + str(self.redirect)

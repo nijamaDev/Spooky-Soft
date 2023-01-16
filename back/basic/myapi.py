@@ -93,6 +93,25 @@ def createProductRegister(req):
         productRegister.save()
     return Response(res)
 
+@api_view(['POST'])
+def createProductRegisterGivenDate(req):  
+    data = req.data
+    if req.method == 'POST':
+        products = Products.objects.all()
+        for i in range(len(products)):
+            productRegister = ProductRegisters.objects.create(product=products[i], date=data['date'], visits=0, redirect=0)
+            productRegister.save()
+    return Response("REGISTROS CREADOS") 
+
+@api_view(['POST'])
+def createProductRegisterAllProducts(req):  
+    if req.method == 'POST':
+        products = Products.objects.all()
+        for i in range(len(products)):
+            productRegister = ProductRegisters.objects.create(product=products[i], date=datetime.now().date(), visits=0, redirect=0)
+            productRegister.save()
+    return Response("REGISTROS CREADOS") 
+
 @api_view(['GET'])
 def getAllUsers(req):
     if req.method == 'GET':
@@ -111,8 +130,9 @@ def getTodayProductRegisters(req):
 @api_view(['POST'])
 def getPerson(req):
     res = { 'name': "", 'lastname': "", 'identification': "" }
+    data = req.data
     try:
-        person = People.objects.get(id=req.data['id'])
+        person = People.objects.get(id=data['id'])
     except People.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if req.method == 'POST':
@@ -125,9 +145,10 @@ def getPerson(req):
 
 @api_view(['POST'])
 def getRole(req):
-    res = { 'name': "" }
+    res = { 'name': "" }        
+    data = req.data
     try:
-        role = Roles.objects.get(id=req.data['id'])
+        role = Roles.objects.get(id=data['id'])
     except Roles.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if req.method == 'POST':
