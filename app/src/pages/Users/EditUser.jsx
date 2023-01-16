@@ -33,7 +33,7 @@ import {
 import Iconify from '../../components/iconify';
 import { FormContainer, FormItem, Selector } from '../../components/Forms';
 
-export default function AlertDialog({ open, setOpen, user }) {
+export default function AlertDialog({ open, setOpen, user, updateList, setUpdateList }) {
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
@@ -43,17 +43,19 @@ export default function AlertDialog({ open, setOpen, user }) {
   const [status, setStatus] = useState(3);
   const phone = 12;
   const computer = 6;
+  const roleMap = {
+    Visitante: 3,
+    Operario: 2,
+    Administrador: 1,
+  };
+
+  const statusMap = {
+    Activo: 3,
+    Inactivo: 4,
+    Suspendido: 5,
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({
-      id,
-      name,
-      lastname,
-      email,
-      password,
-      role,
-      status,
-    });
     try {
       const response = await axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_user/${id}/`, {
         name,
@@ -64,6 +66,7 @@ export default function AlertDialog({ open, setOpen, user }) {
       });
       console.log(response);
       setOpen(false);
+      setUpdateList(!updateList);
     } catch (error) {
       console.error(error);
     }
@@ -98,7 +101,8 @@ export default function AlertDialog({ open, setOpen, user }) {
       setName(user.name);
       setLastname(user.lastname);
       setEmail(user.email);
-      console.log('USE EFFECT ', user);
+      setRole(roleMap[user.role] || user.role);
+      setStatus(statusMap[user.status] || user.status);
     }
   }, [open]);
   return (

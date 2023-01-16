@@ -107,12 +107,14 @@ export default function UserPage() {
 
   const [openEdit, setOpenEdit] = useState(false);
 
+  const [updateList, setUpdateList] = useState(false);
+
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/users/`).then((res) => {
       setUserlist(res.data);
       console.log('UPDATE');
     });
-  }, [update]);
+  }, [updateList]);
 
   const handleOpenMenu = (event, row) => {
     setOpen(event.currentTarget);
@@ -329,7 +331,13 @@ export default function UserPage() {
         </MenuItem>
       </Popover>
       <NewUser open={openNew} setOpen={setOpenNew} />
-      <EditUser open={openEdit} setOpen={setOpenEdit} user={userID} />
+      <EditUser
+        open={openEdit}
+        setOpen={setOpenEdit}
+        user={userID}
+        updateList={updateList}
+        setUpdateList={setUpdateList}
+      />
     </>
   );
 }
