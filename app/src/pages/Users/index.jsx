@@ -13,6 +13,7 @@ import {
   Button,
   Popover,
   Checkbox,
+  CircularProgress,
   TableRow,
   MenuItem,
   TableBody,
@@ -109,10 +110,15 @@ export default function UserPage() {
 
   const [updateList, setUpdateList] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
+    setOpen(null);
+    setIsLoading(true);
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/users/`).then((res) => {
       setUserlist(res.data);
       console.log('UPDATE');
+      setIsLoading(false);
     });
   }, [updateList]);
 
@@ -204,6 +210,7 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Users
           </Typography>
+
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpenNew(true)}>
             New User
           </Button>
@@ -249,15 +256,30 @@ export default function UserPage() {
                         <TableCell align="left">{roleMap[role] || role}</TableCell>
 
                         <TableCell align="left">
-                          <Label color={statusColorMap[status] || 'default'}>
-                            {sentenceCase(statusMap[status] || status)}
-                          </Label>
-                        </TableCell>
-
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row)}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            mb={5}
+                            display="flex"
+                            margin="auto"
+                          >
+                            <Label color={statusColorMap[status] || 'default'}>
+                              {sentenceCase(statusMap[status] || status)}
+                            </Label>
+                            {
+                              (isLoading && <CircularProgress />) || (
+                                <MenuItem onClick={() => setOpenEdit(true)}>
+                                  <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+                                  Edit
+                                </MenuItem>
+                              ) /* || (
+                                <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row)}>
+                                  <Iconify icon={'eva:more-vertical-fill'} />
+                                </IconButton>
+                              ) */
+                            }
+                          </Stack>
                         </TableCell>
                       </TableRow>
                     );
