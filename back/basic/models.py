@@ -40,7 +40,7 @@ class Stores(models.Model):
         return self.name
         
 class Products(models.Model):
-    store = models.ForeignKey(Stores, on_delete=models.CASCADE, null=False)
+    store = models.ForeignKey(Stores, on_delete=models.CASCADE, null=False, related_name='products')
     name = models.CharField(max_length=100, null=False)
     description = models.CharField(max_length=500, null=False)
     cover = models.CharField(max_length=500, null=False)
