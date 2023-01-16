@@ -187,6 +187,12 @@ export default function UserPage() {
     5: 'Suspendido',
   };
 
+  const statusColorMap = {
+    Activo: 'success',
+    Inactivo: 'warning',
+    Suspendido: 'error',
+  };
+
   return (
     <>
       <Helmet>
@@ -243,7 +249,7 @@ export default function UserPage() {
                         <TableCell align="left">{roleMap[role] || role}</TableCell>
 
                         <TableCell align="left">
-                          <Label color={(status === 'disabled' && 'error') || 'success'}>
+                          <Label color={statusColorMap[status] || 'default'}>
                             {sentenceCase(statusMap[status] || status)}
                           </Label>
                         </TableCell>
