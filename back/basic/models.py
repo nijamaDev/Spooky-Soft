@@ -44,7 +44,7 @@ class Products(models.Model):
     name = models.CharField(max_length=100, null=False)
     description = models.CharField(max_length=500, null=False)
     cover = models.CharField(max_length=500, null=False)
-    redirect = models.CharField(max_length=500, null=False)
+    redirect = models.CharField(max_length=500, null=False, unique=True)
     price = models.FloatField(max_length=100, null=False)
     priceSale = models.FloatField(max_length=100, null=True)
     location = models.CharField(max_length=100, null=False)   

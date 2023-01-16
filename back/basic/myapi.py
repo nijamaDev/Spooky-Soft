@@ -5,7 +5,7 @@ from datetime import date
 from datetime import datetime
 from .models import Users, People, Roles, Status, Stores, Products, ProductRegisters
 from .scraping import scrapElement
-from .serializers import UserSerializer, ProductRegistersSerializer
+from .serializers import UserSerializer, ProductsSerializer, ProductRegistersSerializer
 
 #------------------------------------------------------------------------------------------------------------
 @api_view(['GET'])
@@ -158,8 +158,22 @@ def createProducts(req):
     if req.method == 'POST':
         for i in range(len(data['products'])):
             store = Stores.objects.get(name=data['products'][i]['store'])
-            product = Products.objects.create(store=store, name=data['products'][i]['name'], description=data['products'][i]['description'], cover=data['products'][i]['cover'], redirect=data['products'][i]['redirect'], price=data['products'][i]['price'], priceSale=data['products'][i]['priceSale'], location=data['products'][i]['location'], colors=data['products'][i]['colors'])
-            product.save()
+            existing_product = Products.objects.filter(redirect=data['products'][i]['redirect'])
+            if not existing_product.exists():
+                product = Products.objects.create(store=store, name=data['products'][i]['name'], description=data['products'][i]['description'], cover=data['products'][i]['cover'], redirect=data['products'][i]['redirect'], price=data['products'][i]['price'], priceSale=data['products'][i]['priceSale'], location=data['products'][i]['location'], colors=data['products'][i]['colors'])
+                product.save()
+        return Response(status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+def updateProducts(request):
+    data = request.data
+    for product_data in data['products']:
+        redirect = product_data.get('redirect')
+        product = Products.objects.filter(redirect=redirect).first()
+        if product:
+            serializer = ProductsSerializer(product, data=product_data)
+            if serializer.is_valid():
+                serializer.save()
     return Response(status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
@@ -213,11 +227,14 @@ def createProductRegisterGivenDate(req):
 @api_view(['POST'])
 def createProductRegisterAllProducts(req):  
     if req.method == 'POST':
+        today = datetime.now().date()
         products = Products.objects.all()
         for i in range(len(products)):
-            productRegister = ProductRegisters.objects.create(product=products[i], date=datetime.now().date(), visits=0, redirect=0)
-            productRegister.save()
-    return Response("REGISTROS CREADOS") 
+            existing_product_register = ProductRegisters.objects.filter(product=products[i], date=today).first()
+            if not existing_product_register:
+                productRegister = ProductRegisters.objects.create(product=products[i], date=today, visits=0, redirect=0)
+                productRegister.save() 
+        return Response("REGISTROS CREADOS")
 
 @api_view(['GET'])
 def getTodayProductRegisters(req):
