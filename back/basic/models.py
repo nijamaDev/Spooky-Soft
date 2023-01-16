@@ -77,8 +77,8 @@ class GoogleUsers(models.Model):
 class ProductRegisters(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE, null=False)
     date = models.DateField(max_length=100, null=False)
-    visits = models.FloatField(max_length=100)
-    redirect = models.FloatField(max_length=100)
+    visits = models.IntegerField()
+    redirect = models.IntegerField()
 
     def __str__(self):
         return self.product + ' ' + self.redirect

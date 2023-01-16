@@ -54,12 +54,16 @@ class GoogleUsersSerializer(serializers.ModelSerializer):
         model = GoogleUsers
         fields = '__all__'
 
-class ProductRegistersSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductRegisters
-        fields = '__all__'
-
 class ProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Products
         fields = '__all__'
+
+class ProductRegistersSerializer(serializers.ModelSerializer):
+    product = ProductsSerializer(read_only=True)
+    class Meta:
+        model = ProductRegisters
+        fields = ('id','product','date','visits','redirect')
+
+    def get_product(self, obj):
+        return obj.product.name

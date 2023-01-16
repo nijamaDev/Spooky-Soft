@@ -94,7 +94,6 @@ export default function LoginForm() {
                 });
                 RemoveCookie('usrin');
                 if (remember) {
-                  console.log("set cookie")
                   SetCookie(
                     'usrin',
                     JSON.stringify({

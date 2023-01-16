@@ -1,6 +1,8 @@
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import axios from 'axios';
 // @mui
 import { Container, Divider, Stack, Typography } from '@mui/material';
 
@@ -11,13 +13,20 @@ import ProductList from './ProductList'
 // import ProductCartWidget from './ProductCartWidget'
 
 // mock
-import PRODUCTS from '../../_mock/products';
+// import PRODUCTS from '../../_mock/products';
 
 // ----------------------------------------------------------------------
 
 export default function ProductsPage() {
   const navigate = useNavigate();
   const [openFilter, setOpenFilter] = useState(false);
+  const [products, setProducts] = useState([]) 
+
+  useEffect(()=>{
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/today_product_registers/`).then((res) => {
+      setProducts(res.data)
+    })
+  }, [])
 
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -49,7 +58,7 @@ export default function ProductsPage() {
           </Stack>
         </Stack>
         
-        <ProductList products={PRODUCTS} />
+        <ProductList products={products} />
         {/* <ProductCartWidget /> */}
       </Container>
     </>
