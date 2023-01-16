@@ -49,7 +49,6 @@ export default function LoginForm() {
   });
 
   const onSuccess = (res) => {
-    console.log('success:');
     setRemember(true);
     const obj = {
       email: res.profileObj.email,
@@ -84,45 +83,56 @@ export default function LoginForm() {
     axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/login/`, obj).then((res) => {
       const user = res.data.user;
       console.log(res.data);
-      if (res.data.status === 1) {
-        setDisplay(false);
-        axios
-          .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: user.person_id })
-          .then((response) => {
-            const person = response.data;
-            axios
-              .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_role/`, { id: user.role_id })
-              .then((response) => {
-                const role = response.data;
-                axios
-                  .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_status/`, { id: user.status_id })
-                  .then((response) => {
-                    const status = response.data;
-                    setLogin({
-                      ...user,
-                      person,
-                      role,
-                      status,
-                      found: true,
-                    });
-                    RemoveCookie('usrin');
-                    if (remember) {
-                      SetCookie(
-                        'usrin',
-                        JSON.stringify({
-                          ...user,
-                          person,
-                          role,
-                          status,
-                        })
-                      );
-                    }
-                    navigate('/dashboard', { replace: true });
-                  });
-              });
-          });
-      } else {
+      if (res.data.status !== 1) {
         setOpen(true);
+      } else {
+        setDisplay(false);
+        try {
+          axios
+            .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: user.person_id })
+            .then((response) => {
+              const person = response.data;
+              axios
+                .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_role/`, { id: user.role_id })
+                .then((response) => {
+                  const role = response.data;
+                  axios
+                    .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_status/`, { id: user.status_id })
+                    .then((response) => {
+                      const status = response.data;
+                      if (status.name !== 'Activo') {
+                        setOpen(true);
+                        setDisplay(true);
+                        return;
+                      }
+                      setLogin({
+                        ...user,
+                        person,
+                        role,
+                        status,
+                        found: true,
+                      });
+                      RemoveCookie('usrin');
+                      if (remember) {
+                        SetCookie(
+                          'usrin',
+                          JSON.stringify({
+                            ...user,
+                            person,
+                            role,
+                            status,
+                          })
+                        );
+                      }
+                      navigate('/dashboard', { replace: true });
+                    });
+                });
+            });
+        } catch (error) {
+          console.error(error);
+        } finally {
+          console.log('');
+        }
       }
     });
   };
@@ -198,7 +208,7 @@ export default function LoginForm() {
 
       <LinearProgress sx={{ display: display ? 'none' : 'block' }} />
 
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
         <Alert variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
           Datos inválidos. Por favor, intente nuevamente.
         </Alert>
