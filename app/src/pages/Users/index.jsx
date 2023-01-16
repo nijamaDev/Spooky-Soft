@@ -211,9 +211,9 @@ export default function UserPage() {
             Users
           </Typography>
 
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpenNew(true)}>
+          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpenNew(true)}>
             New User
-          </Button>
+          </Button> */}
         </Stack>
 
         <Card>
