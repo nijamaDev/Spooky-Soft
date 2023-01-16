@@ -1,10 +1,11 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from datetime import date
 from datetime import datetime
 from .models import Users, People, Roles, Status, Stores, Products, ProductRegisters
 from .scraping import scrapElement
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ProductRegistersSerializer
 
 @api_view(['GET'])
 def scarpInit(req):
@@ -99,6 +100,14 @@ def getAllUsers(req):
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
+@api_view(['GET'])
+def getTodayProductRegisters(req):
+    if req.method == 'GET':
+        today = date.today()
+        product_registers = ProductRegisters.objects.filter(date=today)
+        serializer = ProductRegistersSerializer(product_registers, many=True, context={'request': req})
+        return Response(serializer.data)
+
 @api_view(['POST'])
 def getPerson(req):
     res = { 'name': "", 'lastname': "", 'identification': "" }
@@ -141,18 +150,57 @@ def getStatus(req):
         return Response(res)
 
 @api_view(['PUT'])
-def updateUserNoPassword(req, user_id):
+def updateUserNoPassword(req, id):
     data = req.data
-    user = Users.objects.get(id=user_id)
+    user = Users.objects.get(id=id)
     if req.method == 'PUT':
         People.objects.filter(id=user.person.id).update(name=data.get('name'), lastname=data.get('lastname')) 
-        Users.objects.filter(id=user_id).update(email=data['email'],role=data['role'],status=data['status'])
+        Users.objects.filter(id=id).update(email=data['email'],role=data['role'],status=data['status'])
         return Response(status=status.HTTP_200_OK) 
 
 @api_view(['PUT'])
-def updateUserPassword(req, user_id):
-    user = Users.objects.get(id=user_id)
+def updateUserPassword(req, id):
+    user = Users.objects.get(id=id)
     if req.method == 'PUT':
         user.password = req.data.get('password')
         user.save()
         return Response(status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+def updateProduct(req, id):
+    if req.method == 'PUT':
+        data = req.data
+        product = Products.objects.get(id=id)
+        product.name = data.get('name', product.name)
+        product.description = data.get('description', product.description)
+        product.cover = data.get('cover', product.cover)
+        product.redirect = data.get('redirect', product.redirect)
+        product.price = data.get('price', product.price)
+        product.priceSale = data.get('priceSale', product.priceSale)
+        product.location = data.get('location', product.location)
+        product.colors = data.get('colors', product.colors)
+        product.save()
+        return Response(status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+def addVisit(req, id):
+    if req.method == 'PUT':
+        product_register = ProductRegisters.objects.get(id=id)
+        product_register.visits += 1
+        product_register.save()
+        return Response(ProductRegistersSerializer(product_register).data)
+
+@api_view(['PUT'])
+def addRedirect(req, id):
+    if req.method == 'PUT':
+        product_register = ProductRegisters.objects.get(id=id)
+        product_register.redirect += 1
+        product_register.save()
+        return Response(ProductRegistersSerializer(product_register).data)
+
+@api_view(['DELETE'])
+def deleteProduct(req, id):
+    if req.method == 'DELETE':
+        product = Products.objects.get(id=id)
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
