@@ -38,7 +38,9 @@ export default function SignUpForm() {
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+  const [role, setRole] = useState(1);
+  const [status, setStatus] = useState(1);
+
   useEffect(() => {
     const initClient = () => {
       gapi.client.init({
@@ -53,19 +55,19 @@ export default function SignUpForm() {
     // console.log('success:',res);
     // setRemember(true)
     const obj = {
-      role : "Visitante",
-      status : "Activo",
-      imageUrl : res.profileObj.imageUrl,
-      email : res.profileObj.email,
-      password : res.profileObj.googleId,
-      people : {
-        identification : "",
-        name : res.profileObj.givenName,
-        lastname : res.profileObj.familyName,
-      }    
-    }
+      role: 'Visitante',
+      status: 'Activo',
+      imageUrl: res.profileObj.imageUrl,
+      email: res.profileObj.email,
+      password: res.profileObj.googleId,
+      people: {
+        identification: '',
+        name: res.profileObj.givenName,
+        lastname: res.profileObj.familyName,
+      },
+    };
     // console.log(obj)
-    onSignUp(obj)
+    onSignUp(obj);
   };
 
   const handleInputChange = ({ target }) => {
@@ -92,71 +94,70 @@ export default function SignUpForm() {
 
   const signButton = () => {
     const obj = {
-      role : "Visitante",
-      status : "Activo",
-      imageUrl : "",
+      role: 'Visitante',
+      status: 'Activo',
+      imageUrl: '',
       email,
       password,
-      people : {
-        identification : id,
+      people: {
+        identification: id,
         name,
         lastname,
-      }    
+      },
     };
-    console.log(obj)
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if( !re.test(email) || name === "" || lastname === ""){
+    console.log(obj);
+    const re =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!re.test(email) || name === '' || lastname === '') {
       setOpen(true);
     } else {
-      onSignUp(obj)
+      onSignUp(obj);
     }
-  }
+  };
 
   const onSignUp = (obj) => {
     axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/create_user/`, obj).then((res) => {
-      const user = res.data.user      
-      if (res.data.status === 1) {     
-        setDisplay(false)   
+      const user = res.data.user;
+      if (res.data.status === 1) {
+        setDisplay(false);
         axios
           .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: user.person_id })
           .then((response) => {
-          const person = response.data;
-          axios
-            .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_role/`, { id: user.role_id })
-            .then((response) => {
-              const role = response.data
-              axios
-              .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_status/`, { id: user.status_id })
+            const person = response.data;
+            axios
+              .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_role/`, { id: user.role_id })
               .then((response) => {
-                const status = response.data
-                setLogin({
-                  ...user,
-                  person,
-                  role,
-                  status,
-                  found:true
-                });
-                RemoveCookie('usrin');
-                SetCookie(
-                  'usrin',
-                  JSON.stringify({
-                    ...user,
-                    person,
-                    role,
-                    status,
-                  })
-                );
-                navigate('/dashboard', { replace: true });
-              })
-            })
-        
+                const role = response.data;
+                axios
+                  .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_status/`, { id: user.status_id })
+                  .then((response) => {
+                    const status = response.data;
+                    setLogin({
+                      ...user,
+                      person,
+                      role,
+                      status,
+                      found: true,
+                    });
+                    RemoveCookie('usrin');
+                    SetCookie(
+                      'usrin',
+                      JSON.stringify({
+                        ...user,
+                        person,
+                        role,
+                        status,
+                      })
+                    );
+                    navigate('/dashboard', { replace: true });
+                  });
+              });
           });
         // console.log(remember)
-        } else {
-          setOpen(true);
-        }
-    })
-        
+      } else {
+        setOpen(true);
+      }
+    });
   };
 
   const [open, setOpen] = useState(false);
@@ -170,12 +171,12 @@ export default function SignUpForm() {
 
   return (
     <>
-    <Box sx={{display:display ? 'block' : 'none'}}>
-      <GoogleLogin
+      <Box sx={{ display: display ? 'block' : 'none' }}>
+        <GoogleLogin
           clientId={clientId}
           buttonText="Sign In with Google"
           onSuccess={onSuccess}
-          onFailure={()=>setOpen(true)}
+          onFailure={() => setOpen(true)}
           cookiePolicy={'single_host_origin'}
         />
         <Divider sx={{ my: 3 }}>
@@ -183,22 +184,23 @@ export default function SignUpForm() {
             OR
           </Typography>
         </Divider>
-      <Stack spacing={3} >
-        <TextField id="email_s" required label="Email address" name="email" value={email} onChange={handleInputChange} />
-
-        <TextField required id="name" label="Name" value={name} onChange={handleInputChange} />
-
-        <TextField
+        <Stack spacing={3}>
+          <TextField
+            id="email_s"
             required
-            id="lastname"
-            label="Lastname"
-            value={lastname}
+            label="Email address"
+            name="email"
+            value={email}
             onChange={handleInputChange}
-        />
+          />
 
-        <TextField id="id" label="Identification" name="Identification" value={id} onChange={handleInputChange} />  
-        
-        <TextField
+          <TextField required id="name" label="Name" value={name} onChange={handleInputChange} />
+
+          <TextField required id="lastname" label="Lastname" value={lastname} onChange={handleInputChange} />
+
+          <TextField id="id" label="Identification" name="Identification" value={id} onChange={handleInputChange} />
+
+          <TextField
             id="password_s"
             label="Password"
             name="password"
@@ -207,29 +209,28 @@ export default function SignUpForm() {
             onChange={handleInputChange}
             type={showPassword ? 'text' : 'password'}
             InputProps={{
-                endAdornment: (
+              endAdornment: (
                 <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
                     <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
+                  </IconButton>
                 </InputAdornment>
-                ),
+              ),
             }}
-            />
-        <LoadingButton size="large" variant="contained" onClick={signButton}>
-          Sign Up
-        </LoadingButton>
-      </Stack>
-    </Box>
+          />
+          <LoadingButton size="large" variant="contained" onClick={signButton}>
+            Sign Up
+          </LoadingButton>
+        </Stack>
+      </Box>
 
-    <LinearProgress sx={{display:display ? 'none' : 'block'}}/>
+      <LinearProgress sx={{ display: display ? 'none' : 'block' }} />
 
-    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-      <Alert variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-        Datos inválidos. Por favor, intente nuevamente.
-      </Alert>
-    </Snackbar>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          Datos inválidos. Por favor, intente nuevamente.
+        </Alert>
+      </Snackbar>
     </>
-    
   );
 }
