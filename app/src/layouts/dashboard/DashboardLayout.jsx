@@ -37,7 +37,6 @@ export default function DashboardLayout() {
   const { login } = useContext(AppContext);
 
   const [open, setOpen] = useState(false);
-  const [dashLay, setDashLay] = useState(<></>);
   const navigate = useNavigate();
 
   useEffect(() => {

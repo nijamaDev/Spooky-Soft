@@ -50,10 +50,6 @@ export default function AccountPopover() {
   };
   const MENU_OPTIONS = [
     {
-      label: 'Dashboard',
-      handle: handleDash,
-    },
-    {
       label: 'Blog',
       handle: handleBlog,
     },
@@ -124,6 +120,13 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Stack sx={{ p: 1 }}>
+          {login.role.name === 'Operario' || login.role.name === 'Administrador' ? (
+            <MenuItem key="Dashboard" onClick={handleDash}>
+              Dashboard
+            </MenuItem>
+          ) : (
+            <></>
+          )}
           {MENU_OPTIONS.map((option) => (
             <MenuItem key={option.label} onClick={option.handle}>
               {option.label}
