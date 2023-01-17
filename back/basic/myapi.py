@@ -10,7 +10,7 @@ from .serializers import UserSerializer, ProductRegistersSerializer
 @api_view(['POST'])
 def scarpInit(req):
     res = { 'status':0, 'elements': "" }
-    elements = descuentos(req.data['tipo'], req.data['prompt'])
+    elements = descuentos(req.data['tipo'], req.data['prompt'], req.data['store'])
     res['elements'] = elements
     res['status'] = 1
     return Response(res)
