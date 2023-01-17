@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
+import { Box, Divider, Typography, Stack, MenuItem, Avatar, Button, IconButton, Popover } from '@mui/material';
 // mocks_
 // import account from '../../../_mock/account';
 import RemoveCookie from '../../../hooks/removeCookie';
@@ -41,9 +41,12 @@ export default function AccountPopover() {
 
   const handleLogout = () => {
     RemoveCookie('usrin');
-    navigate('/login', { replace: true });
+    navigate('/blog', { replace: true });
     setOpen(null);
     setLogin({ found: false });
+  };
+  const handleLogin = () => {
+    navigate('/login', { replace: true });
   };
   const MENU_OPTIONS = [
     {
@@ -60,7 +63,11 @@ export default function AccountPopover() {
     },
   ];
   return login == null || login.found === 'waiting' || login.found === false ? (
-    <></>
+    <>
+      <Button style={{ width: '150px', height: '50px' }} onClick={handleLogin}>
+        Sign up | Log in
+      </Button>
+    </>
   ) : (
     <>
       <IconButton

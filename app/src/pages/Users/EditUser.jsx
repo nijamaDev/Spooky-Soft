@@ -1,36 +1,10 @@
-import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import { useState, useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import axios from 'axios';
 // @mui
-import {
-  Card,
-  Table,
-  Stack,
-  Paper,
-  Avatar,
-  Button,
-  Popover,
-  Checkbox,
-  TableRow,
-  MenuItem,
-  TableBody,
-  TableCell,
-  Container,
-  Typography,
-  IconButton,
-  TableContainer,
-  TablePagination,
-  Box,
-  TextField,
-} from '@mui/material';
+import { Stack, Button, Typography, Box, TextField } from '@mui/material';
 // components
-import Iconify from '../../components/iconify';
 import { FormContainer, FormItem, Selector } from '../../components/Forms';
 
 export default function AlertDialog({ open, setOpen, user, updateList, setUpdateList }) {
