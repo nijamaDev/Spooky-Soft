@@ -4,16 +4,14 @@ from rest_framework.response import Response
 from datetime import date
 from datetime import datetime
 from .models import Users, People, Roles, Status, Stores, Products, ProductRegisters
-from .scraping import scrapElement
+from .scraping import descuentos
 from .serializers import UserSerializer, ProductRegistersSerializer
 
-#------------------------------------------------------------------------------------------------------------
-@api_view(['GET'])
+@api_view(['POST'])
 def scarpInit(req):
-    res = { 'status':0, 'element': "" }
-    element = scrapElement()
-    print(element)
-    res['element'] = element
+    res = { 'status':0, 'elements': "" }
+    elements = descuentos(req.data['tipo'], req.data['prompt'], req.data['store'])
+    res['elements'] = elements
     res['status'] = 1
     return Response(res)
 
