@@ -45,7 +45,7 @@ export default function SignUpForm() {
     const initClient = () => {
       gapi.client.init({
         clientId,
-        scope: '',
+        scope: 'https://www.googleapis.com/auth/userinfo.profile',
       });
     };
     gapi.load('client:auth2', initClient);

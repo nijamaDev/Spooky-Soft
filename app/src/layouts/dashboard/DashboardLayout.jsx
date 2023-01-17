@@ -34,36 +34,35 @@ const Main = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function DashboardLayout() {
-  const { login } = useContext(AppContext)
+  const { login } = useContext(AppContext);
 
   const [open, setOpen] = useState(false);
-  const [dashLay, setDashLay] = useState(<></>)
-  const navigate = useNavigate();   
+  const [dashLay, setDashLay] = useState(<></>);
+  const navigate = useNavigate();
 
-  useEffect(()=>{
-    console.log(login)
-    if(login.found !== "waiting"){
-      if(!login.found){
+  useEffect(() => {
+    console.log(login);
+    if (login.found !== 'waiting') {
+      if (!login.found) {
         // console.log('login',login)
-        navigate('/login')
-      } else if(login.role.name === "Visitante"){
-          navigate('/products')
-        } else {
-          setDashLay(
-            <StyledRoot>
-              <Header onOpenNav={() => setOpen(true)} />
-    
-              <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-    
-              <Main>
-                <Outlet />
-              </Main>
-            </StyledRoot>
-          )
-        }        
-      
+        navigate('/login');
+      } else if (login.role.name === 'Visitante') {
+        navigate('/products');
+      } else {
+        setDashLay(
+          <StyledRoot>
+            <Header onOpenNav={() => setOpen(true)} />
+
+            <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+
+            <Main>
+              <Outlet />
+            </Main>
+          </StyledRoot>
+        );
+      }
     }
-    
+
     /*    
     if(login.id !== undefined){
       // Still looking
@@ -84,15 +83,8 @@ export default function DashboardLayout() {
         )
       }
     }    
-    */    
-    
-  },[login])
+    */
+  }, [login]);
 
-
-  return (
-    <>
-    {dashLay}
-    </>
-     
-  );
+  return <>{dashLay}</>;
 }
