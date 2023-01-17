@@ -6,6 +6,7 @@ from datetime import datetime
 from .models import Users, People, Roles, Status, Stores, Products, ProductRegisters
 from .scraping import scrapElement
 from .serializers import UserSerializer, ProductsSerializer, ProductRegistersSerializer
+from django.db.models import Count
 
 #------------------------------------------------------------------------------------------------------------
 @api_view(['GET'])
@@ -258,4 +259,26 @@ def addRedirect(req, id):
         product_register = ProductRegisters.objects.get(id=id)
         product_register.redirect += 1
         product_register.save()
-        return Response(ProductRegistersSerializer(product_register).data)        
+        return Response(ProductRegistersSerializer(product_register).data)
+
+
+
+#---------------------------reportes-------------------------------------------------------------------------------------        
+
+@api_view(['GET'])
+def report1(req):
+    if req.method == 'GET':
+       today = datetime.now()
+       month = today.month
+       report = ProductRegisters.objects.filter(date_month=month-1).order_by('-redirects')[:10]
+       serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
+       return Response(serializer.data)
+
+@api_view(['GET'])
+def report2(req):
+    if req.method == 'GET':
+       today = datetime.now()
+       month = today.month
+       report = ProductRegisters.objects.values(date_month=month-1).order_by('-visits')[:10]
+       serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
+       return Response(serializer.data)
