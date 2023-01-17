@@ -10,21 +10,6 @@ import RemoveCookie from '../../../hooks/removeCookie';
 import { AppContext } from '../../../context/AppContext';
 // ----------------------------------------------------------------------
 
-const MENU_OPTIONS = [
-  {
-    label: 'Home',
-    icon: 'eva:home-fill',
-  },
-  {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
-  },
-];
-
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
@@ -41,13 +26,39 @@ export default function AccountPopover() {
     setOpen(null);
   };
 
+  const handleDash = () => {
+    handleClose();
+    navigate('/dashboard');
+  };
+  const handleBlog = () => {
+    handleClose();
+    navigate('/blog');
+  };
+  const handleProducts = () => {
+    handleClose();
+    navigate('/products');
+  };
+
   const handleLogout = () => {
     RemoveCookie('usrin');
     navigate('/login', { replace: true });
     setOpen(null);
     setLogin({ found: false });
   };
-
+  const MENU_OPTIONS = [
+    {
+      label: 'Dashboard',
+      handle: handleDash,
+    },
+    {
+      label: 'Blog',
+      handle: handleBlog,
+    },
+    {
+      label: 'Products',
+      handle: handleProducts,
+    },
+  ];
   return login == null || login.found === 'waiting' || login.found === false ? (
     <></>
   ) : (
@@ -107,7 +118,7 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleClose}>
+            <MenuItem key={option.label} onClick={option.handle}>
               {option.label}
             </MenuItem>
           ))}
