@@ -41,50 +41,32 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(login);
+    console.log('login', login);
     if (login.found !== 'waiting') {
       if (!login.found) {
         // console.log('login',login)
         navigate('/login');
       } else if (login.role.name === 'Visitante') {
         navigate('/products');
-      } else {
-        setDashLay(
-          <StyledRoot>
-            <Header onOpenNav={() => setOpen(true)} />
-
-            <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-
-            <Main>
-              <Outlet />
-            </Main>
-          </StyledRoot>
-        );
       }
     }
-
-    /*    
-    if(login.id !== undefined){
-      // Still looking
-      if(login.found === false){
-        console.log('login',login)
-        navigate('/login')        
-      }else{
-        setDashLay(
-          <StyledRoot>
-                <Header onOpenNav={() => setOpen(true)} />
-  
-                <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-  
-                <Main>
-                  <Outlet />
-                </Main>
-              </StyledRoot>
-        )
-      }
-    }    
-    */
   }, [login]);
 
-  return <>{dashLay}</>;
+  return login == null ||
+    login.role == null ||
+    !login.found ||
+    (login.role.name !== 'Operario' && login.role.name !== 'Administrador') ? (
+    <></>
+  ) : (
+    <>
+      <StyledRoot>
+        <Header onOpenNav={() => setOpen(true)} />
+        <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+
+        <Main>
+          <Outlet />
+        </Main>
+      </StyledRoot>
+    </>
+  );
 }

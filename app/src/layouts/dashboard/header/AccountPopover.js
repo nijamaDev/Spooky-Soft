@@ -5,7 +5,7 @@ import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
 // mocks_
 // import account from '../../../_mock/account';
-import RemoveCookie from '../../../hooks/removeCookie'
+import RemoveCookie from '../../../hooks/removeCookie';
 
 import { AppContext } from '../../../context/AppContext';
 // ----------------------------------------------------------------------
@@ -29,7 +29,7 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const navigate = useNavigate();
-  const { login } = useContext(AppContext)
+  const { login, setLogin } = useContext(AppContext);
 
   const [open, setOpen] = useState(null);
 
@@ -38,13 +38,19 @@ export default function AccountPopover() {
   };
 
   const handleClose = () => {
-    RemoveCookie('usrin')  
-    navigate('/login', { replace: true });
     setOpen(null);
-
   };
 
-  return (
+  const handleLogout = () => {
+    RemoveCookie('usrin');
+    navigate('/login', { replace: true });
+    setOpen(null);
+    setLogin({ found: false });
+  };
+
+  return login == null || login.found === 'waiting' || login.found === false ? (
+    <></>
+  ) : (
     <>
       <IconButton
         onClick={handleOpen}
@@ -63,7 +69,10 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={login.imageUrl} alt="photoURL" sx={{backgroundColor: '#ff0000',}}>{login.person.name[0]}{login.person.lastname[0]}</Avatar>
+        <Avatar src={login.imageUrl} alt="photoURL" sx={{ backgroundColor: '#ff0000' }}>
+          {login.person.name[0]}
+          {login.person.lastname[0]}
+        </Avatar>
       </IconButton>
 
       <Popover
@@ -87,7 +96,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {login.name} {login.lastname}
+            {login.person.name} {login.person.lastname}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {login.email}
@@ -106,7 +115,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </Popover>
