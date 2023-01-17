@@ -2,34 +2,19 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
+import { Box, Divider, Typography, Stack, MenuItem, Avatar, Button, IconButton, Popover } from '@mui/material';
 // mocks_
 // import account from '../../../_mock/account';
-import RemoveCookie from '../../../hooks/removeCookie'
+import RemoveCookie from '../../../hooks/removeCookie';
 
 import { AppContext } from '../../../context/AppContext';
 // ----------------------------------------------------------------------
-
-const MENU_OPTIONS = [
-  {
-    label: 'Home',
-    icon: 'eva:home-fill',
-  },
-  {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
-  },
-];
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const navigate = useNavigate();
-  const { login } = useContext(AppContext)
+  const { login, setLogin } = useContext(AppContext);
 
   const [open, setOpen] = useState(null);
 
@@ -38,13 +23,48 @@ export default function AccountPopover() {
   };
 
   const handleClose = () => {
-    RemoveCookie('usrin')  
-    navigate('/login', { replace: true });
     setOpen(null);
-
   };
 
-  return (
+  const handleDash = () => {
+    handleClose();
+    navigate('/dashboard');
+  };
+  const handleBlog = () => {
+    handleClose();
+    navigate('/blog');
+  };
+  const handleProducts = () => {
+    handleClose();
+    navigate('/products');
+  };
+
+  const handleLogout = () => {
+    RemoveCookie('usrin');
+    navigate('/blog', { replace: true });
+    setOpen(null);
+    setLogin({ found: false });
+  };
+  const handleLogin = () => {
+    navigate('/login', { replace: true });
+  };
+  const MENU_OPTIONS = [
+    {
+      label: 'Blog',
+      handle: handleBlog,
+    },
+    {
+      label: 'Products',
+      handle: handleProducts,
+    },
+  ];
+  return login == null || login.found === 'waiting' || login.found === false ? (
+    <>
+      <Button style={{ width: '150px', height: '50px' }} onClick={handleLogin}>
+        Sign up | Log in
+      </Button>
+    </>
+  ) : (
     <>
       <IconButton
         onClick={handleOpen}
@@ -63,7 +83,10 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={login.imageUrl} alt="photoURL" sx={{backgroundColor: '#ff0000',}}>{login.person.name[0]}{login.person.lastname[0]}</Avatar>
+        <Avatar src={login.imageUrl} alt="photoURL" sx={{ backgroundColor: '#ff0000' }}>
+          {login.person.name[0]}
+          {login.person.lastname[0]}
+        </Avatar>
       </IconButton>
 
       <Popover
@@ -87,7 +110,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {login.name} {login.lastname}
+            {login.person.name} {login.person.lastname}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {login.email}
@@ -97,8 +120,15 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Stack sx={{ p: 1 }}>
+          {login.role.name === 'Operario' || login.role.name === 'Administrador' ? (
+            <MenuItem key="Dashboard" onClick={handleDash}>
+              Dashboard
+            </MenuItem>
+          ) : (
+            <></>
+          )}
           {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleClose}>
+            <MenuItem key={option.label} onClick={option.handle}>
               {option.label}
             </MenuItem>
           ))}
@@ -106,7 +136,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </Popover>

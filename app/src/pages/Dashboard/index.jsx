@@ -6,28 +6,15 @@ import { Grid, Container, Typography } from '@mui/material';
 // components
 import Iconify from '../../components/iconify';
 // sections
-/*
-import {
-  AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
-  AppCurrentVisits,
-  AppWebsiteVisits,
-  AppTrafficBySite,
-  AppWidgetSummary,
-  AppCurrentSubject,
-  AppConversionRates,
-} from '../../sections/@dashboard/app';
-*/
-import AppTasks from './AppTasks'
-import AppNewsUpdate from './AppNewsUpdate'
-import AppOrderTimeline from './AppOrderTimeline'
-import AppWebsiteVisits from './AppWebsiteVisits'
-import AppTrafficBySite from './AppTrafficBySite'
-import AppWidgetSummary from './AppWidgetSummary'
-import AppCurrentSubject from './AppCurrentSubject'
-import AppConversionRates from './AppConversionRates'
-import AppCurrentVisits from './AppCurrentVisits'
+import AppTasks from './AppTasks';
+import AppNewsUpdate from './AppNewsUpdate';
+import AppOrderTimeline from './AppOrderTimeline';
+import AppWebsiteVisits from './AppWebsiteVisits';
+import AppTrafficBySite from './AppTrafficBySite';
+import AppWidgetSummary from './AppWidgetSummary';
+import AppCurrentSubject from './AppCurrentSubject';
+import AppConversionRates from './AppConversionRates';
+import AppCurrentVisits from './AppCurrentVisits';
 
 // ----------------------------------------------------------------------
 

@@ -37,6 +37,8 @@ export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [display, setDisplay] = useState(true);
 
   useEffect(() => {
     const initClient = () => {
@@ -100,6 +102,14 @@ export default function LoginForm() {
                     .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_status/`, { id: user.status_id })
                     .then((response) => {
                       const status = response.data;
+
+                      console.log('login', {
+                        ...user,
+                        person,
+                        role,
+                        status,
+                        found: true,
+                      });
                       if (status.name !== 'Activo') {
                         setOpen(true);
                         setDisplay(true);
@@ -124,7 +134,12 @@ export default function LoginForm() {
                           })
                         );
                       }
-                      navigate('/dashboard', { replace: true });
+                      console.log(role.name);
+                      if (role.name === 'Visitante') {
+                        navigate('/products', { replace: true });
+                      } else {
+                        navigate('/dashboard', { replace: true });
+                      }
                     });
                 });
             });
@@ -136,9 +151,6 @@ export default function LoginForm() {
       }
     });
   };
-
-  const [open, setOpen] = useState(false);
-  const [display, setDisplay] = useState(true);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
