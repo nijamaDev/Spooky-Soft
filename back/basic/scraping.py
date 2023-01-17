@@ -26,6 +26,10 @@ def descuentos(tipo,prompt,store):
     
     return res
 
+def calzatodoScrap(browser,tipo,prompt):
+    res = []
+    return res
+
 def croydonScrap(browser,tipo,prompt):
     if tipo == 'Hombre':
         browser.get('https://www.croydon.com.co/hombre-calzado_Discount_5-100_GENDER_339666#applied_filter_id%3Ddiscount%26applied_filter_name%3DDescuentos%26applied_filter_order%3D5%26applied_value_id%3D5-100%26applied_value_name%3DDesde+5%25+OFF%26applied_value_order%3D1%26applied_value_results%3D38%26is_custom%3Dfalse')

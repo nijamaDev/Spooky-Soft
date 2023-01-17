@@ -240,3 +240,23 @@ def addRedirect(req, id):
         product_register.redirect += 1
         product_register.save()
         return Response(ProductRegistersSerializer(product_register).data)        
+
+@api_view(['POST'])
+def addVisitXD(req):
+    try:
+        pr = ProductRegisters.objects.get(product=req.data['p']['id'], date = req.data['date'])
+        pr.visits += 1
+        pr.save()
+    except ProductRegisters.DoesNotExist:
+        pr = ProductRegisters.objects.create(product=req.data['p']['id'], date = req.data['date'], visits=0, redirect=0)
+    return Response(ProductRegistersSerializer(pr).data) 
+
+@api_view(['POST'])
+def addRedirectXD(req):
+    try:
+        pr = ProductRegisters.objects.get(product=req.data['p']['id'], date = req.data['date'])
+        pr.redirect += 1
+        pr.save()
+    except ProductRegisters.DoesNotExist:
+        pr = ProductRegisters.objects.create(product=req.data['p']['id'], date = req.data['date'], visits=0, redirect=0)
+    return Response(ProductRegistersSerializer(pr).data) 
