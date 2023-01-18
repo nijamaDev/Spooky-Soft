@@ -80,6 +80,7 @@ def croydonScrap(browser,tipo,prompt):
         }
         res.append(item)
 
+    browser.quit()
     return res
 
 
@@ -152,5 +153,7 @@ def falabellaScrap(browser,tipo,prompt):
             'colors': colorStr,
         }
         res.append(item)
+    
+    browser.quit()
     return res
 
