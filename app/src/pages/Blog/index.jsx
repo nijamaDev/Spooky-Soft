@@ -48,7 +48,7 @@ export default function BlogPage() {
       </Helmet>
 
       <Container>
-        <Box pt={3} pb={3} ml={'-7%'} mt={'-2.5%'} mb={{ xs: '0%', md: '-31%' }} mr={'-7%'}>
+        <Box pt={3} pb={3} ml={'-7%'} mt={'-4%'} mb={{ xs: '0%', md: '-31%' }} mr={'-7%'}>
           <img
             style={{ width: '100%', height: '100%' }}
             src={'https://www.domuz.com.co/wp-content/uploads/2022/12/Untitled-design.png'}

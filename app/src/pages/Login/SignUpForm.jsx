@@ -45,7 +45,7 @@ export default function SignUpForm() {
     const initClient = () => {
       gapi.client.init({
         clientId,
-        scope: '',
+        scope: 'https://www.googleapis.com/auth/userinfo.profile',
       });
     };
     gapi.load('client:auth2', initClient);
@@ -53,7 +53,6 @@ export default function SignUpForm() {
 
   const onSuccess = (res) => {
     // console.log('success:',res);
-    // setRemember(true)
     const obj = {
       role: 'Visitante',
       status: 'Activo',
@@ -67,7 +66,7 @@ export default function SignUpForm() {
       },
     };
     // console.log(obj)
-    onSignUp(obj);
+    onLogin(obj);
   };
 
   const handleInputChange = ({ target }) => {
@@ -111,7 +110,7 @@ export default function SignUpForm() {
     if (!re.test(email) || name === '' || lastname === '') {
       setOpen(true);
     } else {
-      onSignUp(obj);
+      onLogin(obj);
     }
   };
 
@@ -159,6 +158,77 @@ export default function SignUpForm() {
       }
     });
   };
+  const onLogin = (obj) => {
+    const remember = true;
+    axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/login/`, obj).then((res) => {
+      const user = res.data.user;
+      console.log(res.data);
+      if (res.data.status !== 1) {
+        onSignUp(obj);
+      } else {
+        setDisplay(false);
+        try {
+          axios
+            .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_person/`, { id: user.person_id })
+            .then((response) => {
+              const person = response.data;
+              axios
+                .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_role/`, { id: user.role_id })
+                .then((response) => {
+                  const role = response.data;
+                  axios
+                    .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/get_status/`, { id: user.status_id })
+                    .then((response) => {
+                      const status = response.data;
+
+                      console.log('login', {
+                        ...user,
+                        person,
+                        role,
+                        status,
+                        found: true,
+                      });
+                      if (status.name !== 'Activo') {
+                        setOpen(true);
+                        setDisplay(true);
+                        return;
+                      }
+                      setLogin({
+                        ...user,
+                        person,
+                        role,
+                        status,
+                        found: true,
+                      });
+                      RemoveCookie('usrin');
+                      if (remember) {
+                        SetCookie(
+                          'usrin',
+                          JSON.stringify({
+                            ...user,
+                            person,
+                            role,
+                            status,
+                          })
+                        );
+                      }
+                      console.log(role.name);
+                      if (role.name === 'Visitante') {
+                        navigate('/products', { replace: true });
+                      } else {
+                        navigate('/dashboard', { replace: true });
+                      }
+                    });
+                });
+            });
+        } catch (error) {
+          console.error(error);
+        } finally {
+          console.log('');
+        }
+      }
+    });
+  };
 
   const [open, setOpen] = useState(false);
   const [display, setDisplay] = useState(true);
@@ -174,7 +244,7 @@ export default function SignUpForm() {
       <Box sx={{ display: display ? 'block' : 'none' }}>
         <GoogleLogin
           clientId={clientId}
-          buttonText="Sign In with Google"
+          buttonText="Sign Up with Google"
           onSuccess={onSuccess}
           onFailure={() => setOpen(true)}
           cookiePolicy={'single_host_origin'}

@@ -14,12 +14,12 @@ import Logo from '../../components/logo';
 import LoginForm from './LoginForm';
 import SignUpForm from './SignUpForm';
 
-
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     display: 'flex',
+    justifyContent: 'center',
   },
 }));
 
@@ -74,7 +74,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Login | Minimal UI </title>
+        <title> Login | One Market </title>
       </Helmet>
 
       <StyledRoot>
@@ -95,24 +95,22 @@ export default function LoginPage() {
           </StyledSection>
         )}
 
-        <Stack sx={{paddingTop:{xs: 8, sm: 5} }}
-        style={{ display: 'flex' }}>        
-          <Tabs 
-            value={value} onChange={handleChange} sx={{paddingRight:{xs: 0, sm: 80} }}>
-            <Tab label="Sign in" />
+        <Stack sx={{ paddingTop: { xs: 8, sm: 8 } }} style={{ display: 'flex' }}>
+          <Tabs value={value} onChange={handleChange} sx={{ paddingRight: { xs: 0, sm: 30 } }}>
+            <Tab label="Sign up" />
             <Tab label="Log in" />
           </Tabs>
           <TabPanel value={value} index={0}>
             <Container maxWidth="sm">
               <StyledContent>
-                <Typography variant="h4" gutterBottom>
-                  Sign in to One Market
+                <Typography variant="h4" gutterBottom sx={{ mb: 5 }}>
+                  Sign up to One Market
                 </Typography>
 
-                <Typography variant="body2" sx={{ mb: 5 }}>
+                {/* <Typography variant="body2" sx={{ mb: 5 }}>
                   Don't have a business account? {''}
                   <Link variant="subtitle2">Contact support</Link>
-                </Typography>
+                </Typography> */}
 
                 <SignUpForm />
               </StyledContent>
@@ -121,21 +119,20 @@ export default function LoginPage() {
           <TabPanel value={value} index={1}>
             <Container maxWidth="sm">
               <StyledContent>
-                <Typography variant="h4" gutterBottom>
+                <Typography variant="h4" gutterBottom sx={{ mb: 5 }}>
                   Log in to One Market
                 </Typography>
 
-                <Typography variant="body2" sx={{ mb: 5 }}>
+                {/* <Typography variant="body2" sx={{ mb: 5 }}>
                   Don't have a business account? {''}
                   <Link variant="subtitle2">Contact support</Link>
-                </Typography>
+                </Typography> */}
 
                 <LoginForm />
               </StyledContent>
             </Container>
           </TabPanel>
         </Stack>
-        
       </StyledRoot>
     </>
   );

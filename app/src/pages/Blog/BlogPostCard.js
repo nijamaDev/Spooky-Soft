@@ -30,9 +30,6 @@ import { fDate } from '../../utils/formatTime';
 import { fShortenNumber } from '../../utils/formatNumber';
 //
 import { AppContext } from '../../context/AppContext';
-import SvgColor from '../../components/svg-color';
-import Iconify from '../../components/iconify';
-
 // ----------------------------------------------------------------------
 
 const StyledCardMedia = styled('div')({
@@ -108,7 +105,7 @@ export default function BlogPostCard({ post, index, showButtons }) {
   }
 
   useEffect(() => {
-    if (showButtons && login.role_id !== undefined) {
+    if (showButtons && (login.role !== "Operario" || login.role !== "Administrador")) {
       setShow(
         <Box m={1} display="flex" justifyContent="flex-end" alignItems="flex-end">
           <Card>
@@ -136,7 +133,7 @@ export default function BlogPostCard({ post, index, showButtons }) {
     }
   }, []);
 
-  const handleClose = () => {
+  const handleDelete = () => {
     axios.delete(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/news/${String(id)}/`).then((res) => {
       console.log(res);
       setOpen(false);
@@ -240,7 +237,9 @@ export default function BlogPostCard({ post, index, showButtons }) {
       </Grid>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={() => {
+          setOpen(false);
+        }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -262,7 +261,7 @@ export default function BlogPostCard({ post, index, showButtons }) {
           >
             No
           </Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleDelete} autoFocus>
             Yes
           </Button>
         </DialogActions>

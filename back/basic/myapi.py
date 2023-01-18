@@ -4,17 +4,14 @@ from rest_framework.response import Response
 from datetime import date
 from datetime import datetime
 from .models import Users, People, Roles, Status, Stores, Products, ProductRegisters
-from .scraping import scrapElement
+from .scraping import descuentos
 from .serializers import UserSerializer, ProductsSerializer, ProductRegistersSerializer
 
-
-#------------------------------------------------------------------------------------------------------------
-@api_view(['GET'])
+@api_view(['POST'])
 def scarpInit(req):
-    res = { 'status':0, 'element': "" }
-    element = scrapElement()
-    print(element)
-    res['element'] = element
+    res = { 'status':0, 'elements': "" }
+    elements = descuentos(req.data['tipo'], req.data['prompt'], req.data['store'])
+    res['elements'] = elements
     res['status'] = 1
     return Response(res)
 
@@ -266,7 +263,28 @@ def addRedirect(req, id):
         product_register = ProductRegisters.objects.get(id=id)
         product_register.redirect += 1
         product_register.save()
-        return Response(ProductRegistersSerializer(product_register).data)
+        return Response(ProductRegistersSerializer(product_register).data)        
+
+@api_view(['POST'])
+def addVisitXD(req):
+    try:
+        pr = ProductRegisters.objects.get(product=req.data['p']['id'], date = req.data['date'])
+        pr.visits += 1
+        pr.save()
+    except ProductRegisters.DoesNotExist:
+        pr = ProductRegisters.objects.create(product=req.data['p']['id'], date = req.data['date'], visits=0, redirect=0)
+    return Response(ProductRegistersSerializer(pr).data) 
+
+@api_view(['POST'])
+def addRedirectXD(req):
+    try:
+        pr = ProductRegisters.objects.get(product=req.data['p']['id'], date = req.data['date'])
+        pr.redirect += 1
+        pr.save()
+    except ProductRegisters.DoesNotExist:
+        pr = ProductRegisters.objects.create(product=req.data['p']['id'], date = req.data['date'], visits=0, redirect=0)
+    return Response(ProductRegistersSerializer(pr).data) 
+        
 
 
 
