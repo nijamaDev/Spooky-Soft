@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from rest_framework import routers
 from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet, UsersViewSet, NewsViewSet, GoogleUsersViewSet, ProductRegistersViewSet, ProductsViewSet
-from .myapi import scarpInit, logIn, createUser, createProduct, createProducts, updateProducts, createProductRegister, createProductRegisterGivenDate, createProductRegisterAllProducts, getPerson, getRole, getStatus, getTodayProductRegisters, updateUserNoPassword, updateUserPassword, updateProduct, addVisit, addRedirect, deleteProduct
+from .myapi import getUsersNumber, scarpInit, logIn, createUser, createProduct, createProducts, sumRedirectsByMonth, sumVisitsByMonth, updateProducts, createProductRegister, createProductRegisterGivenDate, createProductRegisterAllProducts, getPerson, getRole, getStatus, getTodayProductRegisters, updateUserNoPassword, updateUserPassword, updateProduct, addVisit, addRedirect, deleteProduct, sortByRedirects, sortByVisits
 
 router = routers.DefaultRouter()
 
@@ -37,6 +37,7 @@ urlpatterns.append(path('api/get_role/', getRole, name='get_role'))
 urlpatterns.append(path('api/get_status/', getStatus, name='get_status'))
 #---------[ USERS ]---------------------------------------------------------------------------------------------------
 urlpatterns.append(path('api/create_user/', createUser, name='create_user'))
+urlpatterns.append(path('api/getUsersNumber/', getUsersNumber, name='getUsersNumber'))
 urlpatterns.append(path('api/update_user/<str:id>/', updateUserNoPassword, name='update_user'))
 urlpatterns.append(path('api/update_user_password/<str:id>/', updateUserPassword, name='update_user_password'))
 #---------[ PRODUCTS ]---------------------------------------------------------------------------------------------------
@@ -52,6 +53,11 @@ urlpatterns.append(path('api/create_product_register_all/', createProductRegiste
 urlpatterns.append(path('api/today_product_registers/', getTodayProductRegisters, name='get_today_product_registers'))
 urlpatterns.append(path('api/add_visit/<str:id>/', addVisit, name='add_visit'))
 urlpatterns.append(path('api/add_redirect/<str:id>/', addRedirect, name='add_redirect'))
+#---------[REPORTS]-------------------------------------------------------------------------------------------------------
+urlpatterns.append(path('api/sortByRedirects/', sortByRedirects, name='sortByRedirects'))
+urlpatterns.append(path('api/sortByVisits/', sortByVisits, name='sortByVisits'))
+urlpatterns.append(path('api/sumVisitsByMonth/', sumVisitsByMonth, name='sumVisitsByMonth'))
+urlpatterns.append(path('api/sumRedirectsByMonth/', sumRedirectsByMonth, name='sumRedirectsByMonth'))
 
 
 
