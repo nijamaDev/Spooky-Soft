@@ -31,9 +31,9 @@ ShopProductCard.propTypes = {
   product: PropTypes.object,
 };
 
-export default function ShopProductCard({ register, checkbox }) {
+export default function ShopProductCard({ index, register, checkbox }) {
   const navigate = useNavigate();
-  const { login } = useContext(AppContext);
+  const { login, scrapping, setScrapping } = useContext(AppContext);
   const { name, cover, price, colors, status, priceSale } = register.product;
 
   const [openEdit, setOpenEdit] = useState(false); 
@@ -43,7 +43,7 @@ export default function ShopProductCard({ register, checkbox }) {
   useEffect(() => {
     let rightButton;
     if (checkbox){
-      rightButton = <Checkbox checked={selected} onClick={() => { setSelected(!selected) }} />
+      rightButton = <Checkbox checked={selected} onClick={handleSelect} />
     } else {
       rightButton = <Button style={{ backgroundColor: '#FF4842' }} variant="contained"
                             onClick={() => { setOpen(true); }} >
@@ -58,6 +58,16 @@ export default function ShopProductCard({ register, checkbox }) {
       );
     }
   }, [selected]);
+
+  const handleSelect = () => {
+    setSelected(!selected)
+    const changeValue = (arr, n, newValue) => {
+                          arr[n] = newValue;
+                          return arr;
+                        };
+    setScrapping(changeValue(scrapping, index, !selected))
+    console.log(index)
+  }
 
   const handleDelete = () => {
     /*
@@ -113,7 +123,7 @@ export default function ShopProductCard({ register, checkbox }) {
 
           <Stack direction="row" alignItems="center" justifyContent="space-between">
             <ColorPreview colors={
-              typeof colors === 'string' ? colors.split(",") : []
+              typeof colors === 'string' ? colors.split("; ") : []
               // colors.split(",")
             } />
             <Typography variant="subtitle1">

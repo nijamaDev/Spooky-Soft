@@ -10,12 +10,11 @@ ProductList.propTypes = {
 };
 
 export default function ProductList({ products, ...other }) {
-  console.log(products)
   return (
     <Grid container spacing={3} {...other}>
-      {products.map((register) => (
-        <Grid key={register.product.id} item xs={12} sm={6} md={3}>
-          <ShopProductCard register={register} checkbox/>
+      {products.map((product, i) => (
+        <Grid key={i} item xs={12} sm={6} md={3}>
+          <ShopProductCard index={i} register={{product}} checkbox/>
         </Grid>
       ))}
     </Grid>
