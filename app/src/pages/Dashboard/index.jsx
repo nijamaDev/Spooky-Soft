@@ -51,6 +51,45 @@ export default function DashboardAppPage() {
       redirects: 20,
     },
   ];
+  const STORES = [
+    {
+      store: 'Nike',
+      visits: 540,
+    },
+    {
+      store: 'Adidas',
+      visits: 480,
+    },
+    {
+      store: 'Puma',
+      visits: 420,
+    },
+    {
+      store: 'Reebok',
+      visits: 380,
+    },
+    {
+      store: 'New Balance',
+      visits: 340,
+    },
+    {
+      store: 'Under Armour',
+      visits: 300,
+    },
+  ];
+
+  const MOST_CLICKED = [
+    { product: 'Outdoor shoes', redirects: 1380 },
+    { product: 'Athletic shoes', redirects: 1200 },
+    { product: 'Dress shoes', redirects: 1100 },
+    { product: 'Running shoes', redirects: 690 },
+    { product: 'Flip flops', redirects: 580 },
+    { product: 'High heels', redirects: 540 },
+    { product: 'Boots', redirects: 470 },
+    { product: 'Sandals', redirects: 448 },
+    { product: 'Loafers', redirects: 430 },
+    { product: 'Sneakers', redirects: 400 },
+  ];
 
   return (
     <>
@@ -121,12 +160,7 @@ export default function DashboardAppPage() {
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
               title="Most visited stores"
-              chartData={[
-                { label: 'Naik', value: 4344 },
-                { label: 'Ardidos', value: 5435 },
-                { label: 'jomsenter', value: 1443 },
-                { label: 'Calzzzatodo', value: 4443 },
-              ]}
+              chartData={[...STORES.map((store) => ({ label: store.store, value: store.visits }))]}
               chartColors={[
                 theme.palette.primary.main,
                 theme.palette.info.main,
@@ -140,18 +174,7 @@ export default function DashboardAppPage() {
             <AppConversionRates
               title="Most clicked products"
               subheader="On all the store"
-              chartData={[
-                { label: 'Outdoor shoes', value: 1380 },
-                { label: 'Athletic shoes', value: 1200 },
-                { label: 'Dress shoes', value: 1100 },
-                { label: 'Running shoes', value: 690 },
-                { label: 'Flip flops', value: 580 },
-                { label: 'High heels', value: 540 },
-                { label: 'Boots', value: 470 },
-                { label: 'Sandals', value: 448 },
-                { label: 'Loafers', value: 430 },
-                { label: 'Sneakers', value: 400 },
-              ]}
+              chartData={[...MOST_CLICKED.map((item) => ({ label: item.product, value: item.redirects }))]}
             />
           </Grid>
           {/* <Grid item xs={12} md={6} lg={8}>
