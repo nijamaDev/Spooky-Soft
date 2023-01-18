@@ -14,15 +14,10 @@ def descuentos(tipo,prompt,store):
     options.add_argument("window-size=1920,1080")
     options.add_argument('--headless')
 
-    browser = webdriver.Chrome(chrome_options=options)
-
     if store == "Falabella":
-        res = falabellaScrap(browser,tipo,prompt)
+        res = falabellaScrap(options,tipo,prompt)
     elif store == "Croydon":
-        res = croydonScrap(browser,tipo,prompt)
-    
-    # Salir
-    browser.quit()
+        res = croydonScrap(options,tipo,prompt)
     
     return res
 
@@ -30,7 +25,8 @@ def calzatodoScrap(browser,tipo,prompt):
     res = []
     return res
 
-def croydonScrap(browser,tipo,prompt):
+def croydonScrap(options,tipo,prompt):
+    browser = webdriver.Chrome(chrome_options=options)
     if tipo == 'Hombre':
         browser.get('https://www.croydon.com.co/hombre-calzado_Discount_5-100_GENDER_339666#applied_filter_id%3Ddiscount%26applied_filter_name%3DDescuentos%26applied_filter_order%3D5%26applied_value_id%3D5-100%26applied_value_name%3DDesde+5%25+OFF%26applied_value_order%3D1%26applied_value_results%3D38%26is_custom%3Dfalse')
     elif tipo == 'Mujer':
@@ -84,7 +80,8 @@ def croydonScrap(browser,tipo,prompt):
 
 
     
-def falabellaScrap(browser,tipo,prompt):
+def falabellaScrap(options,tipo,prompt):
+    browser = webdriver.Chrome(chrome_options=options)
     # Usar el método get para abrir una página web
     if tipo == 'Hombre':
         browser.get('https://www.falabella.com.co/falabella-co/collection/calzado?facetSelected=true&f.product.attribute.G%C3%A9nero=Hombre&f.range.derived.variant.discount=20%25+dcto+y+m%C3%A1s')
