@@ -18,6 +18,16 @@ import EditNew from './pages/EditNew';
 export default function Router() {
   const routes = useRoutes([
     {
+      element: <SimpleLayout />,
+      children: [
+        { element: <Navigate to="/blog" />, index: true },
+        { path: '404', element: <Page404 /> },
+        { path: '*', element: <Navigate to="/404" /> },
+        { path: 'products', element: <ProductsPage /> },
+        { path: 'blog', element: <BlogPage /> },
+      ],
+    },
+    {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
@@ -34,16 +44,6 @@ export default function Router() {
     {
       path: 'login',
       element: <LoginPage />,
-    },
-    {
-      element: <SimpleLayout />,
-      children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
-        { path: '404', element: <Page404 /> },
-        { path: '*', element: <Navigate to="/404" /> },
-        { path: 'products', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
-      ],
     },
     {
       path: '*',

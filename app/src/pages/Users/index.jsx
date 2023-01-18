@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 // @mui
 import {
@@ -31,8 +31,7 @@ import Scrollbar from '../../components/scrollbar';
 // sections
 import UserListHead from './UserListHead';
 import UserListToolbar from './UserListToolbar';
-// Context
-import { AppContext } from '../../context/AppContext';
+
 import NewUser from './NewUser';
 import EditUser from './EditUser';
 
@@ -85,7 +84,6 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
-  const { update } = useContext(AppContext);
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
