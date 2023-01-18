@@ -13,7 +13,7 @@ import ProductList from './ProductList'
 // import ProductCartWidget from './ProductCartWidget'
 
 // mock
- import PRODUCTS from '../../_mock/products';
+// import PRODUCTS from '../../_mock/products';
 
 // ----------------------------------------------------------------------
 
