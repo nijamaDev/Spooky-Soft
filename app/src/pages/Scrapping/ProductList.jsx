@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 // @mui
 import { Grid } from '@mui/material';
-import ShopProductCard from './ProductCard';
+import ShopProductCard from '../Products/ProductCard';
 
 // ----------------------------------------------------------------------
 
@@ -15,7 +15,7 @@ export default function ProductList({ products, ...other }) {
     <Grid container spacing={3} {...other}>
       {products.map((register) => (
         <Grid key={register.product.id} item xs={12} sm={6} md={3}>
-          <ShopProductCard register={register} />
+          <ShopProductCard register={register} checkbox/>
         </Grid>
       ))}
     </Grid>

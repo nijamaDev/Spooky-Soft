@@ -8,6 +8,7 @@ import UserPage from './pages/Users';
 import LoginPage from './pages/Login';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/Products';
+import ScrappingPage from './pages/Scrapping';
 import DashboardAppPage from './pages/Dashboard';
 import RegisterNew from './pages/RegisterNew';
 import EditNew from './pages/EditNew';
@@ -27,6 +28,7 @@ export default function Router() {
         { path: 'blog', element: <BlogPage /> },
         { path: 'create_post', element: <RegisterNew /> },
         { path: 'edit_post', element: <EditNew /> },
+        { path: 'scrapping', element: <ScrappingPage /> },
       ],
     },
     {
