@@ -84,7 +84,7 @@ export default function AlertDialog({ open, setOpen, product }) {
     const obj = {
       name:nameF, description:descriptionF,
       cover:coverF, redirect,
-      price:priceF, priceSale:priceSaleF,
+      price:priceF, priceSale:priceSaleF === "" ? null : priceSaleF,
       location:"", colors:colorsF
     };
     console.log(obj);
@@ -117,7 +117,7 @@ export default function AlertDialog({ open, setOpen, product }) {
                 <TextField required fullWidth id="priceF" label="Price" value={priceF} onChange={handleInputChange} />
               </FormItem>
               <FormItem phone={6} computer={6}>
-                <TextField required fullWidth id="priceSaleF" label="Sale price" value={priceSaleF} onChange={handleInputChange} />
+                <TextField fullWidth id="priceSaleF" label="Sale price" value={priceSaleF} onChange={handleInputChange} />
               </FormItem>
               <FormItem phone={12} computer={12}>
                 <TextField required fullWidth multiline rows={4} id="descriptionF" label="Description" value={descriptionF} onChange={handleInputChange} />

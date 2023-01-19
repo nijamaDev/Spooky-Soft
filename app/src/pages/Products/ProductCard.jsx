@@ -53,7 +53,6 @@ export default function ShopProductCard({ index, register, checkbox }) {
                         <DeleteForeverIcon />
                       </Button>
       } 
-      console.log(login.role.name)
       if (login.role.name === "Operario" || login.role.name === "Administrador") {
         setShow(
           <Box mr={-1} mt={-1} pb={2} display="flex" justifyContent="flex-end" alignItems="flex-end">
@@ -135,7 +134,7 @@ export default function ShopProductCard({ index, register, checkbox }) {
             <Button>{name.length > 12 ? `${name.substring(0, 24)}...` : name}</Button>
           </Link>
 
-          <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Stack direction="column" alignItems="center" justifyContent="space-between">
             <ColorPreview colors={
               typeof colors === 'string' ? colors.split("; ") : []
               // colors.split(",")

@@ -4,7 +4,7 @@ import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Box, Button, Container, Divider, LinearProgress, MenuItem, Select, Stack, TextField, Typography, InputLabel } from '@mui/material';
+import { Box, Button, Container, Divider, LinearProgress, MenuItem, Select, Stack, TextField, Typography, InputLabel, Chip, Grid } from '@mui/material';
 
 // components
 import ProductFilterSidebar from './ProductFilterSidebar';
@@ -22,7 +22,7 @@ import { AppContext } from '../../context/AppContext';
 export default function ProductsPage() {
   const navigate = useNavigate();
   const { scrapping, setScrapping } = useContext(AppContext);
-  const [openFilter, setOpenFilter] = useState(false);
+  const [ state, setState] = useState('Select your search to start :)');
   const [products, setProducts] = useState([])
   const [category, setCategory] = useState('Niñas');
   const [store, setStore] = useState('Croydon');
@@ -64,24 +64,24 @@ export default function ProductsPage() {
     
     for (let i = 0; i < scrapping.length; i += 1) {
       if(scrapping[i]){
-        
-        if(products[i].priceSale === null){
-          obj.push({...products[i],price:parseInt(products[i].price.replace(".",""),10)})
-        } else obj.push({...products[i],price:parseInt(products[i].price.replace(".",""),10),priceSale:parseInt(products[i].priceSale.replace(".",""),10)})
+        obj.push(products[i])
       }      
     }
 
     console.log('sending to db:',obj)
+    
     axios.post('https://onemarket.sncraft.online/basic/api/create_products/',{products:obj}).then((res) => {
       console.log(res.data)
     })
+    
+    
 
   }
 
   const handleButtonClick = () => {
     // `${process.env.REACT_APP_BACK_ADDRESS}/basic/api/today_product_registers/`
     setShowProgress(true)
-    let scrappingProducts = []
+    const scrappingProducts = []
     const obj = {
       "tipo":category,
       "prompt":other,
@@ -91,7 +91,14 @@ export default function ProductsPage() {
     try {
       axios.post('https://onemarket.sncraft.online/basic/api/scrap/',obj).then((res) => {
       setShowProgress(false)
-      scrappingProducts = res.data.elements
+      const aux = res.data.elements
+      console.log('Scrapping:',res.data)
+      for (let i = 0; i < aux.length; i += 1) {
+        if(aux[i].priceSale === null){
+          scrappingProducts.push({...aux[i],price:parseInt(aux[i].price.replace(/\./g, ""),10)})
+        } else scrappingProducts.push({...aux[i],price:parseInt(aux[i].price.replace(/\./g, ""),10),priceSale:parseInt(aux[i].priceSale.replace(/\./g, ""),10)})
+      }
+
       setProducts(scrappingProducts)
       // console.log(scrappingProducts)
       setScrapping(Array(scrappingProducts.length).fill(true))
@@ -101,14 +108,6 @@ export default function ProductsPage() {
       console.log('error')
       setShowProgress(false)
     }
-    
-
-    /*
-    scrappingProducts = [{"store":"Falabella","name":"Tenis Croydon Unisex Royal Hi-Cut Azul","description":"Croydon - Tenis Croydon Unisex Royal Hi-Cut Azul \nDisponible ahora. Por Croydon","price":"99.900","priceSale":null,"location":"5687175","redirect":"https://www.falabella.com.co/falabella-co/product/5687175/Tenis-Croydon-Unisex-Royal-Hi-Cut-Azul/5687176","cover":"https://falabella.scene7.com/is/image/FalabellaCO/5687176?wid=240&hei=240&qlt=70","colors":""},{"store":"Falabella","name":"Tenis Croydon Unisex Discovery Alto Azul","description":"Croydon - Tenis Croydon Unisex Discovery Alto Azul \nDisponible ahora. Por Croydon","price":"94.900","priceSale":null,"location":"5686886","redirect":"https://www.falabella.com.co/falabella-co/product/5686886/Tenis-Croydon-Unisex-Discovery-Alto-Azul/5686887","cover":"https://falabella.scene7.com/is/image/FalabellaCO/5686887?wid=240&hei=240&qlt=70","colors":" rgb(37, 47, 72); #121FFF;"},{"store":"Falabella","name":"Tenis deportivo Fratta Running Mujer Ida","description":"FRATTA - Tenis deportivo Fratta Running Mujer Ida \nDisponible ahora. Por Falabella","price":"119.990","priceSale":"299.990","location":"882500888","redirect":"https://www.falabella.com.co/falabella-co/product/882500888/Tenis-deportivo-Fratta-Running-Mujer-Ida/882500891","cover":"https://falabella.scene7.com/is/image/FalabellaCO/882500891?wid=240&hei=240&qlt.70","colors":" #3F556A"}]    
-    setProducts(scrappingProducts)
-    setScrapping(Array(scrappingProducts.length).fill(true))
-    })  
-    */
     
   }
 
@@ -137,20 +136,31 @@ export default function ProductsPage() {
           </Select>
           {category !== 'Personalizada' ? false : true && <TextField disabled={category !== 'Personalizada'} id="other" label="Which?" value={other} onChange={handleInputChange}/>}
           
-          <Button variant='contained' onClick={handleButtonClick}>
-          Scrapping!
-          </Button>
+          <Stack pt={2} direction='row' spacing={3}>
+            <Button variant='contained' onClick={handleButtonClick}>Scrapping!</Button>
+            <Grid container>
+              <Grid item xs={12}>             
+              <Divider><Chip label={state} /></Divider>
+              </Grid>
+            </Grid>
+          </Stack>
           {showProgress && <LinearProgress />}
+          
+          <Box p={2}>
+          <ProductList products={products} />
+          </Box>
+          
+          <Button variant='contained' onClick={importProducts}>
+            Import Products
+          </Button>
         </Stack>
         
 
-        <ProductList products={products} />
+        
 
         {/* <ProductCartWidget /> */}
       </Box>
-      <Button variant='contained' size='small' onClick={importProducts}>
-        Import Products
-      </Button>
+      
     </>
   );
 }
