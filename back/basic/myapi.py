@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from datetime import date
 from datetime import datetime
+from django.db.models import Sum
 from .models import Users, People, Roles, Status, Stores, Products, ProductRegisters
 from .scraping import descuentos
 from .serializers import UserSerializer, ProductsSerializer, ProductRegistersSerializer
@@ -204,6 +205,12 @@ def deleteProduct(req, id):
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+@api_view(['GET'])
+def getProductsNumber(req):
+    if req.method == 'GET':
+        products = Products.objects.all().count()
+        return Response(products)
+
 #---------[ PRODUCT REGISTERS ]---------------------------------------------------------------------------------------------------
 @api_view(['POST'])
 def createProductRegister(req):
@@ -295,7 +302,7 @@ def sortByRedirects(req):
     if req.method == 'GET':
        today = datetime.now()
        month = today.month
-       report = ProductRegisters.objects.filter(date__month=month).values_list('product__name','redirect').order_by('-redirect')[:10]
+       report = ProductRegisters.objects.filter(date__month=month).values_list('product__name','redirect', 'product__store__name', 'visits').order_by('-redirect')[:10]
        #serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
        return Response(report)
 
@@ -313,9 +320,9 @@ def sumVisitsByMonth(req):
     if req.method == 'GET':
        today = datetime.now()
        month = today.month
-       report = ProductRegisters.objects.filter(date__month=month).aggregate(sum('visits'))
-       serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
-       return Response(serializer.data)
+       report = ProductRegisters.objects.filter(date__month=month).annotate(total_visits=Sum('visits'))
+       #serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
+       return Response(report)
 
 @api_view(['GET'])
 def sumRedirectsByMonth(req):
