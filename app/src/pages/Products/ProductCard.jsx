@@ -16,6 +16,8 @@ import {
   DialogContentText,
   DialogActions,
   Checkbox,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -45,8 +47,8 @@ ShopProductCard.propTypes = {
 
 export default function ShopProductCard({ index, register, checkbox }) {
   const navigate = useNavigate();
-  const { login, scrapping, setScrapping } = useContext(AppContext);
-  const { name, cover, price, colors, priceSale } = register.product;
+  const { login, scrapping, setScrapping, update, setUpdate } = useContext(AppContext);
+  const { id, name, cover, price, colors, priceSale } = register.product;
   const creationDate = new Date(register.product.creation_date)
   const { visits } = register
   const [openEdit, setOpenEdit] = useState(false);
@@ -117,26 +119,31 @@ export default function ShopProductCard({ index, register, checkbox }) {
   };
 
   const handleDelete = () => {
-    /*
-    axios.delete(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/news/${String(id)}/`).then((res) => {
-      console.log(res);
-      setOpen(false);
-      setOpenSnack(true);
-      try {
-        setUpdate(!update);
+    axios.delete(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/delete_product/${String(id)}/`).then((res)=>{
+      console.log(res.data)
+      if(res.data.status === 1){
         setSeveritySnack('success');
-        setMsgSnack(`${title} has been deleted successfuly.`);
-      } catch (error) {
+      } else {
         setSeveritySnack('error');
-        setMsgSnack('An error has ocurred.');
       }
-    });    
-    */
-    console.log('borrado papu');
-    setOpen(false);
+      setOpenSnack(true);
+      setUpdate(!update)
+      setMsgSnack(res.data.msg)
+      setOpen(false);
+    })
   };
 
   const [open, setOpen] = useState(false);
+  const [openSnack, setOpenSnack] = useState(false);
+  const [msgSnack, setMsgSnack] = useState('An error has ocurred.');
+  const [severitySnack, setSeveritySnack] = useState('success');
+
+  const handleCloseSnack = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnack(false);
+  };
 
   return (
     <Box>
@@ -225,6 +232,11 @@ export default function ShopProductCard({ index, register, checkbox }) {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+        <Alert variant="filled" onClose={handleCloseSnack} severity={severitySnack} sx={{ width: '100%' }}>
+          {msgSnack}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
