@@ -108,14 +108,10 @@ export default function AlertDialog({ open, setOpen, product }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const obj = {
-      name: nameF,
-      description: descriptionF,
-      cover: coverF,
-      redirect,
-      price: priceF,
-      priceSale: priceSaleF,
-      location: '',
-      colors: colorsF,
+      name:nameF, description:descriptionF,
+      cover:coverF, redirect,
+      price:priceF, priceSale:priceSaleF === "" ? null : priceSaleF,
+      location:"", colors:colorsF
     };
     console.log(obj);
     axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_product/${id}/`, obj).then((res) => {
@@ -181,7 +177,6 @@ export default function AlertDialog({ open, setOpen, product }) {
               </FormItem>
               <FormItem phone={6} computer={6}>
                 <TextField
-                  required
                   fullWidth
                   id="priceSaleF"
                   label="Sale price"

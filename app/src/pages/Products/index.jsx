@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 // @mui
-import { Container, Divider, Stack, Typography } from '@mui/material';
+import { Box, Button, Container, Divider, Stack, Typography } from '@mui/material';
 // context
 import { AppContext } from '../../context/AppContext';
 
@@ -53,10 +53,21 @@ export default function ProductsPage() {
       </Helmet>
 
       <Container>
-        <Typography variant="h3" align="center" sx={{ pb: 2, pt: 5 }}>
-          All products
-        </Typography>
-        <Divider sx={{ mb: 3 }} />
+        <Box pt={3} pb={3} ml={'-7%'} mt={'-4%'} mb={{ xs: '0%', md: '-31%' }} mr={'-7%'}>
+            <img
+              style={{ width: '100%', height: '100%' }}
+              src={'/assets/images/products/cover.png'}
+              alt="React Logo"
+            />
+          </Box>
+          <Typography variant="h1" color='#FFD600' pr={{ xs: '0%', md: '45%' }}>
+            Products
+          </Typography>
+          <Typography color='white' variant='h3' pr={{ xs: '0%', md: '45%' }} pb={{ xs: '0%', md: '2%' }}>
+            Step up your style<br />with our shoes!
+          </Typography>
+          <Box pb={{ xs: '0%', md: '20%' }} />
+        {/*
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
           <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
             <ProductFilterSidebar
@@ -67,6 +78,8 @@ export default function ProductsPage() {
             <ProductSort />
           </Stack>
         </Stack>
+        */}
+        
 
         <ProductList products={products} />
         {/* <ProductCartWidget /> */}
