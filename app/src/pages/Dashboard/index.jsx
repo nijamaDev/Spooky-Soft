@@ -119,7 +119,9 @@ export default function DashboardAppPage() {
     /* TODO setVisitedStores */
     setVisitedStores(STORES);
     /* TODO setMostClicked */
-    setMostClicked(MOST_CLICKED);
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/sortByRedirects/`).then((res) => {
+      setMostClicked(res.data);
+    });
   }, [updateDash]);
   return (
     <>
@@ -182,12 +184,6 @@ export default function DashboardAppPage() {
                   fill: 'gradient',
                   data: monthRedirects.map((data) => data.redirects),
                 },
-                /* {
-                  name: 'Conversion Rate',
-                  type: 'column',
-                  fill: 'solid',
-                  data: [0.88, 0.85, 0.73, 0.84, 0.49, 0.66, 0.48, 0.66, 0.71, 0.75, 0.62],
-                }, */
               ]}
             />
           </Grid>
@@ -209,7 +205,7 @@ export default function DashboardAppPage() {
             <AppConversionRates
               title="Most clicked products"
               subheader="On all the store"
-              chartData={[...mostClicked.map((item) => ({ label: item.product, value: item.redirects }))]}
+              chartData={[...mostClicked.map((item) => ({ label: [item[0], item[2]].join(', '), value: item[1] }))]}
             />
           </Grid>
         </Grid>
