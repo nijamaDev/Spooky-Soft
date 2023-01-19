@@ -18,7 +18,6 @@ import {
   Checkbox,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 // utils
 import { fCurrency } from '../../utils/formatNumber';
@@ -49,7 +48,7 @@ export default function ShopProductCard({ index, register, checkbox }) {
   const { login, scrapping, setScrapping } = useContext(AppContext);
   const { name, cover, price, colors, priceSale } = register.product;
   const creationDate = new Date(register.product.creation_date)
-  const { visits, redirect } = register
+  const { visits } = register
   const [openEdit, setOpenEdit] = useState(false);
   const [show, setShow] = useState(<Box />);
   const [selected, setSelected] = useState(checkbox);
@@ -162,7 +161,7 @@ export default function ShopProductCard({ index, register, checkbox }) {
           <StyledProductImg alt={name} src={cover} />
         </Box>
 
-        <Stack spacing={2} sx={{ p: 3 }}>
+        <Stack spacing={2} sx={{ pt: 3, pl: 3, pr: 3, pb:1 }}>
           <Link color="inherit" underline="hover" onClick={openDetail}>
             <Button>{name.length > 12 ? `${name.substring(0, 24)}...` : name}</Button>
           </Link>
@@ -189,6 +188,8 @@ export default function ShopProductCard({ index, register, checkbox }) {
               {fCurrency(price)}
             </Typography>
           </Stack>
+          {!checkbox && <Typography style={{ textAlign: "center", color: "gray", fontSize: "0.8rem" }}>
+            Seen today: {visits}</Typography>}
         </Stack>
         <ProductEdit open={openEdit} setOpen={setOpenEdit} product={register.product} />
       </Card>
