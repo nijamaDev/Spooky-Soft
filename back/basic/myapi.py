@@ -222,7 +222,7 @@ def deleteProduct(req, id):
     if req.method == 'DELETE':
         product = Products.objects.get(id=id)
         product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'status':1,"msg":"Removed Successfully"})
 
 @api_view(['GET'])
 def getProductsNumber(req):
@@ -318,11 +318,22 @@ def addRedirectXD(req):
 @api_view(['GET'])
 def sortByRedirects(req):
     if req.method == 'GET':
-       today = datetime.now()
-       month = today.month
-       report = ProductRegisters.objects.filter(date__month=month).values_list('product__name','redirect', 'product__store__name', 'visits').order_by('-redirect')[:10]
-       #serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
-       return Response(report)
+        report = []
+        today = datetime.now()
+        month = today.month
+        xd = ProductRegisters.objects.filter(date__month=month).values('product__id').distinct()
+        for pid in xd:
+            p = Products.objects.get(id=pid['product__id'])
+            arrayFeo = []
+            auxilio = ProductRegisters.objects.filter(date__month=month, product=pid['product__id']).aggregate(Sum('redirect')).get('redirect__sum')
+            arrayFeo.append(p.name)
+            arrayFeo.append(auxilio)
+            report.append(arrayFeo)
+        #serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
+        sorter = lambda x: (x[1], x[0])
+        sorted_report = sorted(report, key=sorter, reverse=True)
+        #print(sorted_report)
+        return Response(sorted_report[:10])
 
 @api_view(['GET'])
 def sortByVisits(req):
