@@ -109,7 +109,18 @@ export default function DashboardAppPage() {
     /* TODO monthRedirects */
     setMonthRedirects(VISITS_MOCK);
     /* TODO setVisitedStores */
-    setVisitedStores(STORES);
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/alejo_report/`).then((res) => {
+      setVisitedStores([
+        {
+          store: 'Falabella',
+          visits: res.data.tfv,
+        },
+        {
+          store: 'Croydon',
+          visits: res.data.tcv,
+        },
+      ]);
+    });
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/sortByRedirects/`).then((res) => {
       setMostClicked(res.data);
     });
@@ -184,6 +195,8 @@ export default function DashboardAppPage() {
               title="Most visited stores"
               chartData={[...visitedStores.map((store) => ({ label: store.store, value: store.visits }))]}
               chartColors={[
+                '#aad500',
+                '#25388e',
                 theme.palette.primary.main,
                 theme.palette.info.main,
                 theme.palette.warning.main,
