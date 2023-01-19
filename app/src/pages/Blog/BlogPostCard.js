@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 // @mui
@@ -93,6 +93,11 @@ export default function BlogPostCard({ post, index, showButtons }) {
   const navigate = useNavigate();
   const { login, update, setUpdate } = useContext(AppContext);
   const [show, setShow] = useState(<Box />);
+  const [currentUrl, setCurrentUrl] = useState('');
+  const location = useLocation();
+  useEffect(() => {
+    setCurrentUrl(location.pathname);
+  }, [location]);
 
   const { id, title, description, redirect, createdAt } = post;
   let { cover } = post;
@@ -105,7 +110,7 @@ export default function BlogPostCard({ post, index, showButtons }) {
   }
 
   useEffect(() => {
-    if (showButtons && (login.role !== "Operario" || login.role !== "Administrador")) {
+    if (showButtons && (login.role !== 'Operario' || login.role !== 'Administrador')) {
       setShow(
         <Box m={1} display="flex" justifyContent="flex-end" alignItems="flex-end">
           <Card>
@@ -233,7 +238,7 @@ export default function BlogPostCard({ post, index, showButtons }) {
             </StyledDesc>
           </CardContent>
         </Card>
-        {show}
+        {currentUrl.includes('dashboard') && show}
       </Grid>
       <Dialog
         open={open}
