@@ -1,5 +1,5 @@
 // import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -11,6 +11,7 @@ import { Stack } from '@mui/system';
 import { fCurrency } from '../../utils/formatNumber';
 import FormContainer from '../../components/Forms/FormContainer'
 import FormItem from '../../components/Forms/FormItem'
+import { AppContext } from '../../context/AppContext';
 /* eslint-disable react/prop-types */ // TODO: upgrade to latest eslint tooling
 /*
 function isImage(url) {
@@ -19,15 +20,16 @@ function isImage(url) {
 */
 
 export default function AlertDialog({ open, setOpen, product }) {
-  console.log("product",product)
-  const { id, name, cover, description, price, colors, redirect, priceSale } = product;
+  const { id, name, store, cover, description, price, colors, redirect, priceSale } = product;
+  const { login, update, setUpdate } = useContext(AppContext);
   // console.log(typeof colors === 'string' ? colors.split(",").length <= 2 ? colors.split(",")[0] : colors.split(",")[1] : [])
+  
   const [ nameF, setNameF] = useState(name);
   const [ descriptionF, setDescriptionF ] = useState(description)
   const [ coverF, setCoverF] = useState(cover)
   const [ priceF, setPriceF] = useState(price)
   const [ priceSaleF, setPriceSaleF] = useState(priceSale)
-  const [color1, setColor1] = useState(typeof colors === 'string' ? colors.split("; ").length >= 1 ? colors.split("; ")[0] : "Not Found" : "Not Found");
+  const [ color1, setColor1] = useState(typeof colors === 'string' ? colors.split("; ").length >= 1 ? colors.split("; ")[0] : "Not Found" : "Not Found");
   const [ color2, setColor2] = useState(typeof colors === 'string' ? colors.split("; ").length === 2 ? colors.split("; ")[1] : "Not Found" : "Not Found");
   const [ colorsF, setColorsF] = useState("");
   const colorsOptions = ["#ffffff", "#f44336", "#9c27b0", "#3f51b5", "#2196f3", "#4caf50", "#8bc34a", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#000001"];
@@ -69,6 +71,14 @@ export default function AlertDialog({ open, setOpen, product }) {
     }
   };
 
+  const openRedirect = () => {
+    axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/add_redirect/${String(id)}/`).then((res)=>{console.log(res.data)})
+    window.open(redirect, '_blank')
+    // if(login.role.name === "Visitante"){
+    //    axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/add_visit/${String(register.product.id)}/`).then((res)=>{console.log(res.data)})
+  // }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const obj = {
@@ -77,29 +87,27 @@ export default function AlertDialog({ open, setOpen, product }) {
       price:priceF, priceSale:priceSaleF,
       location:"", colors:colorsF
     };
-    console.log('ID SENDING',id)
     console.log(obj);
     axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_product/${id}/`, obj).then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
+      setOpen(false)
+      setUpdate(!update)
+      setDisplayEdit(false)
     })
   }
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   return (
     <div>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={()=>{setOpen(false)}}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         scroll='body'
       >
         <DialogContent >
-          <Typography variant="h4" gutterBottom pb={3}>Editing: {nameF}</Typography>
-          <Box mb={3} display="flex" justifyContent="center"><Button variant="contained" color="secondary" onClick={()=>{setDisplayEdit(!displayEdit)}}>Toggle Edit</Button></Box>
+          <Typography variant="h4" gutterBottom pb={1}>{login.role.name === "Operario" || login.role.name === "Administrador" ? 'Editing: ' : ''}{nameF}</Typography>
+          <Box mb={3} display={login.role.name === "Operario" || login.role.name === "Administrador" ? "flex" : 'none'} justifyContent="center"><Button variant="contained" color="secondary" onClick={()=>{setDisplayEdit(!displayEdit)}}>Toggle Edit</Button></Box>
           <Box onSubmit={handleSubmit} component="form" pt={3} pr={3} pb={3} sx={{display:displayEdit ? "block" : "none", border: '1px solid #D3D3D3', borderRadius: '10px'}}>
             <FormContainer>
               <FormItem phone={12} computer={12}>
@@ -147,13 +155,9 @@ export default function AlertDialog({ open, setOpen, product }) {
                 </Box>
               </FormItem>
             </FormContainer>
-          </Box>
-          <Button variant="contained" color="secondary" onClick={()=>console.log(color1,color2)}>
-            Print Colors
-          </Button>
-          
+          </Box>          
             
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+          <Stack pt={2} direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <img style={{ width: '50%', height: '100%' }} src={coverF} alt="" />
             <Stack>
               <Typography
@@ -172,14 +176,16 @@ export default function AlertDialog({ open, setOpen, product }) {
               <Typography>Available Colors</Typography>
               <Box p={2} width="100%" m={.5} sx={{backgroundColor: color1 !== "Not Found" ? color1 : "#ffffff"}} />
               <Box p={2} width="100%" m={.5} sx={{backgroundColor: color2 !== "Not Found" ? color2 : " #ffffff"}} />
+              <Typography >From</Typography>
+              <Typography variant='h5'>{store.name}</Typography>
               
             </Stack>
           </Stack>
           <Typography pt={2}>{descriptionF}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Atrás</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={()=>{setOpen(false)}}>Atrás</Button>
+          <Button onClick={openRedirect} autoFocus>
             Ir al proveedor
           </Button>
         </DialogActions>
