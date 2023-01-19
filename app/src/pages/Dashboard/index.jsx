@@ -105,16 +105,13 @@ export default function DashboardAppPage() {
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/getUsersNumber/`).then((res) => {
       setTotalUsers(res.data);
     });
-    /* TODO PRODUCTS */
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/getProductsNumber/`).then((res) => {
       setTotalProducts(res.data);
     });
-    /* TODO TODAY VIEWS */
-    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/getUsersNumber/`).then((res) => {
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/sumTodayVisits/`).then((res) => {
       setTodayViews(res.data);
     });
-    /* TODO TODAY REDIRECTS */
-    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/getUsersNumber/`).then((res) => {
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/sumTodayRedirects/`).then((res) => {
       setTodayRedirects(res.data);
     });
     /* TODO monthRedirects */
