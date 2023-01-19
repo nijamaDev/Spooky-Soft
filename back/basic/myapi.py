@@ -220,9 +220,12 @@ def updateProduct(req, id):
 @api_view(['DELETE'])
 def deleteProduct(req, id):
     if req.method == 'DELETE':
-        product = Products.objects.get(id=id)
-        product.delete()
-        return Response({'status':1,"msg":"Removed Successfully"})
+        try:
+            product = Products.objects.get(id=id)
+            product.delete()
+            return Response({'status':1,"msg":"Removed Successfully"})
+        except Products.DoesNotExist:
+            return Response({'status':0,"msg":" ERROR: The Product Does Not Exist"})
 
 @api_view(['GET'])
 def getProductsNumber(req):
