@@ -10,7 +10,7 @@ ProductList.propTypes = {
 };
 
 export default function ProductList({ products, ...other }) {
-  console.log(products)
+  // console.log(products)
   return (
     <Grid container spacing={3} {...other}>
       {products.map((register, i) => (
