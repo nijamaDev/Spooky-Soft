@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from rest_framework import routers
 from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet, UsersViewSet, NewsViewSet, GoogleUsersViewSet, ProductRegistersViewSet, ProductsViewSet
-from .myapi import getAllUsers, getProductsNumber, getUsersNumber, scarpInit, logIn, createUser, createProduct, createProducts, sumRedirectsByMonth, sumVisitsByMonth, updateProducts, createProductRegister, createProductRegisterGivenDate, createProductRegisterAllProducts, getPerson, getRole, getStatus, getTodayProductRegisters, updateUserNoPassword, updateUserPassword, updateProduct, addVisit, addRedirect, deleteProduct, addVisitXD, addRedirectXD, sortByRedirects, sortByVisits
+from .myapi import getAllUsers, getProductsNumber, getUsersNumber, scarpInit, logIn, createUser, createProduct, createProducts, sumTodayRedirects, sumTodayVisits, updateProducts, createProductRegister, createProductRegisterGivenDate, createProductRegisterAllProducts, getPerson, getRole, getStatus, getTodayProductRegisters, updateUserNoPassword, updateUserPassword, updateProduct, addVisit, addRedirect, deleteProduct, addVisitXD, addRedirectXD, sortByRedirects, sortByVisits
 
 router = routers.DefaultRouter()
 
@@ -59,8 +59,10 @@ urlpatterns.append(path('api/add_redirect/<str:id>/', addRedirect, name='add_red
 #---------[REPORTS]-------------------------------------------------------------------------------------------------------
 urlpatterns.append(path('api/sortByRedirects/', sortByRedirects, name='sortByRedirects'))
 urlpatterns.append(path('api/sortByVisits/', sortByVisits, name='sortByVisits'))
-urlpatterns.append(path('api/sumVisitsByMonth/', sumVisitsByMonth, name='sumVisitsByMonth'))
-urlpatterns.append(path('api/sumRedirectsByMonth/', sumRedirectsByMonth, name='sumRedirectsByMonth'))
+urlpatterns.append(path('api/sumTodayVisits/', sumTodayVisits, name='sumTodayVisits'))
+urlpatterns.append(path('api/sumTodayRedirects/', sumTodayRedirects, name='sumTodayRedirects'))
+#urlpatterns.append(path('api/sumVisitsByMonth/', sumVisitsByMonth, name='sumVisitsByMonth'))
+#urlpatterns.append(path('api/sumRedirectsByMonth/', sumRedirectsByMonth, name='sumRedirectsByMonth'))
 urlpatterns.append(path('api/add_redirect_xd/', addRedirectXD, name='add_redirect_XD'))
 
 

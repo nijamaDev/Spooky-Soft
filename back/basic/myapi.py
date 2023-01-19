@@ -311,27 +311,25 @@ def sortByVisits(req):
     if req.method == 'GET':
        today = datetime.now()
        month = today.month
-       report = ProductRegisters.objects.filter(date__month=month).order_by('-visits')[:10]
-       serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
-       return Response(serializer.data)
-
-@api_view(['GET'])
-def sumVisitsByMonth(req):
-    if req.method == 'GET':
-       today = datetime.now()
-       month = today.month
-       report = ProductRegisters.objects.filter(date__month=month).annotate(total_visits=Sum('visits'))
+       report = ProductRegisters.objects.filter(date__month=month).values_list('product__name','redirect', 'product__store__name', 'visits').order_by('-visits')[:10]
        #serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
        return Response(report)
 
 @api_view(['GET'])
-def sumRedirectsByMonth(req):
+def sumTodayVisits(req):
     if req.method == 'GET':
        today = datetime.now()
-       month = today.month
-       report = ProductRegisters.objects.filter(date__month=month).aggregate(sum('redirect'))
-       serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
-       return Response(serializer.data)
+       day = today.day
+       report = ProductRegisters.objects.filter(date__day=day).aggregate(Sum('visits')).get('visits__sum')
+       return Response(report)
+
+@api_view(['GET'])
+def sumTodayRedirects(req):
+    if req.method == 'GET':
+       today = datetime.now()
+       day = today.day
+       report = ProductRegisters.objects.filter(date__day=day).aggregate(Sum('redirect')).get('redirect__sum')
+       return Response(report)
 
 
 
