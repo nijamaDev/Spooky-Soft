@@ -118,6 +118,13 @@ def getAllUsers(req):
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
+@api_view(['GET'])
+def getUsersNumber(req):
+    if req.method == 'GET':
+        users = Users.objects.all().count()
+        return Response(users)
+
+
 @api_view(['PUT'])
 def updateUserNoPassword(req, id):
     data = req.data
@@ -277,3 +284,47 @@ def addRedirectXD(req):
     except ProductRegisters.DoesNotExist:
         pr = ProductRegisters.objects.create(product=req.data['p']['id'], date = req.data['date'], visits=0, redirect=0)
     return Response(ProductRegistersSerializer(pr).data) 
+        
+
+
+
+#---------------------------reportes-------------------------------------------------------------------------------------        
+
+@api_view(['GET'])
+def sortByRedirects(req):
+    if req.method == 'GET':
+       today = datetime.now()
+       month = today.month
+       report = ProductRegisters.objects.filter(date__month=month).values_list('product__name','redirect').order_by('-redirect')[:10]
+       #serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
+       return Response(report)
+
+@api_view(['GET'])
+def sortByVisits(req):
+    if req.method == 'GET':
+       today = datetime.now()
+       month = today.month
+       report = ProductRegisters.objects.filter(date__month=month).order_by('-visits')[:10]
+       serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
+       return Response(serializer.data)
+
+@api_view(['GET'])
+def sumVisitsByMonth(req):
+    if req.method == 'GET':
+       today = datetime.now()
+       month = today.month
+       report = ProductRegisters.objects.filter(date__month=month).aggregate(sum('visits'))
+       serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
+       return Response(serializer.data)
+
+@api_view(['GET'])
+def sumRedirectsByMonth(req):
+    if req.method == 'GET':
+       today = datetime.now()
+       month = today.month
+       report = ProductRegisters.objects.filter(date__month=month).aggregate(sum('redirect'))
+       serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
+       return Response(serializer.data)
+
+
+
