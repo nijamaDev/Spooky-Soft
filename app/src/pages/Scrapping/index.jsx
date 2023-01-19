@@ -41,14 +41,6 @@ export default function ProductsPage() {
     
   }, [])
 
-  const handleOpenFilter = () => {
-    setOpenFilter(true);
-  };
-
-  const handleCloseFilter = () => {
-    setOpenFilter(false);
-  };
-
   const handleChange = (event) => {
     setCategory(event.target.value);
     if(category === 'Personalizada'){setOther('')}
