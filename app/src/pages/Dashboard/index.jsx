@@ -45,32 +45,6 @@ export default function DashboardAppPage() {
       redirects: 20,
     },
   ];
-  const STORES = [
-    {
-      store: 'Nike',
-      visits: 540,
-    },
-    {
-      store: 'Adidas',
-      visits: 480,
-    },
-    {
-      store: 'Puma',
-      visits: 420,
-    },
-    {
-      store: 'Reebok',
-      visits: 380,
-    },
-    {
-      store: 'New Balance',
-      visits: 340,
-    },
-    {
-      store: 'Under Armour',
-      visits: 300,
-    },
-  ];
 
   /* const MOST_CLICKED = [
     { product: 'Outdoor shoes', redirects: 1380 },
@@ -113,11 +87,11 @@ export default function DashboardAppPage() {
       setVisitedStores([
         {
           store: 'Falabella',
-          visits: res.data.tfv,
+          visits: res.data.tfr,
         },
         {
           store: 'Croydon',
-          visits: res.data.tcv,
+          visits: res.data.tcr,
         },
       ]);
     });
@@ -168,6 +142,20 @@ export default function DashboardAppPage() {
             />
           </Grid>
 
+          <Grid item xs={12} md={6} lg={4}>
+            <AppCurrentVisits
+              title="Most visited stores"
+              chartData={[...visitedStores.map((store) => ({ label: store.store, value: store.visits }))]}
+              chartColors={[
+                '#aad500',
+                '#25388e',
+                theme.palette.primary.main,
+                theme.palette.info.main,
+                theme.palette.warning.main,
+                theme.palette.error.main,
+              ]}
+            />
+          </Grid>
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Product Visits and redirects"
@@ -186,21 +174,6 @@ export default function DashboardAppPage() {
                   fill: 'gradient',
                   data: monthRedirects.map((data) => data.redirects),
                 },
-              ]}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits
-              title="Most visited stores"
-              chartData={[...visitedStores.map((store) => ({ label: store.store, value: store.visits }))]}
-              chartColors={[
-                '#aad500',
-                '#25388e',
-                theme.palette.primary.main,
-                theme.palette.info.main,
-                theme.palette.warning.main,
-                theme.palette.error.main,
               ]}
             />
           </Grid>
