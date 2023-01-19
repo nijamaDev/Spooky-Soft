@@ -1,20 +1,31 @@
 import { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 // @mui
-import { Box, Card, Link, Typography, Stack, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Checkbox } from '@mui/material';
+import {
+  Box,
+  Card,
+  Link,
+  Typography,
+  Stack,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Checkbox,
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 // utils
 import { fCurrency } from '../../utils/formatNumber';
 // components
 import Label from '../../components/label';
 import { ColorPreview } from '../../components/color-utils';
-import ProductDetail from './ProductDetail';
 import ProductEdit from './ProductEdit';
 import { AppContext } from '../../context/AppContext';
-
 
 // ----------------------------------------------------------------------
 
@@ -32,45 +43,78 @@ ShopProductCard.propTypes = {
   product: PropTypes.object,
 };
 
-export default function ShopProductCard({ register, checkbox }) {
+export default function ShopProductCard({ index, register, checkbox }) {
   const navigate = useNavigate();
-  const { login } = useContext(AppContext);
-  const { name, cover, price, colors, status, priceSale } = register.product;
-
-  const [openDetail, setOpenDetail] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false); 
+  const { login, scrapping, setScrapping } = useContext(AppContext);
+  const { name, cover, price, colors, priceSale } = register.product;
+  const creationDate = new Date(register.product.creation_date)
+  const { visits } = register
+  const [openEdit, setOpenEdit] = useState(false);
   const [show, setShow] = useState(<Box />);
-  const [selected, setSelected] = useState(checkbox)
+  const [selected, setSelected] = useState(checkbox);
+
+  const today = new Date();
+  const twoDaysAgo = new Date(today);
+  twoDaysAgo.setDate(today.getDate() - 2);
+
+
+  const status = priceSale === null ? creationDate >= twoDaysAgo && creationDate <= today ? 'new' : '' : 'sale';
 
   useEffect(() => {
-    let rightButton;
-    if (checkbox){
-      rightButton = <Checkbox checked={selected} onClick={() => { setSelected(!selected) }} />
-    } else {
-      rightButton = <Button style={{ backgroundColor: '#FF4842' }} variant="contained"
-                            onClick={() => { setOpen(true); }} >
-                      <DeleteForeverIcon />
-                    </Button>
-    } 
-    if (login.role !== "Operario" || login.role !== "Administrador") {
-      setShow(
-        <Box m={1} display="flex" justifyContent="flex-end" alignItems="flex-end">
-          <Card>
-            <Stack p={1} direction="row" spacing={1}>
-              <Button variant="filled">
-                <EditIcon
-                  onClick={() => {
-                    setOpenEdit(true)
-                  }}
-                />
-              </Button>
-              {rightButton}
-            </Stack>
-          </Card>
-        </Box>
-      );
+    try {
+      let rightButton;
+      if (checkbox) {
+        rightButton = <Checkbox checked={selected} onClick={handleSelect} />;
+      } else {
+        rightButton = (
+          <Button
+            style={{ backgroundColor: '#FF4842' }}
+            variant="contained"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <DeleteForeverIcon />
+          </Button>
+        );
+      }
+
+      if (login.role.name === 'Operario' || login.role.name === 'Administrador') {
+        setShow(
+          <Box mr={-1} mt={-1} pb={2} display="flex" justifyContent="flex-end" alignItems="flex-end">
+            {rightButton}
+          </Box>
+        );
+      }
+    } catch (error) {
+      navigate('/login');
     }
   }, [selected]);
+
+  const handleSelect = () => {
+    setSelected(!selected);
+    const changeValue = (arr, n, newValue) => {
+      arr[n] = newValue;
+      return arr;
+    };
+    setScrapping(changeValue(scrapping, index, !selected));
+    console.log(index);
+  };
+
+  const openDetail = () => {
+    if (checkbox) {
+      setOpenEdit(false);
+    } else setOpenEdit(true);
+    if (login.role.name === 'Visitante' || true) {
+      console.log('register', register);
+      const obj = {
+        p_id: register.product.id,
+      };
+      axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/add_visit_xd/`, obj).then((res) => {
+        console.log(res.data);
+      });
+    }
+  };
 
   const handleDelete = () => {
     /*
@@ -88,15 +132,16 @@ export default function ShopProductCard({ register, checkbox }) {
       }
     });    
     */
-    console.log("borrado papu")
+    console.log('borrado papu');
     setOpen(false);
   };
 
   const [open, setOpen] = useState(false);
 
   return (
-    <Box > 
+    <Box>
       <Card sx={{ border: selected ? '3px solid #1DA1F2' : '0px solid #1DA1F2', p: selected ? 2.6 : 3 }}>
+        {show}
         <Box sx={{ pt: '100%', position: 'relative' }}>
           {status && (
             <Label
@@ -116,18 +161,18 @@ export default function ShopProductCard({ register, checkbox }) {
           <StyledProductImg alt={name} src={cover} />
         </Box>
 
-        <Stack spacing={2} sx={{ p: 3 }}>
-          <Link color="inherit" underline="hover" onClick={() => setOpenDetail(true)}>
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
+        <Stack spacing={2} sx={{ pt: 3, pl: 3, pr: 3, pb:1 }}>
+          <Link color="inherit" underline="hover" onClick={openDetail}>
+            <Button>{name.length > 12 ? `${name.substring(0, 24)}...` : name}</Button>
           </Link>
 
           <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <ColorPreview colors={
-              typeof colors === 'string' ? colors.split(",") : []
-              // colors.split(",")
-            } />
+            <ColorPreview
+              colors={
+                typeof colors === 'string' ? colors.split('; ') : []
+                // colors.split(",")
+              }
+            />
             <Typography variant="subtitle1">
               <Typography
                 component="span"
@@ -143,11 +188,11 @@ export default function ShopProductCard({ register, checkbox }) {
               {fCurrency(price)}
             </Typography>
           </Stack>
+          {!checkbox && <Typography style={{ textAlign: "center", color: "gray", fontSize: "0.8rem" }}>
+            Seen today: {visits}</Typography>}
         </Stack>
         <ProductEdit open={openEdit} setOpen={setOpenEdit} product={register.product} />
-        <ProductDetail open={openDetail} setOpen={setOpenDetail} product={register.product} />
       </Card>
-      {show}
 
       <Dialog
         open={open}

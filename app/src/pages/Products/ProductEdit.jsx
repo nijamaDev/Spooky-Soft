@@ -1,5 +1,5 @@
 // import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -9,41 +9,65 @@ import { Box, Button, Grid, MenuItem, Select, TextField, Typography } from '@mui
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Stack } from '@mui/system';
 import { fCurrency } from '../../utils/formatNumber';
-import FormContainer from '../../components/Forms/FormContainer'
-import FormItem from '../../components/Forms/FormItem'
+import FormContainer from '../../components/Forms/FormContainer';
+import FormItem from '../../components/Forms/FormItem';
+import { AppContext } from '../../context/AppContext';
 /* eslint-disable react/prop-types */ // TODO: upgrade to latest eslint tooling
-
+/*
 function isImage(url) {
   return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
 }
+*/
 
 export default function AlertDialog({ open, setOpen, product }) {
-  console.log("product",product)
-  const { id, name, cover, description, price, colors, redirect, priceSale } = product;
+  const { id, name, store, cover, description, price, colors, redirect, priceSale } = product;
+  const { login, update, setUpdate } = useContext(AppContext);
   // console.log(typeof colors === 'string' ? colors.split(",").length <= 2 ? colors.split(",")[0] : colors.split(",")[1] : [])
-  const [ nameF, setNameF] = useState(name);
-  const [ descriptionF, setDescriptionF ] = useState(description)
-  const [ coverF, setCoverF] = useState(cover)
-  const [ priceF, setPriceF] = useState(price)
-  const [ priceSaleF, setPriceSaleF] = useState(priceSale)
-  const [color1, setColor1] = useState(typeof colors === 'string' ? colors.split(",").length === 1 ? colors.split(",")[0] : "Not Found" : "Not Found");
-  const [ color2, setColor2] = useState(typeof colors === 'string' ? colors.split(",").length === 2 ? colors.split(",")[1] : "Not Found" : "Not Found");
-  const [ colorsF, setColorsF] = useState("");
-  const colorsOptions = ["#ffffff", "#f44336", "#9c27b0", "#3f51b5", "#2196f3", "#4caf50", "#8bc34a", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#000001"];
-  const [ displayEdit, setDisplayEdit] = useState(false);
+
+  const [nameF, setNameF] = useState(name);
+  const [descriptionF, setDescriptionF] = useState(description);
+  const [coverF, setCoverF] = useState(cover);
+  const [priceF, setPriceF] = useState(price);
+  const [priceSaleF, setPriceSaleF] = useState(priceSale);
+  const [color1, setColor1] = useState(
+    typeof colors === 'string' ? (colors.split('; ').length >= 1 ? colors.split('; ')[0] : 'Not Found') : 'Not Found'
+  );
+  const [color2, setColor2] = useState(
+    typeof colors === 'string' ? (colors.split('; ').length === 2 ? colors.split('; ')[1] : 'Not Found') : 'Not Found'
+  );
+  const [colorsF, setColorsF] = useState('');
+  const colorsOptions = [
+    '#ffffff',
+    '#f44336',
+    '#9c27b0',
+    '#3f51b5',
+    '#2196f3',
+    '#4caf50',
+    '#8bc34a',
+    '#ffeb3b',
+    '#ffc107',
+    '#ff9800',
+    '#ff5722',
+    '#000001',
+  ];
+  const [displayEdit, setDisplayEdit] = useState(false);
 
   // console.log("color2",color2)
-  useEffect(()=>{
-    let colorAux = ""
+  useEffect(() => {
+    let colorAux = '';
     // console.log("color1",color1)
     // console.log("color2",color2)
-    if(color1 !== 'Not Found'){
-      colorAux += color1
-      if(color2 !== 'Not Found'){colorAux += ","}
+    if (color1 !== 'Not Found') {
+      colorAux += color1;
+      if (color2 !== 'Not Found') {
+        colorAux += '; ';
+      }
     }
-    if(color2 !== 'Not Found'){colorAux += color2}
-    setColorsF(colorAux)
-  }, [color1,color2])
+    if (color2 !== 'Not Found') {
+      colorAux += color2;
+    }
+    setColorsF(colorAux);
+  }, [color1, color2]);
 
   const handleInputChange = ({ target }) => {
     // setCreatedAt(new Date().toISOString().slice(0, 10));
@@ -68,80 +92,157 @@ export default function AlertDialog({ open, setOpen, product }) {
     }
   };
 
+  const openRedirect = () => {
+    const obj = {
+      p_id: id,
+    };
+    axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/add_redirect_xd/`, obj).then((res) => {
+      console.log(res.data);
+    });
+    window.open(redirect, '_blank');
+    // if(login.role.name === "Visitante"){
+    //    axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/add_visit/${String(register.product.id)}/`).then((res)=>{console.log(res.data)})
+    // }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const obj = {
-      name:nameF,
-      description:descriptionF,
-      cover:coverF,
-      redirect,
-      price:priceF,
-      priceSale:priceSaleF,
-      location:"",
-
-      colors:colorsF
-
+      name:nameF, description:descriptionF,
+      cover:coverF, redirect,
+      price:priceF, priceSale:priceSaleF === "" ? null : priceSaleF,
+      location:"", colors:colorsF
     };
     console.log(obj);
     axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_product/${id}/`, obj).then((res) => {
-      console.log(res.data);
-    })
-  }
-
-  const handleClose = () => {
-    setOpen(false);
+      // console.log(res.data);
+      setOpen(false);
+      setUpdate(!update);
+      setDisplayEdit(false);
+    });
   };
 
   return (
     <div>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={() => {
+          setOpen(false);
+        }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        scroll='body'
+        scroll="body"
       >
-        <DialogContent >
-          <Typography variant="h4" gutterBottom pb={3}>Editing: {nameF}</Typography>
-          <Box mb={3} display="flex" justifyContent="center"><Button variant="contained" color="secondary" onClick={()=>{setDisplayEdit(!displayEdit)}}>Toggle Edit</Button></Box>
-          <Box onSubmit={handleSubmit} component="form" pt={3} pr={3} pb={3} sx={{display:displayEdit ? "block" : "none", border: '1px solid #D3D3D3', borderRadius: '10px'}}>
+        <DialogContent>
+          <Typography variant="h4" gutterBottom pb={1}>
+            {login.role.name === 'Operario' || login.role.name === 'Administrador' ? 'Editing: ' : ''}
+            {nameF}
+          </Typography>
+          <Box
+            mb={3}
+            display={login.role.name === 'Operario' || login.role.name === 'Administrador' ? 'flex' : 'none'}
+            justifyContent="center"
+          >
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                setDisplayEdit(!displayEdit);
+              }}
+            >
+              Toggle Edit
+            </Button>
+          </Box>
+          <Box
+            onSubmit={handleSubmit}
+            component="form"
+            pt={3}
+            pr={3}
+            pb={3}
+            sx={{ display: displayEdit ? 'block' : 'none', border: '1px solid #D3D3D3', borderRadius: '10px' }}
+          >
             <FormContainer>
               <FormItem phone={12} computer={12}>
-                <TextField required fullWidth id="nameF" label="Product Name" value={nameF} onChange={handleInputChange} />
+                <TextField
+                  required
+                  fullWidth
+                  id="nameF"
+                  label="Product Name"
+                  value={nameF}
+                  onChange={handleInputChange}
+                />
               </FormItem>
               <FormItem phone={6} computer={6}>
                 <TextField required fullWidth id="priceF" label="Price" value={priceF} onChange={handleInputChange} />
               </FormItem>
               <FormItem phone={6} computer={6}>
-                <TextField required fullWidth id="priceSaleF" label="Sale price" value={priceSaleF} onChange={handleInputChange} />
+                <TextField
+                  fullWidth
+                  id="priceSaleF"
+                  label="Sale price"
+                  value={priceSaleF}
+                  onChange={handleInputChange}
+                />
               </FormItem>
               <FormItem phone={12} computer={12}>
-                <TextField required fullWidth multiline rows={4} id="descriptionF" label="Description" value={descriptionF} onChange={handleInputChange} />
+                <TextField
+                  required
+                  fullWidth
+                  multiline
+                  rows={4}
+                  id="descriptionF"
+                  label="Description"
+                  value={descriptionF}
+                  onChange={handleInputChange}
+                />
               </FormItem>
               <FormItem phone={12} computer={12}>
-                <TextField required fullWidth id="coverF" label="Image Url" value={coverF} onChange={handleInputChange} />
+                <TextField
+                  required
+                  fullWidth
+                  id="coverF"
+                  label="Image Url"
+                  value={coverF}
+                  onChange={handleInputChange}
+                />
               </FormItem>
               <FormItem phone={12} computer={12}>
-                <Box p={1.5} display='flex' justifyContent='space-between' sx={{backgroundColor: '#D3D3D3'}}>
+                <Box p={1.5} display="flex" justifyContent="space-between" sx={{ backgroundColor: '#D3D3D3' }}>
                   <Typography>Primary Color</Typography>
                   <CirclePicker
-                      color={color1}
-                      colors={colorsOptions}
-                      onChange={(newColor) => setColor1(newColor.hex)}
-                    />
-                  <Button variant="outlined" onClick={() => {setColor1("Not Found")}} startIcon={<DeleteIcon />}>Clear</Button>
-                </Box>        
+                    color={color1}
+                    colors={colorsOptions}
+                    onChange={(newColor) => setColor1(newColor.hex)}
+                  />
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setColor1('Not Found');
+                    }}
+                    startIcon={<DeleteIcon />}
+                  >
+                    Clear
+                  </Button>
+                </Box>
               </FormItem>
               <FormItem phone={12} computer={12}>
-                <Box p={1.5} display='flex' justifyContent='space-between' sx={{backgroundColor: '#D3D3D3'}}>
+                <Box p={1.5} display="flex" justifyContent="space-between" sx={{ backgroundColor: '#D3D3D3' }}>
                   <Typography>Secondary Color</Typography>
                   <CirclePicker
                     color={color2}
                     colors={colorsOptions}
                     onChange={(newColor) => setColor2(newColor.hex)}
                   />
-                  <Button variant="outlined" onClick={() => {setColor2("Not Found")}} startIcon={<DeleteIcon />}>Clear</Button>
-                </Box>        
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setColor2('Not Found');
+                    }}
+                    startIcon={<DeleteIcon />}
+                  >
+                    Clear
+                  </Button>
+                </Box>
               </FormItem>
               <FormItem phone={12} computer={12}>
                 <Box display="flex" justifyContent="flex-end" alignItems="flex-end" pt={3}>
@@ -153,10 +254,8 @@ export default function AlertDialog({ open, setOpen, product }) {
             </FormContainer>
           </Box>
 
-          
-            
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-            <img style={{ width: '50%', height: '100%' }} src={!isImage(coverF) ?'https://img.freepik.com/free-vector/hand-drawn-flat-design-mountain-landscape_52683-79195.jpg?w=2000' : coverF} alt="" />
+          <Stack pt={2} direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <img style={{ width: '50%', height: '100%' }} src={coverF} alt="" />
             <Stack>
               <Typography
                 component="span"
@@ -172,16 +271,23 @@ export default function AlertDialog({ open, setOpen, product }) {
                 {fCurrency(priceF)}
               </Typography>
               <Typography>Available Colors</Typography>
-              <Box p={2} width="100%" m={.5} sx={{backgroundColor: color1 !== "Not Found" ? color1 : "#ffffff"}} />
-              <Box p={2} width="100%" m={.5} sx={{backgroundColor: color2 !== "Not Found" ? color2 : "#ffffff"}} />
-              
+              <Box p={2} width="100%" m={0.5} sx={{ backgroundColor: color1 !== 'Not Found' ? color1 : '#ffffff' }} />
+              <Box p={2} width="100%" m={0.5} sx={{ backgroundColor: color2 !== 'Not Found' ? color2 : ' #ffffff' }} />
+              <Typography>From</Typography>
+              <Typography variant="h5">{store.name}</Typography>
             </Stack>
           </Stack>
           <Typography pt={2}>{descriptionF}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Atrás</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
+            Atrás
+          </Button>
+          <Button onClick={openRedirect} autoFocus>
             Ir al proveedor
           </Button>
         </DialogActions>

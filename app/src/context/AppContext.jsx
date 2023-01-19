@@ -1,5 +1,5 @@
 // import { LinearProgress } from '@mui/material';
-import { update } from 'lodash';
+// import { update } from 'lodash';
 import React, { useState, createContext, useEffect } from 'react';
 import GetCookie from '../hooks/getCookie'
 
@@ -7,6 +7,7 @@ export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [update, setUpdate] = useState(true);
+  const [scrapping, setScrapping] = useState([]);
   const [login, setLogin] = useState({ found : "waiting"});
   const [isDarkTheme, setIsDarkTheme] = useState(true);
 
@@ -41,7 +42,9 @@ export const AppProvider = ({ children }) => {
         lastObject,
         setLastObject,
         update,
-        setUpdate
+        setUpdate,
+        scrapping,
+        setScrapping
       }}
     >
       {children}

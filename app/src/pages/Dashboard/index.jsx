@@ -13,81 +13,10 @@ import AppCurrentVisits from './AppCurrentVisits';
 
 export default function DashboardAppPage() {
   const theme = useTheme();
-  const VISITS_MOCK = [
-    {
-      date: '01/01/2023',
-      visits: 100,
-      redirects: 10,
-    },
-    {
-      date: '01/02/2023',
-      visits: 120,
-      redirects: 15,
-    },
-    {
-      date: '01/03/2023',
-      visits: 90,
-      redirects: 12,
-    },
-    {
-      date: '01/04/2023',
-      visits: 110,
-      redirects: 18,
-    },
-    {
-      date: '01/05/2023',
-      visits: 95,
-      redirects: 11,
-    },
-    {
-      date: '01/06/2023',
-      visits: 130,
-      redirects: 20,
-    },
-  ];
-  const STORES = [
-    {
-      store: 'Nike',
-      visits: 540,
-    },
-    {
-      store: 'Adidas',
-      visits: 480,
-    },
-    {
-      store: 'Puma',
-      visits: 420,
-    },
-    {
-      store: 'Reebok',
-      visits: 380,
-    },
-    {
-      store: 'New Balance',
-      visits: 340,
-    },
-    {
-      store: 'Under Armour',
-      visits: 300,
-    },
-  ];
-
-  /* const MOST_CLICKED = [
-    { product: 'Outdoor shoes', redirects: 1380 },
-    { product: 'Athletic shoes', redirects: 1200 },
-    { product: 'Dress shoes', redirects: 1100 },
-    { product: 'Running shoes', redirects: 690 },
-    { product: 'Flip flops', redirects: 580 },
-    { product: 'High heels', redirects: 540 },
-    { product: 'Boots', redirects: 470 },
-    { product: 'Sandals', redirects: 448 },
-    { product: 'Loafers', redirects: 430 },
-    { product: 'Sneakers', redirects: 400 },
-  ]; */
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalProducts, setTotalProducts] = useState(0);
-  const [todayViews, setTodayViews] = useState(0);
-  const [todayRedirects, setTodayRedirects] = useState(0);
+  const [totalViews, setTotalViews] = useState(0);
+  const [totalRedirects, setTotalRedirects] = useState(0);
   const [monthRedirects, setMonthRedirects] = useState([]);
   const [visitedStores, setVisitedStores] = useState([]);
   const [mostClicked, setMostClicked] = useState([]);
@@ -100,16 +29,23 @@ export default function DashboardAppPage() {
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/getProductsNumber/`).then((res) => {
       setTotalProducts(res.data);
     });
-    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/sumTodayVisits/`).then((res) => {
-      setTodayViews(res.data);
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/alejo_lines/`).then((res) => {
+      setMonthRedirects(res.data);
     });
-    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/sumTodayRedirects/`).then((res) => {
-      setTodayRedirects(res.data);
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/alejo_report/`).then((res) => {
+      setTotalViews(res.data.tv);
+      setTotalRedirects(res.data.tr);
+      setVisitedStores([
+        {
+          store: 'Falabella',
+          visits: res.data.tfr,
+        },
+        {
+          store: 'Croydon',
+          visits: res.data.tcr,
+        },
+      ]);
     });
-    /* TODO monthRedirects */
-    setMonthRedirects(VISITS_MOCK);
-    /* TODO setVisitedStores */
-    setVisitedStores(STORES);
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/sortByRedirects/`).then((res) => {
       setMostClicked(res.data);
     });
@@ -141,8 +77,8 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
-              title="Today Views"
-              total={todayViews}
+              title="Total Views"
+              total={totalViews}
               color="warning"
               icon={'ant-design:fund-view-outlined'}
             />
@@ -150,13 +86,27 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
-              title="Today Redirects"
-              total={todayRedirects}
+              title="Total Redirects"
+              total={totalRedirects}
               color="error"
               icon={'ant-design:link-outlined'}
             />
           </Grid>
 
+          <Grid item xs={12} md={6} lg={4}>
+            <AppCurrentVisits
+              title="Most visited stores"
+              chartData={[...visitedStores.map((store) => ({ label: store.store, value: store.visits }))]}
+              chartColors={[
+                '#aad500',
+                '#25388e',
+                theme.palette.primary.main,
+                theme.palette.info.main,
+                theme.palette.warning.main,
+                theme.palette.error.main,
+              ]}
+            />
+          </Grid>
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Product Visits and redirects"
@@ -175,19 +125,6 @@ export default function DashboardAppPage() {
                   fill: 'gradient',
                   data: monthRedirects.map((data) => data.redirects),
                 },
-              ]}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits
-              title="Most visited stores"
-              chartData={[...visitedStores.map((store) => ({ label: store.store, value: store.visits }))]}
-              chartColors={[
-                theme.palette.primary.main,
-                theme.palette.info.main,
-                theme.palette.warning.main,
-                theme.palette.error.main,
               ]}
             />
           </Grid>

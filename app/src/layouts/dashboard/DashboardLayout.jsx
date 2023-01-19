@@ -40,7 +40,6 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('login', login);
     if (login.found !== 'waiting') {
       if (!login.found) {
         // console.log('login',login)
