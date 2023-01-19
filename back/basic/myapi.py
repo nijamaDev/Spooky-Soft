@@ -328,6 +328,7 @@ def sortByRedirects(req):
             auxilio = ProductRegisters.objects.filter(date__month=month, product=pid['product__id']).aggregate(Sum('redirect')).get('redirect__sum')
             arrayFeo.append(p.name)
             arrayFeo.append(auxilio)
+            arrayFeo.append(p.store.name)
             report.append(arrayFeo)
         #serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
         sorter = lambda x: (x[1], x[0])
