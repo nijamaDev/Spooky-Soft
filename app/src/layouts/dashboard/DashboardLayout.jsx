@@ -34,62 +34,38 @@ const Main = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function DashboardLayout() {
-  const { login } = useContext(AppContext)
+  const { login } = useContext(AppContext);
 
   const [open, setOpen] = useState(false);
-  const [dashLay, setDashLay] = useState(<></>)
-  const navigate = useNavigate();   
+  const navigate = useNavigate();
 
-  useEffect(()=>{
-    console.log(login)
-    if(login.found !== "waiting"){
-      if(!login.found){
-        console.log('login',login)
-        navigate('/login')  
-      } else {
-        setDashLay(
-          <StyledRoot>
-            <Header onOpenNav={() => setOpen(true)} />
-  
-            <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-  
-            <Main>
-              <Outlet />
-            </Main>
-          </StyledRoot>
-        )
+  useEffect(() => {
+    console.log('login', login);
+    if (login.found !== 'waiting') {
+      if (!login.found) {
+        // console.log('login',login)
+        navigate('/login');
+      } else if (login.role.name === 'Visitante') {
+        navigate('/products');
       }
     }
-    
-    /*    
-    if(login.id !== undefined){
-      // Still looking
-      if(login.found === false){
-        console.log('login',login)
-        navigate('/login')        
-      }else{
-        setDashLay(
-          <StyledRoot>
-                <Header onOpenNav={() => setOpen(true)} />
-  
-                <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-  
-                <Main>
-                  <Outlet />
-                </Main>
-              </StyledRoot>
-        )
-      }
-    }    
-    */    
-    
-  },[login])
+  }, [login]);
 
-
-  return (
+  return login == null ||
+    login.role == null ||
+    !login.found ||
+    (login.role.name !== 'Operario' && login.role.name !== 'Administrador') ? (
+    <></>
+  ) : (
     <>
-    {dashLay}
+      <StyledRoot>
+        <Header onOpenNav={() => setOpen(true)} />
+        <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+
+        <Main>
+          <Outlet />
+        </Main>
+      </StyledRoot>
     </>
-     
   );
 }

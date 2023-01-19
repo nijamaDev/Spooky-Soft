@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from rest_framework import routers
 from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet, UsersViewSet, NewsViewSet, GoogleUsersViewSet, ProductRegistersViewSet, ProductsViewSet
-from .myapi import scarpInit, logIn, createUser, createProduct, createProducts, updateProducts, createProductRegister, createProductRegisterGivenDate, createProductRegisterAllProducts, getPerson, getRole, getStatus, getTodayProductRegisters, updateUserNoPassword, updateUserPassword, updateProduct, addVisit, addRedirect, deleteProduct
+from .myapi import scarpInit, logIn, createUser, createProduct, createProducts, updateProducts, createProductRegister, createProductRegisterGivenDate, createProductRegisterAllProducts, getPerson, getRole, getStatus, getTodayProductRegisters, updateUserNoPassword, updateUserPassword, updateProduct, addVisit, addRedirect, deleteProduct, addVisitXD, addRedirectXD
 
 router = routers.DefaultRouter()
 
@@ -51,7 +51,9 @@ urlpatterns.append(path('api/create_product_register_date/', createProductRegist
 urlpatterns.append(path('api/create_product_register_all/', createProductRegisterAllProducts, name='create_product_register_all'))
 urlpatterns.append(path('api/today_product_registers/', getTodayProductRegisters, name='get_today_product_registers'))
 urlpatterns.append(path('api/add_visit/<str:id>/', addVisit, name='add_visit'))
+urlpatterns.append(path('api/add_visit_xd/', addVisitXD, name='add_visit_XD'))
 urlpatterns.append(path('api/add_redirect/<str:id>/', addRedirect, name='add_redirect'))
+urlpatterns.append(path('api/add_redirect_xd/', addRedirectXD, name='add_redirect_XD'))
 
 
 
