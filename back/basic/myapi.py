@@ -3,16 +3,19 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from datetime import date
 from datetime import datetime
+from django.db.models import Sum
 from .models import Users, People, Roles, Status, Stores, Products, ProductRegisters
 from .scraping import descuentos
 from .serializers import UserSerializer, ProductsSerializer, ProductRegistersSerializer
+from django.db.models.functions import Extract
 
 @api_view(['POST'])
 def scarpInit(req):
     res = { 'status':0, 'elements': "" }
     elements = descuentos(req.data['tipo'], req.data['prompt'], req.data['store'])
     res['elements'] = elements
-    res['status'] = 1
+    if elements != []:
+        res['status'] = 1
     return Response(res)
 
 @api_view(['POST'])
@@ -118,6 +121,13 @@ def getAllUsers(req):
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
+@api_view(['GET'])
+def getUsersNumber(req):
+    if req.method == 'GET':
+        users = Users.objects.all().count()
+        return Response(users)
+
+
 @api_view(['PUT'])
 def updateUserNoPassword(req, id):
     data = req.data
@@ -152,15 +162,31 @@ def createProduct(req):
 
 @api_view(['POST'])
 def createProducts(req):  
+    update = 0
+    created = 0
     data = req.data
     if req.method == 'POST':
         for i in range(len(data['products'])):
             store = Stores.objects.get(name=data['products'][i]['store'])
-            existing_product = Products.objects.filter(redirect=data['products'][i]['redirect'])
-            if not existing_product.exists():
+            try:
+                existing_product = Products.objects.get(redirect=data['products'][i]['redirect'])
+                existing_product.name = data['products'][i]['name']
+                existing_product.description = data['products'][i]['description']
+                existing_product.cover = data['products'][i]['cover']
+                existing_product.redirect = data['products'][i]['redirect']
+                existing_product.price = data['products'][i]['price']
+                existing_product.priceSale = data['products'][i]['priceSale']
+                existing_product.location = data['products'][i]['location']
+                existing_product.colors = data['products'][i]['colors']
+                existing_product.save()
+                update += 1
+            except Products.DoesNotExist:
                 product = Products.objects.create(store=store, name=data['products'][i]['name'], description=data['products'][i]['description'], cover=data['products'][i]['cover'], redirect=data['products'][i]['redirect'], price=data['products'][i]['price'], priceSale=data['products'][i]['priceSale'], location=data['products'][i]['location'], creation_date=datetime.now().date(), colors=data['products'][i]['colors'])
+                register = ProductRegisters.objects.create(product=product, date = product.creation_date, visits=0, redirect=0)
                 product.save()
-        return Response(status=status.HTTP_200_OK)
+                register.save()
+                created += 1
+        return Response({"created":created, "updated":update})
 
 @api_view(['PUT'])
 def updateProducts(request):
@@ -196,6 +222,12 @@ def deleteProduct(req, id):
         product = Products.objects.get(id=id)
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET'])
+def getProductsNumber(req):
+    if req.method == 'GET':
+        products = Products.objects.all().count()
+        return Response(products)
 
 #---------[ PRODUCT REGISTERS ]---------------------------------------------------------------------------------------------------
 @api_view(['POST'])
@@ -261,19 +293,81 @@ def addRedirect(req, id):
 @api_view(['POST'])
 def addVisitXD(req):
     try:
-        pr = ProductRegisters.objects.get(product=req.data['p']['id'], date = req.data['date'])
+        pr = ProductRegisters.objects.get(product=req.data['p_id'], date = req.data['date'])
         pr.visits += 1
         pr.save()
     except ProductRegisters.DoesNotExist:
-        pr = ProductRegisters.objects.create(product=req.data['p']['id'], date = req.data['date'], visits=0, redirect=0)
+        pr = ProductRegisters.objects.create(product=req.data['p_id'], date = req.data['date'], visits=0, redirect=0)
     return Response(ProductRegistersSerializer(pr).data) 
 
 @api_view(['POST'])
 def addRedirectXD(req):
     try:
-        pr = ProductRegisters.objects.get(product=req.data['p']['id'], date = req.data['date'])
+        pr = ProductRegisters.objects.get(product=req.data['p_id'], date = req.data['date'])
         pr.redirect += 1
         pr.save()
     except ProductRegisters.DoesNotExist:
-        pr = ProductRegisters.objects.create(product=req.data['p']['id'], date = req.data['date'], visits=0, redirect=0)
+        pr = ProductRegisters.objects.create(product=req.data['p_id'], date = req.data['date'], visits=0, redirect=0)
     return Response(ProductRegistersSerializer(pr).data) 
+
+@api_view(['GET'])
+def getAlejoReport(req):
+    res = {"tr":0,"tv":0,"tfr":0,"tfv":0,"tcr":0,"tcv":0,"pfr":0,"pfv":0,"pcr":0,"pcv":0}
+    total = ProductRegisters.objects.all()
+    for r in total:
+        res['tr'] += r.redirect
+        res['tv'] += r.visits
+    falabella = ProductRegisters.objects.filter(product__store__name="Falabella")
+    for r in falabella:
+        res['tfr'] += r.redirect
+        res['tfv'] += r.visits
+    croydon = ProductRegisters.objects.filter(product__store__name="Croydon")
+    for r in croydon:
+        res['tcr'] += r.redirect
+        res['tcv'] += r.visits
+    res['pcr'] = (res['tcr']/res['tr'])*100
+    res['pfr'] = (res['tfr']/res['tr'])*100
+    res['pcv'] = (res['tcv']/res['tv'])*100
+    res['pfv'] = (res['tfv']/res['tv'])*100
+    a = ProductRegisters.objects.filter(date__month=2).count()
+    print(a)
+    return Response(res)
+
+#---------------------------reportes-------------------------------------------------------------------------------------        
+
+@api_view(['GET'])
+def sortByRedirects(req):
+    if req.method == 'GET':
+       today = datetime.now()
+       month = today.month
+       report = ProductRegisters.objects.filter(date__month=month).values_list('product__name','redirect', 'product__store__name', 'visits').order_by('-redirect')[:10]
+       #serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
+       return Response(report)
+
+@api_view(['GET'])
+def sortByVisits(req):
+    if req.method == 'GET':
+       today = datetime.now()
+       month = today.month
+       report = ProductRegisters.objects.filter(date__month=month).values_list('product__name','redirect', 'product__store__name', 'visits').order_by('-visits')[:10]
+       #serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
+       return Response(report)
+
+@api_view(['GET'])
+def sumTodayVisits(req):
+    if req.method == 'GET':
+       today = datetime.now()
+       day = today.day
+       report = ProductRegisters.objects.filter(date__day=day).aggregate(Sum('visits')).get('visits__sum')
+       return Response(report)
+
+@api_view(['GET'])
+def sumTodayRedirects(req):
+    if req.method == 'GET':
+       today = datetime.now()
+       day = today.day
+       report = ProductRegisters.objects.filter(date__day=day).aggregate(Sum('redirect')).get('redirect__sum')
+       return Response(report)
+
+
+

@@ -1,18 +1,12 @@
 import { Helmet } from 'react-helmet-async';
-import { faker } from '@faker-js/faker';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
-// components
-import Iconify from '../../components/iconify';
 // sections
-import AppTasks from './AppTasks';
-import AppNewsUpdate from './AppNewsUpdate';
-import AppOrderTimeline from './AppOrderTimeline';
 import AppWebsiteVisits from './AppWebsiteVisits';
-import AppTrafficBySite from './AppTrafficBySite';
 import AppWidgetSummary from './AppWidgetSummary';
-import AppCurrentSubject from './AppCurrentSubject';
 import AppConversionRates from './AppConversionRates';
 import AppCurrentVisits from './AppCurrentVisits';
 // ----------------------------------------------------------------------
@@ -78,7 +72,7 @@ export default function DashboardAppPage() {
     },
   ];
 
-  const MOST_CLICKED = [
+  /* const MOST_CLICKED = [
     { product: 'Outdoor shoes', redirects: 1380 },
     { product: 'Athletic shoes', redirects: 1200 },
     { product: 'Dress shoes', redirects: 1100 },
@@ -89,8 +83,37 @@ export default function DashboardAppPage() {
     { product: 'Sandals', redirects: 448 },
     { product: 'Loafers', redirects: 430 },
     { product: 'Sneakers', redirects: 400 },
-  ];
+  ]; */
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [todayViews, setTodayViews] = useState(0);
+  const [todayRedirects, setTodayRedirects] = useState(0);
+  const [monthRedirects, setMonthRedirects] = useState([]);
+  const [visitedStores, setVisitedStores] = useState([]);
+  const [mostClicked, setMostClicked] = useState([]);
+  const [updateDash, setUpdateDash] = useState(false);
 
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/getUsersNumber/`).then((res) => {
+      setTotalUsers(res.data);
+    });
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/getProductsNumber/`).then((res) => {
+      setTotalProducts(res.data);
+    });
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/sumTodayVisits/`).then((res) => {
+      setTodayViews(res.data);
+    });
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/sumTodayRedirects/`).then((res) => {
+      setTodayRedirects(res.data);
+    });
+    /* TODO monthRedirects */
+    setMonthRedirects(VISITS_MOCK);
+    /* TODO setVisitedStores */
+    setVisitedStores(STORES);
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/sortByRedirects/`).then((res) => {
+      setMostClicked(res.data);
+    });
+  }, [updateDash]);
   return (
     <>
       <Helmet>
@@ -104,13 +127,13 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Users" total={714000} icon={'ant-design:user-outlined'} />
+            <AppWidgetSummary title="Total Users" total={totalUsers} icon={'ant-design:user-outlined'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Total Products"
-              total={1352831}
+              total={totalProducts}
               color="info"
               icon={'ant-design:appstore-outlined'}
             />
@@ -119,40 +142,39 @@ export default function DashboardAppPage() {
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Today Views"
-              total={1723315}
+              total={todayViews}
               color="warning"
               icon={'ant-design:fund-view-outlined'}
             />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Today Redirects" total={234} color="error" icon={'ant-design:link-outlined'} />
+            <AppWidgetSummary
+              title="Today Redirects"
+              total={todayRedirects}
+              color="error"
+              icon={'ant-design:link-outlined'}
+            />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Product Visits and redirects"
               subheader="For all products"
-              chartLabels={VISITS_MOCK.map((data) => data.date)}
+              chartLabels={monthRedirects.map((data) => data.date)}
               chartData={[
                 {
                   name: 'Views',
                   type: 'line',
                   fill: 'solid',
-                  data: VISITS_MOCK.map((data) => data.visits),
+                  data: monthRedirects.map((data) => data.visits),
                 },
                 {
                   name: 'Redirects',
                   type: 'area',
                   fill: 'gradient',
-                  data: VISITS_MOCK.map((data) => data.redirects),
+                  data: monthRedirects.map((data) => data.redirects),
                 },
-                /* {
-                  name: 'Conversion Rate',
-                  type: 'column',
-                  fill: 'solid',
-                  data: [0.88, 0.85, 0.73, 0.84, 0.49, 0.66, 0.48, 0.66, 0.71, 0.75, 0.62],
-                }, */
               ]}
             />
           </Grid>
@@ -160,7 +182,7 @@ export default function DashboardAppPage() {
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
               title="Most visited stores"
-              chartData={[...STORES.map((store) => ({ label: store.store, value: store.visits }))]}
+              chartData={[...visitedStores.map((store) => ({ label: store.store, value: store.visits }))]}
               chartColors={[
                 theme.palette.primary.main,
                 theme.palette.info.main,
@@ -174,21 +196,9 @@ export default function DashboardAppPage() {
             <AppConversionRates
               title="Most clicked products"
               subheader="On all the store"
-              chartData={[...MOST_CLICKED.map((item) => ({ label: item.product, value: item.redirects }))]}
+              chartData={[...mostClicked.map((item) => ({ label: [item[0], item[2]].join(', '), value: item[1] }))]}
             />
           </Grid>
-          {/* <Grid item xs={12} md={6} lg={8}>
-            <AppNewsUpdate
-              title="News Update"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: faker.name.jobTitle(),
-                description: faker.name.jobTitle(),
-                image: `/assets/images/covers/cover_${index + 1}.jpg`,
-                postedAt: faker.date.recent(),
-              }))}
-            />
-          </Grid> */}
         </Grid>
       </Container>
     </>

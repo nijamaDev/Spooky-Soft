@@ -11,16 +11,12 @@ import {
   Paper,
   Avatar,
   Button,
-  Popover,
-  Checkbox,
   CircularProgress,
   TableRow,
-  MenuItem,
   TableBody,
   TableCell,
   Container,
   Typography,
-  IconButton,
   TableContainer,
   TablePagination,
 } from '@mui/material';
@@ -76,87 +72,36 @@ function applySortFilter(array, comparator, query) {
       (_user) =>
         [_user.name, _user.lastname].join(' ').toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
         _user.email.toLowerCase().indexOf(query.toLowerCase()) !== -1
-      // || _user.role.toLowerCase().indexOf(query.toLowerCase()) !== -1
-      // || _user.status.toLowerCase().indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 export default function UserPage() {
-  const [open, setOpen] = useState(null);
-
   const [page, setPage] = useState(0);
-
   const [order, setOrder] = useState('asc');
-
-  const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
-
   const [filterName, setFilterName] = useState('');
-
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
   const [userlist, setUserlist] = useState([]);
-
   const [userID, setUserID] = useState({});
-
   const [openNew, setOpenNew] = useState(false);
-
   const [openEdit, setOpenEdit] = useState(false);
-
   const [updateList, setUpdateList] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setOpen(null);
     setIsLoading(true);
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/users/`).then((res) => {
       setUserlist(res.data);
-      console.log('UPDATE');
       setIsLoading(false);
     });
   }, [updateList]);
-
-  const handleOpenMenu = (event, row) => {
-    setOpen(event.currentTarget);
-    setUserID(row);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = userlist.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -208,14 +153,10 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Users
           </Typography>
-
-          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpenNew(true)}>
-            New User
-          </Button> */}
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <UserListToolbar filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -224,23 +165,15 @@ export default function UserPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={userlist.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { id, name, lastname, role, status, email, imageUrl } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
-
-                        <TableCell component="th" scope="row" padding="none">
+                      <TableRow hover key={id} tabIndex={-1}>
+                        <TableCell component="th" scope="row" padding="10px">
                           <Stack direction="row" alignItems="center" spacing={2}>
                             <Avatar alt={name} src={imageUrl} />
                             <Typography variant="subtitle2" noWrap>
@@ -265,23 +198,17 @@ export default function UserPage() {
                             <Label color={statusColorMap[status] || 'default'}>
                               {sentenceCase(statusMap[status] || status)}
                             </Label>
-                            {
-                              (isLoading && <CircularProgress size={36} />) || (
-                                <Button
-                                  onClick={() => {
-                                    setOpenEdit(true);
-                                    setUserID(row);
-                                  }}
-                                >
-                                  <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                                  Edit
-                                </Button>
-                              ) /* || (
-                                <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row)}>
-                                  <Iconify icon={'eva:more-vertical-fill'} />
-                                </IconButton>
-                              ) */
-                            }
+                            {(isLoading && <CircularProgress size={36} />) || (
+                              <Button
+                                onClick={() => {
+                                  setOpenEdit(true);
+                                  setUserID(row);
+                                }}
+                              >
+                                <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+                                Edit
+                              </Button>
+                            )}
                           </Stack>
                         </TableCell>
                       </TableRow>
@@ -333,34 +260,6 @@ export default function UserPage() {
         </Card>
       </Container>
 
-      <Popover
-        open={Boolean(open)}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: {
-            p: 1,
-            width: 140,
-            '& .MuiMenuItem-root': {
-              px: 1,
-              typography: 'body2',
-              borderRadius: 0.75,
-            },
-          },
-        }}
-      >
-        <MenuItem onClick={() => setOpenEdit(true)}>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-
-        <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Popover>
       <NewUser open={openNew} setOpen={setOpenNew} />
       <EditUser
         open={openEdit}
