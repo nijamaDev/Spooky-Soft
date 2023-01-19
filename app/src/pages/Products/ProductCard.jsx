@@ -11,7 +11,6 @@ import { fCurrency } from '../../utils/formatNumber';
 // components
 import Label from '../../components/label';
 import { ColorPreview } from '../../components/color-utils';
-import ProductDetail from './ProductDetail';
 import ProductEdit from './ProductEdit';
 import { AppContext } from '../../context/AppContext';
 
@@ -32,12 +31,12 @@ ShopProductCard.propTypes = {
   product: PropTypes.object,
 };
 
-export default function ShopProductCard({ register, checkbox }) {
+export default function ShopProductCard({ index, register, checkbox }) {
   const navigate = useNavigate();
-  const { login } = useContext(AppContext);
-  const { name, cover, price, colors, status, priceSale } = register.product;
-
-  const [openDetail, setOpenDetail] = useState(false);
+  const { login, scrapping, setScrapping } = useContext(AppContext);
+  // console.log(register.product)
+  const { name, cover, price, colors, priceSale } = register.product;
+  const status = priceSale === null ? '' : 'sale'
   const [openEdit, setOpenEdit] = useState(false); 
   const [show, setShow] = useState(<Box />);
   const [selected, setSelected] = useState(checkbox)
@@ -45,7 +44,7 @@ export default function ShopProductCard({ register, checkbox }) {
   useEffect(() => {
     let rightButton;
     if (checkbox){
-      rightButton = <Checkbox checked={selected} onClick={() => { setSelected(!selected) }} />
+      rightButton = <Checkbox checked={selected} onClick={handleSelect} />
     } else {
       rightButton = <Button style={{ backgroundColor: '#FF4842' }} variant="contained"
                             onClick={() => { setOpen(true); }} >
@@ -54,23 +53,22 @@ export default function ShopProductCard({ register, checkbox }) {
     } 
     if (login.role !== "Operario" || login.role !== "Administrador") {
       setShow(
-        <Box m={1} display="flex" justifyContent="flex-end" alignItems="flex-end">
-          <Card>
-            <Stack p={1} direction="row" spacing={1}>
-              <Button variant="filled">
-                <EditIcon
-                  onClick={() => {
-                    setOpenEdit(true)
-                  }}
-                />
-              </Button>
-              {rightButton}
-            </Stack>
-          </Card>
+        <Box mr={-1} mt={-1} pb={2} display="flex" justifyContent="flex-end" alignItems="flex-end">
+          {rightButton}
         </Box>
       );
     }
   }, [selected]);
+
+  const handleSelect = () => {
+    setSelected(!selected)
+    const changeValue = (arr, n, newValue) => {
+                          arr[n] = newValue;
+                          return arr;
+                        };
+    setScrapping(changeValue(scrapping, index, !selected))
+    console.log(index)
+  }
 
   const handleDelete = () => {
     /*
@@ -97,6 +95,7 @@ export default function ShopProductCard({ register, checkbox }) {
   return (
     <Box > 
       <Card sx={{ border: selected ? '3px solid #1DA1F2' : '0px solid #1DA1F2', p: selected ? 2.6 : 3 }}>
+      {show}
         <Box sx={{ pt: '100%', position: 'relative' }}>
           {status && (
             <Label
@@ -117,7 +116,7 @@ export default function ShopProductCard({ register, checkbox }) {
         </Box>
 
         <Stack spacing={2} sx={{ p: 3 }}>
-          <Link color="inherit" underline="hover" onClick={() => setOpenDetail(true)}>
+          <Link color="inherit" underline="hover" onClick={() => checkbox ? setOpenEdit(false) : setOpenEdit(true)}>
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>
@@ -125,7 +124,7 @@ export default function ShopProductCard({ register, checkbox }) {
 
           <Stack direction="row" alignItems="center" justifyContent="space-between">
             <ColorPreview colors={
-              typeof colors === 'string' ? colors.split(",") : []
+              typeof colors === 'string' ? colors.split("; ") : []
               // colors.split(",")
             } />
             <Typography variant="subtitle1">
@@ -145,9 +144,8 @@ export default function ShopProductCard({ register, checkbox }) {
           </Stack>
         </Stack>
         <ProductEdit open={openEdit} setOpen={setOpenEdit} product={register.product} />
-        <ProductDetail open={openDetail} setOpen={setOpenDetail} product={register.product} />
       </Card>
-      {show}
+      
 
       <Dialog
         open={open}
