@@ -23,7 +23,7 @@ export default function ProductsPage() {
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/today_product_registers/`).then((res) => {
       setProducts(res.data);
-      console.log(products);
+      // console.log(products);
     });
   }, []);
 

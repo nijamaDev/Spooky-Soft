@@ -12,10 +12,11 @@ import { fCurrency } from '../../utils/formatNumber';
 import FormContainer from '../../components/Forms/FormContainer'
 import FormItem from '../../components/Forms/FormItem'
 /* eslint-disable react/prop-types */ // TODO: upgrade to latest eslint tooling
-
+/*
 function isImage(url) {
   return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
 }
+*/
 
 export default function AlertDialog({ open, setOpen, product }) {
   console.log("product",product)
@@ -26,8 +27,8 @@ export default function AlertDialog({ open, setOpen, product }) {
   const [ coverF, setCoverF] = useState(cover)
   const [ priceF, setPriceF] = useState(price)
   const [ priceSaleF, setPriceSaleF] = useState(priceSale)
-  const [color1, setColor1] = useState(typeof colors === 'string' ? colors.split(",").length === 1 ? colors.split(",")[0] : "Not Found" : "Not Found");
-  const [ color2, setColor2] = useState(typeof colors === 'string' ? colors.split(",").length === 2 ? colors.split(",")[1] : "Not Found" : "Not Found");
+  const [color1, setColor1] = useState(typeof colors === 'string' ? colors.split("; ").length >= 1 ? colors.split("; ")[0] : "Not Found" : "Not Found");
+  const [ color2, setColor2] = useState(typeof colors === 'string' ? colors.split("; ").length === 2 ? colors.split("; ")[1] : "Not Found" : "Not Found");
   const [ colorsF, setColorsF] = useState("");
   const colorsOptions = ["#ffffff", "#f44336", "#9c27b0", "#3f51b5", "#2196f3", "#4caf50", "#8bc34a", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#000001"];
   const [ displayEdit, setDisplayEdit] = useState(false);
@@ -39,7 +40,7 @@ export default function AlertDialog({ open, setOpen, product }) {
     // console.log("color2",color2)
     if(color1 !== 'Not Found'){
       colorAux += color1
-      if(color2 !== 'Not Found'){colorAux += ","}
+      if(color2 !== 'Not Found'){colorAux += "; "}
     }
     if(color2 !== 'Not Found'){colorAux += color2}
     setColorsF(colorAux)
@@ -71,17 +72,12 @@ export default function AlertDialog({ open, setOpen, product }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const obj = {
-      name:nameF,
-      description:descriptionF,
-      cover:coverF,
-      redirect,
-      price:priceF,
-      priceSale:priceSaleF,
-      location:"",
-
-      colors:colorsF
-
+      name:nameF, description:descriptionF,
+      cover:coverF, redirect,
+      price:priceF, priceSale:priceSaleF,
+      location:"", colors:colorsF
     };
+    console.log('ID SENDING',id)
     console.log(obj);
     axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_product/${id}/`, obj).then((res) => {
       console.log(res.data);
@@ -152,11 +148,13 @@ export default function AlertDialog({ open, setOpen, product }) {
               </FormItem>
             </FormContainer>
           </Box>
-
+          <Button variant="contained" color="secondary" onClick={()=>console.log(color1,color2)}>
+            Print Colors
+          </Button>
           
             
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-            <img style={{ width: '50%', height: '100%' }} src={!isImage(coverF) ?'https://img.freepik.com/free-vector/hand-drawn-flat-design-mountain-landscape_52683-79195.jpg?w=2000' : coverF} alt="" />
+            <img style={{ width: '50%', height: '100%' }} src={coverF} alt="" />
             <Stack>
               <Typography
                 component="span"
@@ -173,7 +171,7 @@ export default function AlertDialog({ open, setOpen, product }) {
               </Typography>
               <Typography>Available Colors</Typography>
               <Box p={2} width="100%" m={.5} sx={{backgroundColor: color1 !== "Not Found" ? color1 : "#ffffff"}} />
-              <Box p={2} width="100%" m={.5} sx={{backgroundColor: color2 !== "Not Found" ? color2 : "#ffffff"}} />
+              <Box p={2} width="100%" m={.5} sx={{backgroundColor: color2 !== "Not Found" ? color2 : " #ffffff"}} />
               
             </Stack>
           </Stack>
