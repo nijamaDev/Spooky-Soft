@@ -72,6 +72,8 @@ export default function ProductsPage() {
     
     axios.post('https://onemarket.sncraft.online/basic/api/create_products/',{products:obj}).then((res) => {
       console.log(res.data)
+      setState(`Done! Created: ${res.data.created} Updated: ${res.data.updated}`)
+      setProducts([])
     })
     
     
@@ -81,6 +83,7 @@ export default function ProductsPage() {
   const handleButtonClick = () => {
     // `${process.env.REACT_APP_BACK_ADDRESS}/basic/api/today_product_registers/`
     setShowProgress(true)
+    setState('Extracting some cool products :D')
     const scrappingProducts = []
     const obj = {
       "tipo":category,
@@ -91,6 +94,9 @@ export default function ProductsPage() {
     try {
       axios.post('https://onemarket.sncraft.online/basic/api/scrap/',obj).then((res) => {
       setShowProgress(false)
+      if(res.data.status === 1){setState('Here is what I found :)')} 
+      else { setState('Seems like the search did not throw any result :(') }
+
       const aux = res.data.elements
       console.log('Scrapping:',res.data)
       for (let i = 0; i < aux.length; i += 1) {
