@@ -209,14 +209,10 @@ export default function ShopProductCard({ index, register, checkbox }) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="erase-dialog-title">{'Are you sure you want to delete this post?'}</DialogTitle>
+        <DialogTitle id="erase-dialog-title">{'Are you sure you want to delete this product?'}</DialogTitle>
         <DialogContent>
           <DialogContentText align="justify" id="alert-dialog-description">
-            This message is displayed to confirm the user's intention to delete a post. It is a warning message that
-            alerts the user that the action cannot be undone and that the post will be permanently removed from the
-            system. By clicking "Yes", the user confirms that they understand the consequences of their action and want
-            to proceed with the deletion. Clicking "No" cancels the operation and close this dialog without making any
-            changes.
+            This message is displayed to confirm the user's intention to delete a product. It is a warning message that alerts the user that the action cannot be undone and that the post will be permanently removed from the system. By clicking "Yes", the user confirms that they understand the consequences of their action and want to proceed with the deletion. Clicking "No" cancels the operation and close this dialog without making any changes.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
