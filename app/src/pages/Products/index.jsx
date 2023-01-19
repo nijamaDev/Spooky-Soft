@@ -12,15 +12,13 @@ import { AppContext } from '../../context/AppContext';
 import ProductFilterSidebar from './ProductFilterSidebar';
 import ProductSort from './ProductSort';
 import ProductList from './ProductList';
-import { AppContext } from '../../context/AppContext';
 // import ProductCartWidget from './ProductCartWidget'
 
 // ----------------------------------------------------------------------
 
 export default function ProductsPage() {
-  const { login } = useContext(AppContext);
+  const { update, login } = useContext(AppContext);
   const navigate = useNavigate();
-  const { update } = useContext(AppContext);
 
   const [openFilter, setOpenFilter] = useState(false);
   const [products, setProducts] = useState([]);
