@@ -107,7 +107,7 @@ def falabellaScrap(options,tipo,prompt):
 
     # Espera a que el elemento este listo
     try:
-        print("try")
+        #print("try")
         WebDriverWait(browser, timeout=4).until(EC.presence_of_element_located((By.ID, "testId-searchResults-products")))
 
         # Scroll down para cargar los productos
@@ -140,7 +140,7 @@ def falabellaScrap(options,tipo,prompt):
                 for c in zapato.div.next_sibling.ul.find_all('li'):
                     cssColor = c.button['style'].split(":")[1]
                     if "#" in cssColor:
-                        colorStr += f'{cssColor};'
+                        colorStr += f' {cssColor};'
                     else :
                         colorStr += cssColor
             # Buscar Precios
