@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from rest_framework import routers
 from .api import StoreViweSet, StatusViewSet, PeopleViewSet, RolesViewSet, UsersViewSet, NewsViewSet, GoogleUsersViewSet, ProductRegistersViewSet, ProductsViewSet
-from .myapi import getAllUsers, getProductsNumber, getUsersNumber, scarpInit, logIn, createUser, createProduct, createProducts, sumTodayRedirects, sumTodayVisits, updateProducts, createProductRegister, createProductRegisterGivenDate, createProductRegisterAllProducts, getPerson, getRole, getStatus, getTodayProductRegisters, updateUserNoPassword, updateUserPassword, updateProduct, addVisit, addRedirect, deleteProduct, addVisitXD, addRedirectXD, sortByRedirects, sortByVisits, getAlejoReport, getAljeoLines
+from .myapi import getAllUsers, getProductsNumber, getUsersNumber, scarpInit, logIn, createUser, deleteUser, createProduct, createProducts, sumTodayRedirects, sumTodayVisits, updateProducts, createProductRegister, createProductRegisterGivenDate, createProductRegisterAllProducts, getPerson, getRole, getStatus, getTodayProductRegisters, updateUserNoPassword, updateUserPassword, updateProduct, addVisit, addRedirect, deleteProduct, addVisitXD, addRedirectXD, sortByRedirects, sortByVisits, getAlejoReport, getAljeoLines
 
 router = routers.DefaultRouter()
 
@@ -43,7 +43,7 @@ urlpatterns.append(path('api/getUsersNumber/', getUsersNumber, name='getUsersNum
 urlpatterns.append(path('api/getAllUsers/', getAllUsers, name= 'getAllUsers'))
 urlpatterns.append(path('api/update_user/<str:id>/', updateUserNoPassword, name='update_user'))
 urlpatterns.append(path('api/update_user_password/<str:id>/', updateUserPassword, name='update_user_password'))
-urlpatterns.append(path('delete/user/<str:email>', views.delete_user, name='delete_user'))
+urlpatterns.append(path('delete/user/<str:email>', deleteUser, name='delete_user'))
 #---------[ PRODUCTS ]---------------------------------------------------------------------------------------------------
 urlpatterns.append(path('api/getProductsNumber/', getProductsNumber, name='getProductsNumber'))
 urlpatterns.append(path('api/create_product/', createProduct, name='create_product'))
