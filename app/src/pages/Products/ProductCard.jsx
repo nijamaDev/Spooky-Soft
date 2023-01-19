@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 // @mui
 import { Box, Card, Link, Typography, Stack, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Checkbox } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -42,21 +43,26 @@ export default function ShopProductCard({ index, register, checkbox }) {
   const [selected, setSelected] = useState(checkbox)
 
   useEffect(() => {
-    let rightButton;
-    if (checkbox){
-      rightButton = <Checkbox checked={selected} onClick={handleSelect} />
-    } else {
-      rightButton = <Button style={{ backgroundColor: '#FF4842' }} variant="contained"
-                            onClick={() => { setOpen(true); }} >
-                      <DeleteForeverIcon />
-                    </Button>
-    } 
-    if (login.role !== "Operario" || login.role !== "Administrador") {
-      setShow(
-        <Box mr={-1} mt={-1} pb={2} display="flex" justifyContent="flex-end" alignItems="flex-end">
-          {rightButton}
-        </Box>
-      );
+    try {      
+      let rightButton;
+      if (checkbox){
+        rightButton = <Checkbox checked={selected} onClick={handleSelect} />
+      } else {
+        rightButton = <Button style={{ backgroundColor: '#FF4842' }} variant="contained"
+                              onClick={() => { setOpen(true); }} >
+                        <DeleteForeverIcon />
+                      </Button>
+      } 
+      console.log(login.role.name)
+      if (login.role.name === "Operario" || login.role.name === "Administrador") {
+        setShow(
+          <Box mr={-1} mt={-1} pb={2} display="flex" justifyContent="flex-end" alignItems="flex-end">
+            {rightButton}
+          </Box>
+        );
+      }
+    } catch (error) {
+      navigate('/login')
     }
   }, [selected]);
 
@@ -68,6 +74,15 @@ export default function ShopProductCard({ index, register, checkbox }) {
                         };
     setScrapping(changeValue(scrapping, index, !selected))
     console.log(index)
+  }
+
+  const openDetail = () => {
+    if(checkbox){
+      setOpenEdit(false)
+    } else setOpenEdit(true)
+    if(login.role.name === "Visitante"){
+      axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/add_visit/${String(register.product.id)}/`).then((res)=>{console.log(res.data)})
+    }
   }
 
   const handleDelete = () => {
@@ -116,10 +131,8 @@ export default function ShopProductCard({ index, register, checkbox }) {
         </Box>
 
         <Stack spacing={2} sx={{ p: 3 }}>
-          <Link color="inherit" underline="hover" onClick={() => checkbox ? setOpenEdit(false) : setOpenEdit(true)}>
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
+          <Link color="inherit" underline="hover" onClick={openDetail}>
+            <Button>{name.length > 12 ? `${name.substring(0, 24)}...` : name}</Button>
           </Link>
 
           <Stack direction="row" alignItems="center" justifyContent="space-between">

@@ -182,7 +182,7 @@ def createProducts(req):
                 existing_product.save()
                 update += 1
             except Products.DoesNotExist:
-                product = Products.objects.create(store=store, name=data['products'][i]['name'], description=data['products'][i]['description'], cover=data['products'][i]['cover'], redirect=data['products'][i]['redirect'], price=data['products'][i]['price'], priceSale=data['products'][i]['priceSale'], location=data['products'][i]['location'], colors=data['products'][i]['colors'])
+                product = Products.objects.create(store=store, name=data['products'][i]['name'], description=data['products'][i]['description'], cover=data['products'][i]['cover'], redirect=data['products'][i]['redirect'], price=data['products'][i]['price'], priceSale=data['products'][i]['priceSale'], location=data['products'][i]['location'], creation_date=datetime.now().date(), colors=data['products'][i]['colors'])
                 register = ProductRegisters.objects.create(product=product, date = product.creation_date, visits=0, redirect=0)
                 product.save()
                 register.save()
