@@ -34,8 +34,9 @@ ShopProductCard.propTypes = {
 export default function ShopProductCard({ index, register, checkbox }) {
   const navigate = useNavigate();
   const { login, scrapping, setScrapping } = useContext(AppContext);
-  const { name, cover, price, colors, status, priceSale } = register.product;
-
+  // console.log(register.product)
+  const { name, cover, price, colors, priceSale } = register.product;
+  const status = priceSale === null ? '' : 'sale'
   const [openEdit, setOpenEdit] = useState(false); 
   const [show, setShow] = useState(<Box />);
   const [selected, setSelected] = useState(checkbox)
@@ -115,7 +116,7 @@ export default function ShopProductCard({ index, register, checkbox }) {
         </Box>
 
         <Stack spacing={2} sx={{ p: 3 }}>
-          <Link color="inherit" underline="hover" onClick={() => setOpenEdit(true)}>
+          <Link color="inherit" underline="hover" onClick={() => checkbox ? setOpenEdit(false) : setOpenEdit(true)}>
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>

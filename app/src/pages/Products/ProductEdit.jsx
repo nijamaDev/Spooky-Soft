@@ -19,7 +19,7 @@ function isImage(url) {
 */
 
 export default function AlertDialog({ open, setOpen, product }) {
-  // console.log("product",product)
+  console.log("product",product)
   const { id, name, cover, description, price, colors, redirect, priceSale } = product;
   // console.log(typeof colors === 'string' ? colors.split(",").length <= 2 ? colors.split(",")[0] : colors.split(",")[1] : [])
   const [ nameF, setNameF] = useState(name);
@@ -77,6 +77,7 @@ export default function AlertDialog({ open, setOpen, product }) {
       price:priceF, priceSale:priceSaleF,
       location:"", colors:colorsF
     };
+    console.log('ID SENDING',id)
     console.log(obj);
     axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/update_product/${id}/`, obj).then((res) => {
       console.log(res.data);
