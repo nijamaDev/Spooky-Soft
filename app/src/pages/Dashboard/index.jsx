@@ -1,20 +1,12 @@
 import { Helmet } from 'react-helmet-async';
-import { faker } from '@faker-js/faker';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
-// components
-import Iconify from '../../components/iconify';
 // sections
-import AppTasks from './AppTasks';
-import AppNewsUpdate from './AppNewsUpdate';
-import AppOrderTimeline from './AppOrderTimeline';
 import AppWebsiteVisits from './AppWebsiteVisits';
-import AppTrafficBySite from './AppTrafficBySite';
 import AppWidgetSummary from './AppWidgetSummary';
-import AppCurrentSubject from './AppCurrentSubject';
 import AppConversionRates from './AppConversionRates';
 import AppCurrentVisits from './AppCurrentVisits';
 // ----------------------------------------------------------------------
@@ -80,7 +72,7 @@ export default function DashboardAppPage() {
     },
   ];
 
-  const MOST_CLICKED = [
+  /* const MOST_CLICKED = [
     { product: 'Outdoor shoes', redirects: 1380 },
     { product: 'Athletic shoes', redirects: 1200 },
     { product: 'Dress shoes', redirects: 1100 },
@@ -91,7 +83,7 @@ export default function DashboardAppPage() {
     { product: 'Sandals', redirects: 448 },
     { product: 'Loafers', redirects: 430 },
     { product: 'Sneakers', redirects: 400 },
-  ];
+  ]; */
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalProducts, setTotalProducts] = useState(0);
   const [todayViews, setTodayViews] = useState(0);
@@ -118,7 +110,6 @@ export default function DashboardAppPage() {
     setMonthRedirects(VISITS_MOCK);
     /* TODO setVisitedStores */
     setVisitedStores(STORES);
-    /* TODO setMostClicked */
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/sortByRedirects/`).then((res) => {
       setMostClicked(res.data);
     });
