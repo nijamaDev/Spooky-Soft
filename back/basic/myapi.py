@@ -220,9 +220,12 @@ def updateProduct(req, id):
 @api_view(['DELETE'])
 def deleteProduct(req, id):
     if req.method == 'DELETE':
-        product = Products.objects.get(id=id)
-        product.delete()
-        return Response({'status':1,"msg":"Removed Successfully"})
+        try:
+            product = Products.objects.get(id=id)
+            product.delete()
+            return Response({'status':1,"msg":"Removed Successfully"})
+        except Products.DoesNotExist:
+            return Response({'status':0,"msg":" ERROR: The Product Does Not Exist"})
 
 @api_view(['GET'])
 def getProductsNumber(req):
@@ -328,6 +331,7 @@ def sortByRedirects(req):
             auxilio = ProductRegisters.objects.filter(date__month=month, product=pid['product__id']).aggregate(Sum('redirect')).get('redirect__sum')
             arrayFeo.append(p.name)
             arrayFeo.append(auxilio)
+            arrayFeo.append(p.store.name)
             report.append(arrayFeo)
         #serializer = ProductRegistersSerializer(report, many=True, context={'request': req})
         sorter = lambda x: (x[1], x[0])
