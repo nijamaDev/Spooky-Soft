@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 // @mui
 import { Grid, Button, Container, Stack, Typography, Box, Divider } from '@mui/material';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -31,7 +31,6 @@ export default function BlogPage() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [hover, setHover] = useState(false);
-
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/news/`).then((res) => {
       setPosts(res.data);
@@ -40,7 +39,11 @@ export default function BlogPage() {
 
   const handleMouseEnter = () => setHover(true);
   const handleMouseLeave = () => setHover(false);
-
+  const [currentUrl, setCurrentUrl] = useState('');
+  const location = useLocation();
+  useEffect(() => {
+    setCurrentUrl(location.pathname);
+  }, [location]);
   return (
     <>
       <Helmet>
@@ -107,20 +110,24 @@ export default function BlogPage() {
           </Grid>
         </Grid>
         <Typography variant="h3" align="center" sx={{ mb: 2 }}>
-          All products
+          News
         </Typography>
         <Divider sx={{ mb: 3 }} />
-        <Button
-          variant="contained"
-          startIcon={<Iconify icon="eva:plus-fill" />}
-          onClick={() => navigate('/dashboard/create_post')}
-        >
-          New Post
-        </Button>
+        {currentUrl.includes('dashboard') && (
+          <Button
+            variant="contained"
+            startIcon={<Iconify icon="eva:plus-fill" />}
+            onClick={() => navigate('/dashboard/create_post')}
+            style={{ marginBottom: '20px' }}
+          >
+            New Post
+          </Button>
+        )}
 
         <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
           <BlogPostsSearch posts={posts} />
-          <BlogPostsSort options={SORT_OPTIONS} />
+          {/* 
+          <BlogPostsSort options={SORT_OPTIONS} /> */}
         </Stack>
 
         <Grid container spacing={3}>

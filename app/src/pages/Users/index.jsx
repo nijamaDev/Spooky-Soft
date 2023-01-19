@@ -28,7 +28,6 @@ import Scrollbar from '../../components/scrollbar';
 import UserListHead from './UserListHead';
 import UserListToolbar from './UserListToolbar';
 
-import NewUser from './NewUser';
 import EditUser from './EditUser';
 
 // ----------------------------------------------------------------------
@@ -85,7 +84,6 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [userlist, setUserlist] = useState([]);
   const [userID, setUserID] = useState({});
-  const [openNew, setOpenNew] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [updateList, setUpdateList] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -260,7 +258,6 @@ export default function UserPage() {
         </Card>
       </Container>
 
-      <NewUser open={openNew} setOpen={setOpenNew} />
       <EditUser
         open={openEdit}
         setOpen={setOpenEdit}
