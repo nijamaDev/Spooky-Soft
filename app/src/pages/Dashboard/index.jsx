@@ -106,7 +106,7 @@ export default function DashboardAppPage() {
       setTotalUsers(res.data);
     });
     /* TODO PRODUCTS */
-    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/getUsersNumber/`).then((res) => {
+    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/getProductsNumber/`).then((res) => {
       setTotalProducts(res.data);
     });
     /* TODO TODAY VIEWS */
