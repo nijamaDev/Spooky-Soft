@@ -29,18 +29,6 @@ export default function ProductsPage() {
   const [other, setOther] = useState('');
   const [showProgress, setShowProgress] = useState(false);
 
-  useEffect(()=>{
-    
-    /*
-    axios.get(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/today_product_registers/`).then((res) => {
-      
-      setProducts(res.data)
-      console.log(products)
-    })
-    */
-    
-  }, [])
-
   const handleChange = (event) => {
     setCategory(event.target.value);
     if(category === 'Personalizada'){setOther('')}
@@ -70,7 +58,7 @@ export default function ProductsPage() {
 
     console.log('sending to db:',obj)
     
-    axios.post('https://onemarket.sncraft.online/basic/api/create_products/',{products:obj}).then((res) => {
+    axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/create_products/`,{products:obj}).then((res) => {
       console.log(res.data)
       setState(`Done! Created: ${res.data.created} Updated: ${res.data.updated}`)
       setProducts([])
@@ -92,7 +80,7 @@ export default function ProductsPage() {
     }
 
     try {
-      axios.post('https://onemarket.sncraft.online/basic/api/scrap/',obj).then((res) => {
+      axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/scrap/`,obj).then((res) => {
       setShowProgress(false)
       if(res.data.status === 1){setState('Here is what I found :)')} 
       else { setState('Seems like the search did not throw any result :(') }

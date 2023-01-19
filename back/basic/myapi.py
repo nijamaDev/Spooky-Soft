@@ -222,7 +222,7 @@ def deleteProduct(req, id):
     if req.method == 'DELETE':
         product = Products.objects.get(id=id)
         product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'status':1,"msg":"Removed Successfully"})
 
 @api_view(['GET'])
 def getProductsNumber(req):
