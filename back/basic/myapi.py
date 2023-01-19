@@ -7,7 +7,8 @@ from django.db.models import Sum
 from .models import Users, People, Roles, Status, Stores, Products, ProductRegisters
 from .scraping import descuentos
 from .serializers import UserSerializer, ProductsSerializer, ProductRegistersSerializer
-from django.db.models.functions import Extract
+import calendar
+
 
 @api_view(['POST'])
 def scarpInit(req):
@@ -292,46 +293,25 @@ def addRedirect(req, id):
 
 @api_view(['POST'])
 def addVisitXD(req):
+    today = datetime.now()
     try:
-        pr = ProductRegisters.objects.get(product=req.data['p_id'], date = req.data['date'])
+        pr = ProductRegisters.objects.get(product=req.data['p_id'], date = today)
         pr.visits += 1
         pr.save()
     except ProductRegisters.DoesNotExist:
-        pr = ProductRegisters.objects.create(product=req.data['p_id'], date = req.data['date'], visits=0, redirect=0)
+        pr = ProductRegisters.objects.create(product=req.data['p_id'], date = today, visits=0, redirect=0)
     return Response(ProductRegistersSerializer(pr).data) 
 
 @api_view(['POST'])
 def addRedirectXD(req):
+    today = datetime.now()
     try:
-        pr = ProductRegisters.objects.get(product=req.data['p_id'], date = req.data['date'])
+        pr = ProductRegisters.objects.get(product=req.data['p_id'], date =today)
         pr.redirect += 1
         pr.save()
     except ProductRegisters.DoesNotExist:
-        pr = ProductRegisters.objects.create(product=req.data['p_id'], date = req.data['date'], visits=0, redirect=0)
+        pr = ProductRegisters.objects.create(product=req.data['p_id'], date = today, visits=0, redirect=0)
     return Response(ProductRegistersSerializer(pr).data) 
-
-@api_view(['GET'])
-def getAlejoReport(req):
-    res = {"tr":0,"tv":0,"tfr":0,"tfv":0,"tcr":0,"tcv":0,"pfr":0,"pfv":0,"pcr":0,"pcv":0}
-    total = ProductRegisters.objects.all()
-    for r in total:
-        res['tr'] += r.redirect
-        res['tv'] += r.visits
-    falabella = ProductRegisters.objects.filter(product__store__name="Falabella")
-    for r in falabella:
-        res['tfr'] += r.redirect
-        res['tfv'] += r.visits
-    croydon = ProductRegisters.objects.filter(product__store__name="Croydon")
-    for r in croydon:
-        res['tcr'] += r.redirect
-        res['tcv'] += r.visits
-    res['pcr'] = (res['tcr']/res['tr'])*100
-    res['pfr'] = (res['tfr']/res['tr'])*100
-    res['pcv'] = (res['tcv']/res['tv'])*100
-    res['pfv'] = (res['tfv']/res['tv'])*100
-    a = ProductRegisters.objects.filter(date__month=2).count()
-    print(a)
-    return Response(res)
 
 #---------------------------reportes-------------------------------------------------------------------------------------        
 
@@ -369,5 +349,59 @@ def sumTodayRedirects(req):
        report = ProductRegisters.objects.filter(date__day=day).aggregate(Sum('redirect')).get('redirect__sum')
        return Response(report)
 
+@api_view(['GET'])
+def getAlejoReport(req):
+    res = {"tr":0,"tv":0,"tfr":0,"tfv":0,"tcr":0,"tcv":0,"pfr":0,"pfv":0,"pcr":0,"pcv":0}
+    total = ProductRegisters.objects.all()
+    for r in total:
+        res['tr'] += r.redirect
+        res['tv'] += r.visits
+    falabella = ProductRegisters.objects.filter(product__store__name="Falabella")
+    for r in falabella:
+        res['tfr'] += r.redirect
+        res['tfv'] += r.visits
+    croydon = ProductRegisters.objects.filter(product__store__name="Croydon")
+    for r in croydon:
+        res['tcr'] += r.redirect
+        res['tcv'] += r.visits
+    res['pcr'] = (res['tcr']/res['tr'])*100
+    res['pfr'] = (res['tfr']/res['tr'])*100
+    res['pcv'] = (res['tcv']/res['tv'])*100
+    res['pfv'] = (res['tfv']/res['tv'])*100
+    a = ProductRegisters.objects.filter(date__month=2).count()
+    print(a)
+    return Response(res)
 
+@api_view(['GET'])
+def getAljeoLines(req):
+    today = datetime.now()
 
+    day = today.day
+    year = today.year
+    month = today.month
+    visits_mock = []
+    for i in range(30):
+        res = {"date": '', "visits": 0, "redirects": 0}
+        fecha = date(year,month,day)
+        results = ProductRegisters.objects.filter(date=fecha)
+        if len(results) != 0:
+            res['date'] = fecha.strftime("%m-%d-%Y")
+            res['redirects'] = results.aggregate(Sum('redirect')).get('redirect__sum')
+            res['visits'] = results.aggregate(Sum('visits')).get('visits__sum')
+            visits_mock.append(res)
+        else:
+            res['date'] = fecha.strftime("%m-%d-%Y")
+            visits_mock.append(res)
+        if day == 1:
+            if month == 1:
+                year -= 1
+                month = 12
+                first_day, num_days = calendar.monthrange(year, month)
+                day = num_days
+            else:
+                month -= 1
+                first_day, num_days = calendar.monthrange(year, month)
+                day = num_days
+        else: 
+            day -= 1
+    return Response(visits_mock)

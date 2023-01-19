@@ -3,7 +3,20 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 // @mui
-import { Box, Card, Link, Typography, Stack, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Checkbox } from '@mui/material';
+import {
+  Box,
+  Card,
+  Link,
+  Typography,
+  Stack,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Checkbox,
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -14,7 +27,6 @@ import Label from '../../components/label';
 import { ColorPreview } from '../../components/color-utils';
 import ProductEdit from './ProductEdit';
 import { AppContext } from '../../context/AppContext';
-
 
 // ----------------------------------------------------------------------
 
@@ -35,25 +47,40 @@ ShopProductCard.propTypes = {
 export default function ShopProductCard({ index, register, checkbox }) {
   const navigate = useNavigate();
   const { login, scrapping, setScrapping } = useContext(AppContext);
-  // console.log(register.product)
   const { name, cover, price, colors, priceSale } = register.product;
-  const status = priceSale === null ? '' : 'sale'
-  const [openEdit, setOpenEdit] = useState(false); 
+  const creationDate = new Date(register.product.creation_date)
+  const { visits, redirect } = register
+  const [openEdit, setOpenEdit] = useState(false);
   const [show, setShow] = useState(<Box />);
-  const [selected, setSelected] = useState(checkbox)
+  const [selected, setSelected] = useState(checkbox);
+
+  const today = new Date();
+  const twoDaysAgo = new Date(today);
+  twoDaysAgo.setDate(today.getDate() - 2);
+
+
+  const status = priceSale === null ? creationDate >= twoDaysAgo && creationDate <= today ? 'new' : '' : 'sale';
 
   useEffect(() => {
-    try {      
+    try {
       let rightButton;
-      if (checkbox){
-        rightButton = <Checkbox checked={selected} onClick={handleSelect} />
+      if (checkbox) {
+        rightButton = <Checkbox checked={selected} onClick={handleSelect} />;
       } else {
-        rightButton = <Button style={{ backgroundColor: '#FF4842' }} variant="contained"
-                              onClick={() => { setOpen(true); }} >
-                        <DeleteForeverIcon />
-                      </Button>
-      } 
-      if (login.role.name === "Operario" || login.role.name === "Administrador") {
+        rightButton = (
+          <Button
+            style={{ backgroundColor: '#FF4842' }}
+            variant="contained"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <DeleteForeverIcon />
+          </Button>
+        );
+      }
+
+      if (login.role.name === 'Operario' || login.role.name === 'Administrador') {
         setShow(
           <Box mr={-1} mt={-1} pb={2} display="flex" justifyContent="flex-end" alignItems="flex-end">
             {rightButton}
@@ -61,28 +88,34 @@ export default function ShopProductCard({ index, register, checkbox }) {
         );
       }
     } catch (error) {
-      navigate('/login')
+      navigate('/login');
     }
   }, [selected]);
 
   const handleSelect = () => {
-    setSelected(!selected)
+    setSelected(!selected);
     const changeValue = (arr, n, newValue) => {
-                          arr[n] = newValue;
-                          return arr;
-                        };
-    setScrapping(changeValue(scrapping, index, !selected))
-    console.log(index)
-  }
+      arr[n] = newValue;
+      return arr;
+    };
+    setScrapping(changeValue(scrapping, index, !selected));
+    console.log(index);
+  };
 
   const openDetail = () => {
-    if(checkbox){
-      setOpenEdit(false)
-    } else setOpenEdit(true)
-    if(login.role.name === "Visitante"){
-      axios.put(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/add_visit/${String(register.product.id)}/`).then((res)=>{console.log(res.data)})
+    if (checkbox) {
+      setOpenEdit(false);
+    } else setOpenEdit(true);
+    if (login.role.name === 'Visitante' || true) {
+      console.log('register', register);
+      const obj = {
+        p_id: register.product.id,
+      };
+      axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/add_visit_xd/`, obj).then((res) => {
+        console.log(res.data);
+      });
     }
-  }
+  };
 
   const handleDelete = () => {
     /*
@@ -100,16 +133,16 @@ export default function ShopProductCard({ index, register, checkbox }) {
       }
     });    
     */
-    console.log("borrado papu")
+    console.log('borrado papu');
     setOpen(false);
   };
 
   const [open, setOpen] = useState(false);
 
   return (
-    <Box > 
+    <Box>
       <Card sx={{ border: selected ? '3px solid #1DA1F2' : '0px solid #1DA1F2', p: selected ? 2.6 : 3 }}>
-      {show}
+        {show}
         <Box sx={{ pt: '100%', position: 'relative' }}>
           {status && (
             <Label
@@ -134,11 +167,13 @@ export default function ShopProductCard({ index, register, checkbox }) {
             <Button>{name.length > 12 ? `${name.substring(0, 24)}...` : name}</Button>
           </Link>
 
-          <Stack direction="column" alignItems="center" justifyContent="space-between">
-            <ColorPreview colors={
-              typeof colors === 'string' ? colors.split("; ") : []
-              // colors.split(",")
-            } />
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <ColorPreview
+              colors={
+                typeof colors === 'string' ? colors.split('; ') : []
+                // colors.split(",")
+              }
+            />
             <Typography variant="subtitle1">
               <Typography
                 component="span"
@@ -157,7 +192,6 @@ export default function ShopProductCard({ index, register, checkbox }) {
         </Stack>
         <ProductEdit open={openEdit} setOpen={setOpenEdit} product={register.product} />
       </Card>
-      
 
       <Dialog
         open={open}

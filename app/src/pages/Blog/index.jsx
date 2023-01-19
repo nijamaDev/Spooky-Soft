@@ -78,7 +78,7 @@ export default function BlogPage() {
           }}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/products')}
         >
           See all products!
           <ExpandMoreIcon />
