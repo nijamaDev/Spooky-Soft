@@ -26,6 +26,11 @@ const navConfig = [
     path: '/dashboard/products',
     icon: icon('ic_cart'),
   },
+  {
+    title: 'scrapping',
+    path: '/dashboard/scrapping',
+    icon: icon('GiWarPick'),
+  },
 ];
 
 export default navConfig;
