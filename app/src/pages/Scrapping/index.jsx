@@ -73,12 +73,17 @@ export default function ProductsPage() {
     }
 
     console.log('sending to db:', obj);
-
-    axios.post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/create_products/`, { products: obj }).then((res) => {
-      console.log(res.data);
-      setState(`Done! Created: ${res.data.created} Updated: ${res.data.updated}`);
-      setProducts([]);
+    const updatedArray = obj.map((item) => {
+      return { ...item, location: '' };
     });
+    axios
+      .post(`${process.env.REACT_APP_BACK_ADDRESS}/basic/api/create_products/`, { products: updatedArray })
+      .then((res) => {
+        console.log(res.data);
+        setState(`Done! Created: ${res.data.created} Updated: ${res.data.updated}`);
+        setProducts([]);
+        setScrapping([]);
+      });
   };
 
   const handleButtonClick = () => {
