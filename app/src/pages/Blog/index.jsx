@@ -71,7 +71,7 @@ export default function BlogPage() {
             transition: 'transform 0.2s',
             transform: hover ? 'scale(1.2)' : 'none',
             backgroundColor: 'transparent',
-            color: '#ffffff',
+            color: '#111',
             fontSize: '21px',
             display: 'flex',
             flexDirection: 'column',
